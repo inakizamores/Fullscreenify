@@ -11,8 +11,8 @@ let accessToken = null;
 function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
     const params = {
-        client_id: clientId,
-        redirect_uri: redirectUri,
+        client_id: c9aaff6bc4d0497eb4d2c2cad732a923,
+        redirect_uri: https://fullscreenify.netlify.app/callback,
         scope: scopes.join(' '),
         response_type: 'token',
         show_dialog: true
