@@ -112,23 +112,21 @@ body {
     z-index: 10; /* Ensure login button is above other elements */
 }
 
+/* Info Container Styles */
 #info-container {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 50%;  /* Position in the vertical center */
+    left: 0;   /* Start from the left edge */
+    width: 100%; /* Occupy full width */
     display: flex;
-    flex-direction: column; /* Stack vertically on mobile */
-    justify-content: center; /* Center vertically on mobile */
-    align-items: center; /* Center horizontally on mobile */
-    width: calc(100% - 40px); 
-    max-width: 800px;
-    padding: 0 20px;
+    flex-direction: row; /* Align items horizontally */
+    justify-content: space-between; /* Space between artist and song name */
+    align-items: center; /* Center vertically within the container */
+    padding: 0 20px; /* Medium padding on the sides */
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 5;
     pointer-events: none;
-    text-align: center; /* Center text on mobile */
 }
 
 #info-container.show {
@@ -136,6 +134,7 @@ body {
     pointer-events: auto;
 }
 
+/* Text Styles */
 #artist-name,
 #song-name {
     color: white;
@@ -145,32 +144,15 @@ body {
     font-family: 'Roboto', sans-serif;
     white-space: normal; /* Allow text to wrap */
     word-wrap: break-word; /* Force long words to break */
-    max-width: 45%; /* Adjust as needed */
-    flex: 1; /* Allow elements to share available space */
-    min-width: 0; /* Important for flex items to shrink */
+    max-width: 40%; /* Limit width to prevent overlap with album image */
 }
 
 #artist-name {
-  margin-bottom: 10px; /* Add some spacing between artist and song on mobile*/
+    text-align: left; /* Align artist name to the left */
 }
 
 #song-name {
-    text-align: right; /* Align song name to right on larger screens */
-}
-
-/* Desktop Styles */
-@media (min-width: 769px) { /* Adjust breakpoint as needed */
-    #info-container {
-        flex-direction: row; /* Align items horizontally */
-        justify-content: space-between; /* Space between on larger screens */
-        align-items: center;
-        text-align: left; /* Default text alignment */
-    }
-
-    #artist-name {
-        margin-bottom: 0; /* Remove spacing on desktop */
-        text-align: left;
-    }
+    text-align: right; /* Align song name to the right */
 }
 
 /* Mobile Styles */
@@ -183,9 +165,19 @@ body {
     .control-btn i {
         font-size: 20px;
     }
-    #artist-name, #song-name {
-        font-size: 24px; /* Slightly smaller font on mobile */
-        max-width: 90%;
+    #info-container {
+        flex-direction: column; /* Stack items vertically on mobile */
+        align-items: flex-start; /* Align items to the left on mobile */
+        text-align: left; /* Align text to the left on mobile */
+        padding-top: 20px;
+    }
+    #artist-name,
+    #song-name {
+        max-width: 90%; /* Adjust max-width for smaller screens */
+        margin-bottom: 10px;
+    }
+    #song-name {
+        text-align: left;
     }
 }
 
