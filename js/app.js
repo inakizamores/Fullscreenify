@@ -25,8 +25,14 @@ function updateUI(data) {
         pauseBtn.style.display = 'none';
     }
     // Update artist and song name
-    document.getElementById('artist-name').innerText = data.item.artists[0].name;
-    document.getElementById('song-name').innerText = data.item.name;
+    const artistNameElement = document.getElementById('artist-name');
+    const songNameElement = document.getElementById('song-name');
+
+    artistNameElement.innerText = data.item.artists[0].name;
+    songNameElement.innerText = data.item.name;
+
+    console.log("Artist Name:", data.item.artists[0].name); // Debug log
+    console.log("Song Name:", data.item.name); // Debug log
 }
 
 function displayPlaceholder() {
