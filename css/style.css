@@ -39,20 +39,21 @@ body {
     align-items: center;
 }
 
-/* Album cover styles (increased size) */
+/* Album cover styles */
 #album-cover {
     position: relative;
-    max-width: 85%; /* Increased size */
-    max-height: 85%; /* Increased size */
+    max-width: 90%; /* Adjust size as needed */
+    max-height: 90%; /* Adjust size as needed */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
     z-index: 0;
     cursor: pointer;
 }
 
+/* Album cover hover effects */
 .fullscreenify-container:hover #album-cover {
-    transform: scale(1.05);
-    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
+    transform: scale(1.05); /* Enlarge on hover */
+    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
 
 /* Control buttons container styles */
@@ -160,25 +161,20 @@ body {
 }
 
 #cd-image {
-    max-width: 85%; /* Increased size */
-    max-height: 85%; /* Increased size */
+    max-width: 85%; /* Adjust size as needed */
+    max-height: 85%; /* Adjust size as needed */
     border-radius: 50%;
     position: relative; /* Add position for pseudo-element */
     animation: rotateCD 10s linear infinite; /* Add the rotation animation */
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Add initial shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
+    cursor: pointer;
 }
 
-/* CD cutout effect */
-#cd-image::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100px; /* Adjust size of cutout */
-    height: 100px; /* Adjust size of cutout */
-    border-radius: 50%;
-    background-color: #222; /* Match background color */
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Add inner shadow */
+/* CD hover effects */
+.fullscreenify-container:hover #cd-image {
+    transform: scale(1.05); /* Enlarge on hover */
+    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
 
 /* Keyframes for CD rotation animation */
