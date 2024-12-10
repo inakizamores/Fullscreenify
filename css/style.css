@@ -89,8 +89,11 @@ body {
 }
 
 .control-btn i {
-    margin: 0; /* Remove default margin for icons */
-    font-size: 24px; /* Adjust icon size as needed */
+    margin: 0;
+    font-size: 24px;
+    color: #b3b3b3; /* Light gray color */
+    position: relative;
+    top: -2px; /* Adjust vertical position */
 }
 
 #login-btn {
