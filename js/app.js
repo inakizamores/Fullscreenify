@@ -11,12 +11,14 @@ function updateUI(data) {
         albumCover.src = data.item.album.images[0].url;
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
+        document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
         cdImage.src = data.item.album.images[0].url;
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
+        document.getElementById('placeholder-text').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
     }
 
@@ -42,6 +44,10 @@ function updateUI(data) {
 }
 
 function displayPlaceholder() {
+    const placeholderText = document.getElementById('placeholder-text');
+    placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
+    placeholderText.style.display = 'block';
+
     if (!isCdView) {
         // Album cover view
         const albumCover = document.getElementById('album-cover');
@@ -95,6 +101,7 @@ async function toggleCdView() {
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
     const cdImage = document.getElementById('cd-image');
+    const placeholderText = document.getElementById('placeholder-text');
 
     // Force image refresh by adding a unique query parameter
     const timestamp = new Date().getTime();
@@ -113,6 +120,7 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     cdImage.src = `${data.item.album.images[0].url}?t=${timestamp}`;
+                    placeholderText.style.display = 'none';
                 } else {
                     handleApiError(response);
                 }
@@ -121,6 +129,7 @@ async function toggleCdView() {
             }
         } else {
             cdImage.src = `https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg?t=${timestamp}`;
+            placeholderText.style.display = 'block';
         }
     } else {
         // Switch to album cover view
@@ -136,6 +145,7 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     albumCover.src = `${data.item.album.images[0].url}?t=${timestamp}`;
+                    placeholderText.style.display = 'none';
                 } else {
                     handleApiError(response);
                 }
@@ -144,6 +154,7 @@ async function toggleCdView() {
             }
         } else {
             albumCover.src = `https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg?t=${timestamp}`;
+            placeholderText.style.display = 'block';
         }
     }
 }

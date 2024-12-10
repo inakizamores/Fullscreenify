@@ -190,3 +190,19 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* Placeholder text styles */
+#placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    z-index: 10; /* Ensure text is above other elements */
+    font-family: 'Arial', sans-serif; /* Modern font */
+    text-transform: uppercase; /* All caps text */
+    display: none; /* Initially hidden */
+}
