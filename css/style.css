@@ -101,6 +101,10 @@ body {
     margin: 0; /* Remove any default margin */
     font-size: 24px; /* Adjust icon size as needed */
     color: #000; /* Icon color set to black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Make sure the icon takes full height of the button */
 }
 
 /* Login button styles */

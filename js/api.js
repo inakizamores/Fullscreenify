@@ -9,9 +9,20 @@ async function getCurrentlyPlaying() {
         if (response.status === 204) {
             // No content - nothing is playing
             displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
         } else if (response.ok) {
             const data = await response.json();
-            updateUI(data);
+            if (data.item.id !== currentSongId) {
+                currentSongId = data.item.id;
+                updateUI(data);
+            }
+
+            // Adjust update interval based on playing state
+            if (data.is_playing) {
+                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+            } else {
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            }
         } else {
             handleApiError(response);
         }

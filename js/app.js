@@ -1,5 +1,5 @@
-const ACTIVE_UPDATE_INTERVAL = 1000; // 1 second
-const INACTIVE_UPDATE_INTERVAL = 5000; // 5 seconds
+const ACTIVE_UPDATE_INTERVAL = 500; // 0.5 second (Faster update when playing)
+const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
@@ -71,40 +71,6 @@ function handleApiError(response) {
         checkAuthentication();
     } else {
         console.error('API Error:', response.status, response.statusText);
-    }
-}
-
-async function getCurrentlyPlaying() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.status === 204) {
-            // No content - nothing is playing
-            displayPlaceholder();
-            stopUpdatingSongInfo();
-        } else if (response.ok) {
-            const data = await response.json();
-
-            if (data.item.id !== currentSongId) {
-                currentSongId = data.item.id;
-                updateUI(data);
-            }
-
-            // Adjust update interval based on playing state
-            if (data.is_playing) {
-                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-            } else {
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            }
-        } else {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error fetching currently playing song:', error);
     }
 }
 
