@@ -1,3 +1,5 @@
+/* Fullscreenify/css/style.css */
+
 body::before {
     content: '';
     position: fixed; /* Or absolute */
@@ -11,6 +13,7 @@ body::before {
     filter: blur(20px); /* Adjust blur amount as needed */
     z-index: -1; /* Place it behind other elements */
 }
+
 body {
     margin: 0;
     font-family: 'Helvetica Neue', sans-serif;
@@ -38,6 +41,7 @@ body {
     max-height: 100%;
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 0;
 }
 
 .fullscreenify-container:hover #album-cover {
@@ -47,10 +51,13 @@ body {
 
 .controls {
     position: absolute;
-    bottom: 20px;
-    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Adjust width as needed */
+    max-width: 400px; /* Adjust max-width as needed */
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 10; /* Ensure controls are above the blurred background */
