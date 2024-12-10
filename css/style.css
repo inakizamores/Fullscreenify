@@ -109,10 +109,7 @@ body {
 
 /* Login button styles */
 #login-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     background-color: #1DB954;
     color: white;
     padding: 15px 30px;
@@ -122,6 +119,32 @@ body {
     font-weight: bold;
     cursor: pointer;
     z-index: 10; /* Ensure login button is above other elements */
+    display: flex; /* Use flexbox for icon alignment */
+    align-items: center; /* Center items vertically */
+    animation: pulsate 2s infinite; /* Add the pulsate animation */
+}
+
+#login-btn i {
+    margin-right: 10px; /* Add some space between the icon and text */
+    font-size: 24px; /* Adjust icon size as needed */
+}
+
+/* Add glow effect to the login button */
+#login-btn:hover {
+    box-shadow: 0 0 15px #1DB954;
+}
+
+/* Pulsate animation keyframes */
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Styles for CD toggle button */
