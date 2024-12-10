@@ -109,7 +109,6 @@ body {
 
 /* Login button styles */
 #login-btn {
-    position: relative;
     background-color: #1DB954;
     color: white;
     padding: 15px 30px;
@@ -242,9 +241,9 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 100;
-    background: linear-gradient(135deg, #222, #222 50%, rgba(30, 185, 84, 0.5) 100%); /* Slight green gradient */
-    background-size: 250% 100%; /* Adjust size for animation */
-    animation: gradientAnimation 5s linear infinite; /* Animate the gradient */
+    background: linear-gradient(135deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 1) 50%, rgba(30, 185, 84, 0.05) 100%); /* Very subtle green gradient */
+    background-size: 250% 250%;
+    animation: gradientAnimation 10s ease infinite; /* Animate the gradient */
 }
 
 /* Keyframes for gradient animation */
@@ -252,13 +251,20 @@ body {
     0% {
         background-position: 0% 50%;
     }
-    100% {
+    50% {
         background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
     }
 }
 
 /* Center content inside login screen */
 .login-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     color: white;
     padding: 0 40px; /* Increased padding */
