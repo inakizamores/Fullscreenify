@@ -27,12 +27,6 @@ function updateUI(data) {
         playBtn.style.display = 'inline-block';
         pauseBtn.style.display = 'none';
     }
-
-    // Update artist and song name
-    const artistNameElement = document.getElementById('artist-name');
-    const songNameElement = document.getElementById('song-name');
-    artistNameElement.innerText = data.item.artists[0].name;
-    songNameElement.innerText = data.item.name;
 }
 
 function displayPlaceholder() {
@@ -112,14 +106,6 @@ document.getElementById('play-btn').addEventListener('click', playSong);
 document.getElementById('pause-btn').addEventListener('click', pauseSong);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
-
-// Event listener for album cover click
-const albumCover = document.getElementById('album-cover');
-const infoContainer = document.getElementById('info-container');
-albumCover.addEventListener('click', () => {
-    console.log("Album cover clicked");
-    infoContainer.classList.toggle('show');
-});
 
 // Check authentication and start updating on page load
 window.addEventListener('load', () => {
