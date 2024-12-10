@@ -124,28 +124,61 @@ function stopUpdatingSongInfo() {
     }
 }
 
-function toggleCdView() {
+async function toggleCdView() {
     isCdView = !isCdView;
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
     const cdImage = document.getElementById('cd-image');
 
+    // Force image refresh by adding a unique query parameter
+    const timestamp = new Date().getTime();
+
     if (isCdView) {
         // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
-        cdImage.src = albumCover.src; // Copy current album art to CD
+        if (currentSongId) {
+            try {
+                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    cdImage.src = `${data.item.album.images[0].url}?t=${timestamp}`;
+                } else {
+                    handleApiError(response);
+                }
+            } catch (error) {
+                console.error('Error fetching currently playing song for CD image:', error);
+            }
+        } else {
+            cdImage.src = `https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg?t=${timestamp}`;
+        }
     } else {
         // Switch to album cover view
         cdContainer.style.display = 'none';
         albumCover.style.display = 'block';
-
-        // Get the currently playing song to update the album cover
-        getCurrentlyPlaying().then(data => {
-            if (data && data.item) {
-                albumCover.src = data.item.album.images[0].url;
+        if (currentSongId) {
+            try {
+                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    albumCover.src = `${data.item.album.images[0].url}?t=${timestamp}`;
+                } else {
+                    handleApiError(response);
+                }
+            } catch (error) {
+                console.error('Error fetching currently playing song for album cover:', error);
             }
-        });
+        } else {
+            albumCover.src = `https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg?t=${timestamp}`;
+        }
     }
 }
 
