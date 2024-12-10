@@ -42,6 +42,8 @@ function checkAuthentication() {
         // Show the login button if not authenticated
         document.getElementById('login-btn').style.display = 'block';
     } else {
+        // Hide the login button if authenticated
+        document.getElementById('login-btn').style.display = 'none';
         // Fetch the currently playing song if authenticated
         getCurrentlyPlaying();
     }
