@@ -248,6 +248,8 @@ body {
 .login-content {
     text-align: center;
     color: white;
+    padding: 0 20px;
+    width: 90%;
 }
 
 /* Style for app name */
