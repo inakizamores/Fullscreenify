@@ -1,5 +1,7 @@
-const clientId = 'YOUR_SPOTIFY_CLIENT_ID'; // Replace with your actual Client ID
-const redirectUri = 'YOUR_REDIRECT_URI'; // Replace with your Redirect URI (e.g., http://localhost:5500/ or your Netlify URL)
+// Fullscreenify/js/auth.js
+
+const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Your actual Client ID
+const redirectUri = 'https://fullscreenify.netlify.app/'; // Your Netlify Redirect URI (no /callback)
 const scopes = [
     'user-read-currently-playing',
     'user-modify-playback-state',
@@ -11,8 +13,8 @@ let accessToken = null;
 function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
     const params = {
-        client_id: c9aaff6bc4d0497eb4d2c2cad732a923,
-        redirect_uri: https://fullscreenify.netlify.app/callback,
+        client_id: clientId,
+        redirect_uri: redirectUri,
         scope: scopes.join(' '),
         response_type: 'token',
         show_dialog: true
