@@ -131,14 +131,21 @@ function toggleCdView() {
     const cdImage = document.getElementById('cd-image');
 
     if (isCdView) {
+        // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
-        if(albumCover.src != ''){
-            cdImage.src = albumCover.src;
-        }
+        cdImage.src = albumCover.src; // Copy current album art to CD
     } else {
-        albumCover.style.display = 'block';
+        // Switch to album cover view
         cdContainer.style.display = 'none';
+        albumCover.style.display = 'block';
+
+        // Get the currently playing song to update the album cover
+        getCurrentlyPlaying().then(data => {
+            if (data && data.item) {
+                albumCover.src = data.item.album.images[0].url;
+            }
+        });
     }
 }
 
