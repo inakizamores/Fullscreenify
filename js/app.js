@@ -117,6 +117,7 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 const albumCover = document.getElementById('album-cover');
 const infoContainer = document.getElementById('info-container');
 albumCover.addEventListener('click', () => {
+    console.log("Album cover clicked");
     infoContainer.classList.toggle('show');
 });
 
