@@ -34,14 +34,13 @@ function updateUI(data) {
     document.querySelector('.controls').style.display = 'flex';
 
     // Update play/pause button based on the current state
-    const playBtn = document.getElementById('play-btn');
-    const pauseBtn = document.getElementById('pause-btn');
+    const playPauseBtn = document.getElementById('play-pause-btn');
     if (data.is_playing) {
-        playBtn.style.display = 'none';
-        pauseBtn.style.display = 'inline-block';
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        playPauseBtn.title = 'Pause';
     } else {
-        playBtn.style.display = 'inline-block';
-        pauseBtn.style.display = 'none';
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.title = 'Play';
     }
 }
 
@@ -162,8 +161,7 @@ async function toggleCdView() {
 }
 
 // Event listeners for control buttons
-document.getElementById('play-btn').addEventListener('click', playSong);
-document.getElementById('pause-btn').addEventListener('click', pauseSong);
+document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
