@@ -68,7 +68,7 @@ body {
 }
 
 .control-btn {
-    background-color: rgba(29, 185, 84, 0.7); /* Spotify green with opacity */
+    background-color: rgba(179, 179, 179, 0.7); /* Gray color for buttons */
     border: none;
     color: white;
     padding: 15px; /* Adjust padding as needed */
@@ -84,16 +84,14 @@ body {
 }
 
 .control-btn:hover {
-    background-color: rgba(29, 185, 84, 1); /* Make color solid on hover */
+    background-color: rgba(179, 179, 179, 1); /* Solid gray on hover */
     transform: scale(1.1); /* Slightly increase size on hover */
 }
 
 .control-btn i {
-    margin: 0;
-    font-size: 24px;
-    color: #b3b3b3; /* Light gray color */
-    position: relative;
-    top: -2px; /* Adjust vertical position */
+    margin: 0; /* Remove any default margin */
+    font-size: 24px; /* Adjust icon size as needed */
+    color: #000; /* Icon color set to black */
 }
 
 #login-btn {
