@@ -118,14 +118,18 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 60%;
+    width: calc(100% - 40px); /* Adjust width for padding */
+    max-width: 800px; /* Maximum width for the info container */
+    padding: 0 20px; /* Add horizontal padding */
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 5;
+    pointer-events: none; /* Makes the container not interactable */
 }
 
 #info-container.show {
     opacity: 1;
+    pointer-events: auto; /* Makes the container interactable when shown */
 }
 
 #artist-name, #song-name {
@@ -134,19 +138,24 @@ body {
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     font-family: 'Roboto', sans-serif;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    border-radius: 5px;
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden; /* Hides overflow text */
+    text-overflow: ellipsis; /* Adds ellipsis (...) to overflow text */
+    max-width: 50%; /* Prevents text from overlapping album cover */
 }
 
 #artist-name {
-    margin-right: 25rem;
+    text-align: right;
+    padding-right: 20px; /* Space between text and album cover */
 }
 
 #song-name {
-    margin-left: 25rem;
+    text-align: left;
+    padding-left: 20px; /* Space between text and album cover */
 }
-
+#album-cover.info-visible {
+    transform: scale(0.75);
+}
 /* Mobile Styles */
 @media (max-width: 768px) {
     .control-btn {
@@ -165,12 +174,17 @@ body {
     #artist-name {
         margin-right: 0;
         margin-bottom: 10px; /* Add spacing between artist and song */
+        text-align: center;
     }
     #song-name {
         margin-left: 0;
+        text-align: center;
     }
     #artist-name, #song-name {
         font-size: 24px; /* Slightly smaller font on mobile */
+    }
+    #artist-name, #song-name {
+        max-width: 90%; /* Adjust for smaller screens */
     }
 }
 
