@@ -10,6 +10,7 @@ function updateUI(data) {
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
     const playPauseBtn = document.getElementById('play-pause-btn');
+    const isPlaying = data.is_playing;
 
     if (!isCdView) {
         // Album cover view
@@ -36,7 +37,7 @@ function updateUI(data) {
     document.querySelector('.controls').style.display = 'flex';
 
     // Update play/pause button icon based on the current state
-    if (data.is_playing) {
+    if (isPlaying) {
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         playPauseBtn.title = 'Pause';
     } else {
@@ -171,13 +172,27 @@ async function togglePlayPause() {
 
         if (response.ok) {
             const data = await response.json();
-            if (data.is_playing) {
+            const isPlaying = data.is_playing;
+
+            if (isPlaying) {
                 await pauseSong();
             } else {
                 await playSong();
             }
-            // Update the UI after the toggle
-            updateUI(data);
+
+            // Fetch the updated state after toggling
+            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (updatedResponse.ok) {
+                const updatedData = await updatedResponse.json();
+                updateUI(updatedData); // Update UI with the new state
+            } else {
+                handleApiError(updatedResponse);
+            }
         } else {
             handleApiError(response);
         }

@@ -1,6 +1,6 @@
 # Fullscreenify
 
-Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls, a toggleable CD display, and dynamically updates the UI as the music changes. The app features a visually engaging design with a dedicated login screen and smooth animations.
+Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls, a toggleable CD display, and dynamically updates the UI as the music changes. The app features a visually engaging design with a dedicated login screen, smooth animations, and subtle background effects.
 
 ## Features
 
@@ -8,12 +8,16 @@ Fullscreenify is a web application that displays the album cover of your current
 -   **Full-Screen Album Art:** Displays the album artwork in full-screen mode for an immersive visual experience.
 -   **CD Display Mode:** Allows users to toggle between the album art and a spinning CD display.
 -   **Blurred Background:** Applies a blurred background effect based on the album art, creating a visually appealing backdrop.
--   **Interactive Playback Controls:** Provides buttons to play, pause, skip to the next track, and go to the previous track.
+-   **Interactive Playback Controls:** Provides buttons to play, pause, skip to the next track, and go to the previous track. The play/pause button dynamically changes icons to reflect the current playback state.
 -   **Dynamic Updates:** Updates the displayed album art in real-time when the song changes. The update frequency is adjusted based on whether music is actively playing or paused.
 -   **Responsive Design:** Adapts to different screen sizes (desktop and mobile) for optimal viewing.
 -   **Hover Effects:** Control buttons, album art, and CD image have hover effects for visual feedback.
 -   **Automatic Login Persistence:** Stores the Spotify access token in local storage to automatically log the user in on subsequent visits (until the token expires).
--   **Dedicated Login Screen:** Presents a separate login screen with a pulsating Spotify button and a subtle green glow effect for an enhanced user experience.
+-   **Dedicated Login Screen:** Presents a separate login screen with:
+    -   **App Name and Description:** Clearly presents the app name "FULLSCREENIFY" and a brief description of its features.
+    -   **Pulsating Spotify Button:** A visually engaging login button with the Spotify logo that pulsates subtly.
+    -   **Subtle Animated Gradient:** A very faint, slowly moving green gradient overlay on a dark background for a modern aesthetic.
+    -   **Padding and Centering:** Content is centered and has padding to avoid visual issues on different screen sizes.
 -   **Placeholder Content:** Displays a message when no music is playing, prompting the user to start streaming.
 
 ## How it Works
@@ -38,7 +42,7 @@ The application consists of the following core components:
 -   **User Interface (`app.js`):**
     -   Manages the UI elements and updates them based on the song data.
     -   Sets the album art as the full-screen background and applies the blur effect.
-    -   Displays and hides the playback control buttons based on the playing state.
+    -   Dynamically updates the play/pause button icon based on the current playback state.
     -   Implements intelligent polling to update the UI at different intervals depending on whether music is playing or paused.
     -   Handles API errors (e.g., expired tokens) and prompts re-authentication.
     -   Provides a toggle to switch between album art and CD display.
@@ -49,7 +53,12 @@ The application consists of the following core components:
     -   Creates the full-screen album art display with the blurred background effect.
     -   Styles the control buttons and adds hover effects.
     -   Styles the CD display with a rotation animation.
-    -   Creates a dedicated login screen with a pulsating, glowing Spotify login button.
+    -   Creates a dedicated login screen with:
+        -   A centered layout with appropriate padding.
+        -   A large, all-caps "FULLSCREENIFY" title.
+        -   A brief app description.
+        -   A pulsating Spotify login button with a subtle glow effect.
+        -   A very subtle, animated background gradient.
     -   Ensures responsiveness across different screen sizes.
 
 ## Prerequisites
@@ -89,4 +98,4 @@ The application consists of the following core components:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. (You can add a LICENSE file if you want to specify licensing terms)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. (You can add a LICENSE file if you want to specify licensing terms)LICENSE file if you want to specify licensing terms)
