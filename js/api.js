@@ -76,3 +76,19 @@ async function nextSong() {
             console.error('Network error while skipping to next song:', error);
         }
 }
+async function prevSong() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error moving to previous song:', error);
+    }
+}

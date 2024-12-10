@@ -52,6 +52,29 @@ function handleApiError(response) {
 document.getElementById('play-btn').addEventListener('click', playSong);
 document.getElementById('pause-btn').addEventListener('click', pauseSong);
 document.getElementById('next-btn').addEventListener('click', nextSong);
+document.getElementById('prev-btn').addEventListener('click', prevSong);
 
 // Call getCurrentlyPlaying on page load (if authenticated)
 // This is handled in auth.js after checking authentication
+
+// Update song information periodically
+const UPDATE_INTERVAL = 5000; // 5 seconds (adjust as needed)
+
+function startUpdatingSongInfo() {
+    setInterval(async () => {
+        await getCurrentlyPlaying();
+    }, UPDATE_INTERVAL);
+}
+
+// Call getCurrentlyPlaying on page load (if authenticated) and start updating
+window.addEventListener('load', () => {
+    if (window.location.hash) {
+        handleRedirect();
+    } else {
+        checkAuthentication();
+    }
+
+    if (accessToken) {
+        startUpdatingSongInfo();
+    }
+});

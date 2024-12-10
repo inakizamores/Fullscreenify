@@ -1,7 +1,6 @@
-// Fullscreenify/js/auth.js
-
 const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Your actual Client ID
-const redirectUri = 'https://fullscreenify.netlify.app/'; // Your Netlify Redirect URI (no /callback)
+//const redirectUri = 'http://localhost:5500/'; // Your Redirect URI (e.g., http://localhost:5500/ or your Netlify URL)
+const redirectUri = 'https://fullscreenify.netlify.app/';
 const scopes = [
     'user-read-currently-playing',
     'user-modify-playback-state',

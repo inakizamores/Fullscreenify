@@ -1,3 +1,16 @@
+body::before {
+    content: '';
+    position: fixed; /* Or absolute */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px); /* Adjust blur amount as needed */
+    z-index: -1; /* Place it behind other elements */
+}
 body {
     margin: 0;
     font-family: 'Helvetica Neue', sans-serif;
@@ -40,6 +53,7 @@ body {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: 10; /* Ensure controls are above the blurred background */
 }
 
 .fullscreenify-container:hover .controls {
