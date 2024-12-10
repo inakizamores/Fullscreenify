@@ -55,45 +55,43 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%; /* Adjust width as needed */
-    max-width: 300px; /* Adjust max-width as needed */
+    max-width: 400px; /* Adjust max-width as needed */
     display: flex;
     justify-content: space-around;
-    opacity: 0; /* Initially hidden */
+    opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 10; /* Ensure controls are above the album cover */
+    z-index: 10; /* Ensure controls are above the blurred background */
 }
-/* Hover effect to show controls */
+
 .fullscreenify-container:hover .controls {
     opacity: 1;
 }
 
 .control-btn {
-    background-color: transparent; /* Transparent background */
+    background-color: rgba(179, 179, 179, 0.7); /* Gray color for buttons */
     border: none;
-    padding: 0; /* Remove padding */
+    color: white;
+    padding: 15px; /* Adjust padding as needed */
     margin: 0 10px;
+    border-radius: 50%; /* Circular buttons */
+    width: 50px; /* Set a fixed width */
+    height: 50px; /* Set a fixed height */
+    display: flex; /* Use flexbox to center the icon */
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease; /* Add transform transition */
 }
 
-/* Control button hover effect */
 .control-btn:hover {
+    background-color: rgba(179, 179, 179, 1); /* Solid gray on hover */
     transform: scale(1.1); /* Slightly increase size on hover */
 }
 
-/* Styling for the dots */
-.control-btn span {
-    display: block;
-    width: 15px; /* Adjust dot size as needed */
-    height: 15px; /* Adjust dot size as needed */
-    border-radius: 50%;
-    background-color: black;
-    transition: background-color 0.3s ease, opacity 0.3s ease; /* Add opacity transition */
-}
-
-/* Hover effect for dots */
-.control-btn:hover span {
-    opacity: 0.7; /* Adjust hover opacity as needed */
+.control-btn i {
+    margin: 0; /* Remove any default margin */
+    font-size: 24px; /* Adjust icon size as needed */
+    color: #000; /* Icon color set to black */
 }
 
 #login-btn {
@@ -114,22 +112,24 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .controls {
-        max-width: 250px;
+    .control-btn {
+        padding: 10px;
+        width: 40px;
+        height: 40px;
     }
-    .control-btn span {
-        width: 12px;
-        height: 12px;
+    .control-btn i {
+        font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
-    .controls {
-        max-width: 200px;
+    .control-btn {
+        padding: 8px;
+        width: 35px;
+        height: 35px;
     }
-    .control-btn span {
-        width: 10px;
-        height: 10px;
+    .control-btn i {
+        font-size: 18px;
     }
     #login-btn {
         padding: 12px 25px;
