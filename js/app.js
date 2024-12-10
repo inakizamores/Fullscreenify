@@ -5,17 +5,19 @@ let currentSongId = null;
 let isCdView = false; // Track CD view state
 
 function updateUI(data) {
+    const timestamp = new Date().getTime(); // Get current timestamp
+    const albumCover = document.getElementById('album-cover');
+    const cdImage = document.getElementById('cd-image');
+
     if (!isCdView) {
         // Album cover view
-        const albumCover = document.getElementById('album-cover');
-        albumCover.src = data.item.album.images[0].url;
+        albumCover.src = `${data.item.album.images[0].url}?t=${timestamp}`; // Add timestamp to URL
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        const cdImage = document.getElementById('cd-image');
-        cdImage.src = data.item.album.images[0].url;
+        cdImage.src = `${data.item.album.images[0].url}?t=${timestamp}`; // Add timestamp to URL
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';

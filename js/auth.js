@@ -45,8 +45,6 @@ function checkAuthentication() {
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Hide the login screen if authenticated
-        document.getElementById('login-screen').style.display = 'none';
         // Show the main content
         document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song if authenticated

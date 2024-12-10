@@ -1,17 +1,20 @@
 # Fullscreenify
 
-Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls and dynamically updates the UI as the music changes.
+Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls, a toggleable CD display, and dynamically updates the UI as the music changes. The app features a visually engaging design with a dedicated login screen and smooth animations.
 
 ## Features
 
 -   **Fetches Currently Playing Song:** Retrieves the currently playing song information from the Spotify API.
 -   **Full-Screen Album Art:** Displays the album artwork in full-screen mode for an immersive visual experience.
+-   **CD Display Mode:** Allows users to toggle between the album art and a spinning CD display.
 -   **Blurred Background:** Applies a blurred background effect based on the album art, creating a visually appealing backdrop.
 -   **Interactive Playback Controls:** Provides buttons to play, pause, skip to the next track, and go to the previous track.
 -   **Dynamic Updates:** Updates the displayed album art in real-time when the song changes. The update frequency is adjusted based on whether music is actively playing or paused.
 -   **Responsive Design:** Adapts to different screen sizes (desktop and mobile) for optimal viewing.
--   **Hover Effects:** Control buttons have hover effects for visual feedback.
+-   **Hover Effects:** Control buttons, album art, and CD image have hover effects for visual feedback.
 -   **Automatic Login Persistence:** Stores the Spotify access token in local storage to automatically log the user in on subsequent visits (until the token expires).
+-   **Dedicated Login Screen:** Presents a separate login screen with a pulsating Spotify button and a subtle green glow effect for an enhanced user experience.
+-   **Placeholder Content:** Displays a message when no music is playing, prompting the user to start streaming.
 
 ## How it Works
 
@@ -19,6 +22,7 @@ The application consists of the following core components:
 
 -   **Authentication (`auth.js`):**
     -   Handles user authentication with Spotify using the OAuth 2.0 flow.
+    -   Implements a dedicated login screen that appears before the main content is loaded.
     -   Redirects users to the Spotify login page to grant access to their account.
     -   Retrieves the access token after successful login and stores it in the browser's local storage.
 
@@ -37,11 +41,15 @@ The application consists of the following core components:
     -   Displays and hides the playback control buttons based on the playing state.
     -   Implements intelligent polling to update the UI at different intervals depending on whether music is playing or paused.
     -   Handles API errors (e.g., expired tokens) and prompts re-authentication.
+    -   Provides a toggle to switch between album art and CD display.
+    -   Displays placeholder content when no music is playing.
 
 -   **Styling (`style.css`):**
     -   Defines the visual appearance of the application, including layout, colors, typography, and animations.
     -   Creates the full-screen album art display with the blurred background effect.
     -   Styles the control buttons and adds hover effects.
+    -   Styles the CD display with a rotation animation.
+    -   Creates a dedicated login screen with a pulsating, glowing Spotify login button.
     -   Ensures responsiveness across different screen sizes.
 
 ## Prerequisites
