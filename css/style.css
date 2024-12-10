@@ -206,3 +206,17 @@ body {
     text-transform: uppercase; /* All caps text */
     display: none; /* Initially hidden */
 }
+
+/* Login screen styles */
+#login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #222; /* Or whatever color you want */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* Make sure it's on top of everything */
+}

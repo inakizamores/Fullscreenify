@@ -29,8 +29,10 @@ function handleRedirect() {
     if (accessToken) {
         // Store the access token securely (e.g., local storage)
         localStorage.setItem('fullscreenify_access_token', accessToken);
-        // Hide the login button
-        document.getElementById('login-btn').style.display = 'none';
+        // Hide the login screen
+        document.getElementById('login-screen').style.display = 'none';
+        // Show the main content
+        document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song
         getCurrentlyPlaying();
     }
@@ -39,11 +41,14 @@ function handleRedirect() {
 function checkAuthentication() {
     accessToken = localStorage.getItem('fullscreenify_access_token');
     if (!accessToken) {
-        // Show the login button if not authenticated
-        document.getElementById('login-btn').style.display = 'block';
+        // Show the login screen if not authenticated
+        document.getElementById('login-screen').style.display = 'flex';
+        document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Hide the login button if authenticated
-        document.getElementById('login-btn').style.display = 'none';
+        // Hide the login screen if authenticated
+        document.getElementById('login-screen').style.display = 'none';
+        // Show the main content
+        document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song if authenticated
         getCurrentlyPlaying();
     }
