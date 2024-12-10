@@ -109,9 +109,11 @@ window.addEventListener('load', () => {
         startUpdatingSongInfo();
     }
 });
+
 const albumCover = document.getElementById('album-cover');
 const infoContainer = document.getElementById('info-container');
 
 albumCover.addEventListener('click', () => {
     infoContainer.classList.toggle('show');
+    albumCover.classList.toggle('info-visible');
 });
