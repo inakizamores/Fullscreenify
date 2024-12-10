@@ -118,12 +118,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
+    width: 60%;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 5; /* Below controls but above album cover */
+    z-index: 5;
 }
 
 #info-container.show {
@@ -132,17 +130,21 @@ body {
 
 #artist-name, #song-name {
     color: white;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-family: 'Roboto', sans-serif;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
 }
 
 #artist-name {
-    margin-right: auto; /* Push to the left */
+    margin-right: 25rem;
 }
 
 #song-name {
-    margin-left: auto; /* Push to the right */
+    margin-left: 25rem;
 }
 
 /* Mobile Styles */
@@ -158,6 +160,7 @@ body {
     #info-container {
         flex-direction: column;
         text-align: center;
+        width: 100%;
     }
     #artist-name {
         margin-right: 0;
@@ -165,6 +168,9 @@ body {
     }
     #song-name {
         margin-left: 0;
+    }
+    #artist-name, #song-name {
+        font-size: 24px; /* Slightly smaller font on mobile */
     }
 }
 
