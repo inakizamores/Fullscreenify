@@ -51,7 +51,7 @@ body {
 }
 
 /* Album cover hover effects */
-#album-cover:hover {
+.fullscreenify-container:hover #album-cover {
     transform: scale(1.05); /* Enlarge on hover */
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
@@ -69,6 +69,10 @@ body {
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 10; /* Ensure controls are above the blurred background */
+}
+
+.fullscreenify-container:hover .controls {
+    opacity: 1;
 }
 
 /* Individual control button styles */
@@ -194,7 +198,7 @@ body {
 }
 
 /* CD hover effects */
-#cd-image:hover {
+.fullscreenify-container:hover #cd-image {
     transform: scale(1.05) rotate(0deg); /* Enlarge on hover, maintain rotation */
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
@@ -283,8 +287,4 @@ body {
     font-size: 18px;
     margin-bottom: 30px;
     font-family: 'Roboto', sans-serif;
-}
-
-.image-container:hover .controls {
-    opacity: 1;
 }
