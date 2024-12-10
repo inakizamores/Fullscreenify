@@ -12,6 +12,7 @@ body::before {
     background-position: center;
     filter: blur(20px); /* Adjust blur amount as needed */
     z-index: -1; /* Place it behind other elements */
+    transform: scale(1.1);
 }
 
 body {

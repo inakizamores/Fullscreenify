@@ -23,6 +23,7 @@ Fullscreenify is a web application that displays the album cover of your current
     -   Obtain your Client ID and Client Secret.
     -   Add `http://localhost:5500` (or your local development URL) as a Redirect URI.
 2. **Clone the Repository:**
+
     ```bash
     git clone <repository-url>
     cd Fullscreenify
