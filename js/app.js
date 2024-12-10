@@ -4,10 +4,12 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 
+//Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
+    const playPauseBtn = document.getElementById('play-pause-btn');
 
     if (!isCdView) {
         // Album cover view
@@ -33,8 +35,7 @@ function updateUI(data) {
     // Show controls
     document.querySelector('.controls').style.display = 'flex';
 
-    // Update play/pause button based on the current state
-    const playPauseBtn = document.getElementById('play-pause-btn');
+    // Update play/pause button icon based on the current state
     if (data.is_playing) {
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         playPauseBtn.title = 'Pause';
@@ -157,6 +158,31 @@ async function toggleCdView() {
             albumCover.src = `https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg?t=${timestamp}`;
             placeholderText.style.display = 'block';
         }
+    }
+}
+
+async function togglePlayPause() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.is_playing) {
+                await pauseSong();
+            } else {
+                await playSong();
+            }
+            // Update the UI after the toggle
+            updateUI(data);
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error toggling play/pause:', error);
     }
 }
 
