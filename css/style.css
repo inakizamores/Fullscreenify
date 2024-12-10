@@ -68,19 +68,29 @@ body {
 }
 
 .control-btn {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(29, 185, 84, 0.7); /* Spotify green with opacity */
     border: none;
     color: white;
-    padding: 12px 18px;
+    padding: 15px; /* Adjust padding as needed */
     margin: 0 10px;
-    border-radius: 30px;
-    font-size: 18px;
+    border-radius: 50%; /* Circular buttons */
+    width: 50px; /* Set a fixed width */
+    height: 50px; /* Set a fixed height */
+    display: flex; /* Use flexbox to center the icon */
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Add transform transition */
 }
 
 .control-btn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(29, 185, 84, 1); /* Make color solid on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+.control-btn i {
+    margin: 0; /* Remove default margin for icons */
+    font-size: 24px; /* Adjust icon size as needed */
 }
 
 #login-btn {
@@ -102,17 +112,24 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .control-btn {
-        padding: 10px 15px;
-        font-size: 16px;
+        padding: 10px;
+        width: 40px;
+        height: 40px;
+    }
+    .control-btn i {
+        font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
     .control-btn {
-        padding: 8px 12px;
-        font-size: 14px;
+        padding: 8px;
+        width: 35px;
+        height: 35px;
     }
-
+    .control-btn i {
+        font-size: 18px;
+    }
     #login-btn {
         padding: 12px 25px;
         font-size: 18px;
