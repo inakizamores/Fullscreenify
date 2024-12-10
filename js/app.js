@@ -24,6 +24,9 @@ function updateUI(data) {
         playBtn.style.display = 'inline-block';
         pauseBtn.style.display = 'none';
     }
+    // Update artist and song name
+    document.getElementById('artist-name').innerText = data.item.artists[0].name;
+    document.getElementById('song-name').innerText = data.item.name;
 }
 
 function displayPlaceholder() {
@@ -105,4 +108,10 @@ window.addEventListener('load', () => {
     if (accessToken) {
         startUpdatingSongInfo();
     }
+});
+const albumCover = document.getElementById('album-cover');
+const infoContainer = document.getElementById('info-container');
+
+albumCover.addEventListener('click', () => {
+    infoContainer.classList.toggle('show');
 });

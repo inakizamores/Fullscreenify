@@ -42,6 +42,7 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     z-index: 0;
+    cursor: pointer;
 }
 
 .fullscreenify-container:hover #album-cover {
@@ -109,8 +110,42 @@ body {
     cursor: pointer;
     z-index: 10; /* Ensure login button is above other elements */
 }
+#info-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 5; /* Below controls but above album cover */
+}
 
-/* Responsive Design */
+#info-container.show {
+    opacity: 1;
+}
+
+#artist-name, #song-name {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+#artist-name {
+    margin-right: auto; /* Push to the left */
+}
+
+#song-name {
+    margin-left: auto; /* Push to the right */
+}
+
+/* Mobile Styles */
 @media (max-width: 768px) {
     .control-btn {
         padding: 10px;
@@ -119,6 +154,17 @@ body {
     }
     .control-btn i {
         font-size: 20px;
+    }
+    #info-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    #artist-name {
+        margin-right: 0;
+        margin-bottom: 10px; /* Add spacing between artist and song */
+    }
+    #song-name {
+        margin-left: 0;
     }
 }
 
@@ -134,5 +180,8 @@ body {
     #login-btn {
         padding: 12px 25px;
         font-size: 18px;
+    }
+    #artist-name, #song-name {
+        font-size: 20px;
     }
 }
