@@ -58,7 +58,36 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 // This is handled in auth.js after checking authentication
 
 // Update song information periodically
-const UPDATE_INTERVAL = 5000; // 5 seconds (adjust as needed)
+const UPDATE_INTERVAL = 3000; // 3 seconds (adjust as needed)
+let currentSongId = null; // Add a variable to track the current song ID
+let nextAlbumImage = new Image(); // Create an image object for preloading
+
+async function getCurrentlyPlaying() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No content - nothing is playing
+            displayPlaceholder(); // Function to be implemented in app.js
+        } else if (response.ok) {
+            const data = await response.json();
+
+            // Check if the song has actually changed
+            if (data.item.id !== currentSongId) {
+                currentSongId = data.item.id;
+                updateUI(data);
+            }
+        } else {
+            handleApiError(response); // Function to be implemented in app.js
+        }
+    } catch (error) {
+        console.error('Error fetching currently playing song:', error);
+    }
+}
 
 function startUpdatingSongInfo() {
     setInterval(async () => {

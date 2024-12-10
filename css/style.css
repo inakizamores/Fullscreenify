@@ -68,15 +68,14 @@ body {
 }
 
 .control-btn {
-    background-color: rgba(179, 179, 179, 0.7); /* Gray color for buttons */
+    background-color: transparent; /* Transparent background */
     border: none;
-    color: white;
     padding: 15px; /* Adjust padding as needed */
     margin: 0 10px;
     border-radius: 50%; /* Circular buttons */
     width: 50px; /* Set a fixed width */
     height: 50px; /* Set a fixed height */
-    display: flex; /* Use flexbox to center the icon */
+    display: flex; /* Use flexbox to center the dots */
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -84,14 +83,39 @@ body {
 }
 
 .control-btn:hover {
-    background-color: rgba(179, 179, 179, 1); /* Solid gray on hover */
+    background-color: rgba(0, 0, 0, 0.2); /* Slightly darker on hover */
     transform: scale(1.1); /* Slightly increase size on hover */
 }
 
-.control-btn i {
-    margin: 0; /* Remove any default margin */
-    font-size: 24px; /* Adjust icon size as needed */
-    color: #000; /* Icon color set to black */
+/* Styling for the three dots */
+.control-btn::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.control-btn::after {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: black;
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 12px);
+    transform: translate(-50%, -50%);
+}
+
+#next-btn::after {
+    left: calc(50% + 12px);
 }
 
 #login-btn {
@@ -117,8 +141,9 @@ body {
         width: 40px;
         height: 40px;
     }
-    .control-btn i {
-        font-size: 20px;
+    .control-btn::before, .control-btn::after {
+        width: 5px;
+        height: 5px;
     }
 }
 
@@ -128,8 +153,9 @@ body {
         width: 35px;
         height: 35px;
     }
-    .control-btn i {
-        font-size: 18px;
+    .control-btn::before, .control-btn::after {
+        width: 4px;
+        height: 4px;
     }
     #login-btn {
         padding: 12px 25px;
