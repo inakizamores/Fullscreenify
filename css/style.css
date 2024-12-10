@@ -55,14 +55,14 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%; /* Adjust width as needed */
-    max-width: 400px; /* Adjust max-width as needed */
+    max-width: 300px; /* Adjust max-width as needed */
     display: flex;
     justify-content: space-around;
-    opacity: 0;
+    opacity: 0; /* Initially hidden */
     transition: opacity 0.3s ease;
-    z-index: 10; /* Ensure controls are above the blurred background */
+    z-index: 10; /* Ensure controls are above the album cover */
 }
-
+/* Hover effect to show controls */
 .fullscreenify-container:hover .controls {
     opacity: 1;
 }
@@ -70,52 +70,30 @@ body {
 .control-btn {
     background-color: transparent; /* Transparent background */
     border: none;
-    padding: 15px; /* Adjust padding as needed */
+    padding: 0; /* Remove padding */
     margin: 0 10px;
-    border-radius: 50%; /* Circular buttons */
-    width: 50px; /* Set a fixed width */
-    height: 50px; /* Set a fixed height */
-    display: flex; /* Use flexbox to center the dots */
-    justify-content: center;
-    align-items: center;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease; /* Add transform transition */
 }
 
+/* Control button hover effect */
 .control-btn:hover {
-    background-color: rgba(0, 0, 0, 0.2); /* Slightly darker on hover */
     transform: scale(1.1); /* Slightly increase size on hover */
 }
 
-/* Styling for the three dots */
-.control-btn::before {
-    content: '';
+/* Styling for the dots */
+.control-btn span {
     display: block;
-    width: 6px;
-    height: 6px;
+    width: 15px; /* Adjust dot size as needed */
+    height: 15px; /* Adjust dot size as needed */
     border-radius: 50%;
     background-color: black;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    transition: background-color 0.3s ease, opacity 0.3s ease; /* Add opacity transition */
 }
 
-.control-btn::after {
-    content: '';
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: black;
-    position: absolute;
-    top: 50%;
-    left: calc(50% - 12px);
-    transform: translate(-50%, -50%);
-}
-
-#next-btn::after {
-    left: calc(50% + 12px);
+/* Hover effect for dots */
+.control-btn:hover span {
+    opacity: 0.7; /* Adjust hover opacity as needed */
 }
 
 #login-btn {
@@ -136,26 +114,22 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .control-btn {
-        padding: 10px;
-        width: 40px;
-        height: 40px;
+    .controls {
+        max-width: 250px;
     }
-    .control-btn::before, .control-btn::after {
-        width: 5px;
-        height: 5px;
+    .control-btn span {
+        width: 12px;
+        height: 12px;
     }
 }
 
 @media (max-width: 480px) {
-    .control-btn {
-        padding: 8px;
-        width: 35px;
-        height: 35px;
+    .controls {
+        max-width: 200px;
     }
-    .control-btn::before, .control-btn::after {
-        width: 4px;
-        height: 4px;
+    .control-btn span {
+        width: 10px;
+        height: 10px;
     }
     #login-btn {
         padding: 12px 25px;

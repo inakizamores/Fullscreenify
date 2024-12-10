@@ -28,7 +28,7 @@ function updateUI(data) {
 
 function displayPlaceholder() {
     const albumCover = document.getElementById('album-cover');
-    albumCover.src = 'placeholder-image.jpg'; // Replace with your actual placeholder image
+    albumCover.src = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg'; // Placeholder image
     albumCover.style.display = 'block';
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
@@ -60,7 +60,6 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 // Update song information periodically
 const UPDATE_INTERVAL = 3000; // 3 seconds (adjust as needed)
 let currentSongId = null; // Add a variable to track the current song ID
-let nextAlbumImage = new Image(); // Create an image object for preloading
 
 async function getCurrentlyPlaying() {
     try {
@@ -72,7 +71,7 @@ async function getCurrentlyPlaying() {
 
         if (response.status === 204) {
             // No content - nothing is playing
-            displayPlaceholder(); // Function to be implemented in app.js
+            displayPlaceholder(); 
         } else if (response.ok) {
             const data = await response.json();
 
@@ -82,7 +81,7 @@ async function getCurrentlyPlaying() {
                 updateUI(data);
             }
         } else {
-            handleApiError(response); // Function to be implemented in app.js
+            handleApiError(response); 
         }
     } catch (error) {
         console.error('Error fetching currently playing song:', error);
