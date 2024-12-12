@@ -4,14 +4,9 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
-let isUpdating = false; // Flag to prevent multiple simultaneous updates
 
 // Updated UI
-async function updateUI(data) {
-  if (isUpdating) return; // Prevent multiple updates at the same time
-  isUpdating = true;
-
-  try {
+function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
@@ -24,38 +19,39 @@ async function updateUI(data) {
     manageImageCache(imageUrl);
 
     if (!isCdView) {
-      // Album cover view
-      await updateImage(albumCover, imageUrl); // Await image loading
-      albumCover.style.display = 'block';
-      document.getElementById('cd-container').style.display = 'none';
-      document.getElementById('placeholder-text').style.display = 'none';
+        // Album cover view
+        updateImage(albumCover, imageUrl);
+        albumCover.style.display = 'block';
+        document.getElementById('cd-container').style.display = 'none';
+        document.getElementById('placeholder-text').style.display = 'none';
     } else {
-      // CD view
-      await updateImage(cdImage, imageUrl); // Await image loading
-      cdImage.style.display = 'block';
-      document.getElementById('album-cover').style.display = 'none';
-      document.getElementById('cd-container').style.display = 'flex';
+        // CD view
+        updateImage(cdImage, imageUrl);
+        cdImage.style.display = 'block';
+        document.getElementById('album-cover').style.display = 'none';
+        document.getElementById('placeholder-text').style.display = 'none';
+        document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Update background image using a separate div
-    updateBackgroundImage(imageUrl);
+    // Set the background to the album art with a gradient overlay
+    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundRepeat = 'no-repeat';
 
     // Show controls
     document.querySelector('.controls').style.display = 'flex';
 
     // Update play/pause button icon based on the current state
     if (isPlaying) {
-      playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-      playPauseBtn.title = 'Pause';
-      cdImage.style.animationPlayState = 'running';
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        playPauseBtn.title = 'Pause';
+        cdImage.style.animationPlayState = 'running';
     } else {
-      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-      playPauseBtn.title = 'Play';
-      cdImage.style.animationPlayState = 'paused';
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.title = 'Play';
+        cdImage.style.animationPlayState = 'paused';
     }
-  } finally {
-    isUpdating = false; // Allow updates again
-  }
 }
 
 function displayPlaceholder() {
@@ -81,7 +77,7 @@ function displayPlaceholder() {
     }
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
-    updateBackgroundImage(null); // Remove background image
+    document.body.style.backgroundImage = 'none'; // Remove background image
 
     // Hide controls if nothing is playing
     document.querySelector('.controls').style.display = 'none';
@@ -190,64 +186,43 @@ async function toggleCdView() {
     }
 }
 
-// New function to debounce the play/pause action
-let playPauseDebounceTimer;
-function debouncePlayPause() {
-  clearTimeout(playPauseDebounceTimer);
-  playPauseDebounceTimer = setTimeout(async () => {
-    await togglePlayPauseAction();
-  }, 300); // 300ms debounce time (adjust as needed)
-}
-
-async function togglePlayPauseAction() {
-  try {
-    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const isPlaying = data.is_playing;
-
-      if (isPlaying) {
-        await pauseSong();
-      } else {
-        await playSong();
-      }
-
-      // Only fetch updated state if the response is not 204 No Content
-      if (response.status !== 204) {
-        const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
+async function togglePlayPause() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
         });
 
-        if (updatedResponse.ok) {
-          const updatedData = await updatedResponse.json();
-          updateUI(updatedData); // Update UI with the new state
+        if (response.ok) {
+            const data = await response.json();
+            const isPlaying = data.is_playing;
+
+            if (isPlaying) {
+                await pauseSong();
+            } else {
+                await playSong();
+            }
+
+            // Fetch the updated state after toggling
+            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (updatedResponse.ok) {
+                const updatedData = await updatedResponse.json();
+                updateUI(updatedData); // Update UI with the new state
+            } else {
+                handleApiError(updatedResponse);
+            }
         } else {
-          handleApiError(updatedResponse);
+            handleApiError(response);
         }
-      } else {
-        // Handle 204 No Content (e.g., nothing playing)
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        if (!isPlaying) {
-          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-          playPauseBtn.title = 'Pause';
-        } else {
-          playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-          playPauseBtn.title = 'Play';
-        }
-      }
-    } else {
-      handleApiError(response);
+    } catch (error) {
+        console.error('Error toggling play/pause:', error);
     }
-  } catch (error) {
-    console.error('Error toggling play/pause:', error);
-  }
 }
 
 // Helper function to update an image element after the image has loaded
@@ -283,40 +258,8 @@ function manageImageCache(imageUrl) {
     }
 }
 
-// New function to update the background image using a separate div
-function updateBackgroundImage(imageUrl) {
-    let bgImageDiv = document.getElementById('bg-image');
-
-    // Create the div if it doesn't exist
-    if (!bgImageDiv) {
-        bgImageDiv = document.createElement('div');
-        bgImageDiv.id = 'bg-image';
-        document.body.appendChild(bgImageDiv); // Append to body
-    }
-
-    // Set styles for the div (only need to do this once, but it's safe to do it every time)
-    bgImageDiv.style.position = 'fixed';
-    bgImageDiv.style.top = '0';
-    bgImageDiv.style.left = '0';
-    bgImageDiv.style.width = '100%';
-    bgImageDiv.style.height = '100%';
-    bgImageDiv.style.backgroundSize = 'cover';
-    bgImageDiv.style.backgroundPosition = 'center';
-    bgImageDiv.style.backgroundRepeat = 'no-repeat';
-    bgImageDiv.style.zIndex = '-2'; // Ensure it's behind other elements AND the blur div
-    bgImageDiv.style.transition = 'background-image 0.5s ease-in-out'; // Add a transition
-
-    // Set or update the background image with a gradient overlay
-    if (imageUrl) {
-        bgImageDiv.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-    } else {
-        bgImageDiv.style.backgroundImage = 'none'; // Remove the image
-        bgImageDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'; // Semi-transparent black background
-    }
-}
-
 // Event listeners for control buttons
-document.getElementById('play-pause-btn').addEventListener('click', debouncePlayPause);
+document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
