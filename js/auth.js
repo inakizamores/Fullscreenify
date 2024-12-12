@@ -45,10 +45,10 @@ function checkAuthentication() {
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Show the main content
-        document.querySelector('.fullscreenify-container').style.display = 'flex';
+        // Do NOT show the main content here.
+        // It should be handled AFTER getCurrentlyPlaying() in api.js is successful.
         // Fetch the currently playing song if authenticated
-        getCurrentlyPlaying();
+        getCurrentlyPlaying(); 
     }
 }
 
@@ -72,11 +72,14 @@ document.getElementById('login-btn').addEventListener('click', handleLogin);
 // Event listener for the logout button
 document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
-// Check for redirect and existing authentication on page load
-window.addEventListener('load', () => {
+// Check for redirect and existing authentication on page load (only once)
+function initializeAuthentication() {
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
-});
+}
+
+// Call initializeAuthentication() only once on page load
+initializeAuthentication();

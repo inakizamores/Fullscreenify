@@ -264,11 +264,14 @@ document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
-// Check authentication and start updating on page load
-window.addEventListener('load', () => {
+// Check authentication and start updating on page load (only once)
+function initializeApp() {
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
-});
+}
+
+// Call initializeApp() only once on page load
+initializeApp();

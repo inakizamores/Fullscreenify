@@ -10,6 +10,8 @@ async function getCurrentlyPlaying() {
             // No content - nothing is playing
             displayPlaceholder();
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
         } else if (response.ok) {
             const data = await response.json();
             if (data.item.id !== currentSongId) {
@@ -23,6 +25,8 @@ async function getCurrentlyPlaying() {
             } else {
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             }
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
         } else {
             handleApiError(response);
         }
