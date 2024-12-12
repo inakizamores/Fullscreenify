@@ -3,8 +3,9 @@ const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
+const imageCache = new Set(); // Track cached image URLs
 
-//Updated UI
+// Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
@@ -12,15 +13,20 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
 
+    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
+
+    // Manage image cache
+    manageImageCache(imageUrl);
+
     if (!isCdView) {
         // Album cover view
-        updateImage(albumCover, `${data.item.album.images[0].url}?t=${timestamp}`);
+        updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        updateImage(cdImage, `${data.item.album.images[0].url}?t=${timestamp}`);
+        updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
@@ -28,7 +34,7 @@ function updateUI(data) {
     }
 
     // Set the background to the album art with a gradient overlay
-    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${data.item.album.images[0].url})`;
+    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundRepeat = 'no-repeat';
@@ -53,16 +59,18 @@ function displayPlaceholder() {
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
 
+    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+
     if (!isCdView) {
         // Album cover view
         const albumCover = document.getElementById('album-cover');
-        updateImage(albumCover, 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg');
+        updateImage(albumCover, placeholderImageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
-        updateImage(cdImage, 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg');
+        updateImage(cdImage, placeholderImageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
@@ -124,7 +132,8 @@ async function toggleCdView() {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    await updateImage(cdImage, data.item.album.images[0].url);
+                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                    await updateImage(cdImage, imageUrl);
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
 
@@ -141,7 +150,8 @@ async function toggleCdView() {
                 console.error('Error fetching currently playing song for CD image:', error);
             }
         } else {
-            await updateImage(cdImage, 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg');
+            const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+            await updateImage(cdImage, placeholderImageUrl);
             cdImage.style.display = 'block';
             placeholderText.style.display = 'block';
         }
@@ -157,7 +167,8 @@ async function toggleCdView() {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    await updateImage(albumCover, data.item.album.images[0].url);
+                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                    await updateImage(albumCover, imageUrl);
                     albumCover.style.display = 'block';
                     placeholderText.style.display = 'none';
                 } else {
@@ -167,7 +178,8 @@ async function toggleCdView() {
                 console.error('Error fetching currently playing song for album cover:', error);
             }
         } else {
-            await updateImage(albumCover, 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg');
+            const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+            await updateImage(albumCover, placeholderImageUrl);
             albumCover.style.display = 'block';
             placeholderText.style.display = 'block';
         }
@@ -216,9 +228,34 @@ async function togglePlayPause() {
 // Helper function to update an image element after the image has loaded
 async function updateImage(imgElement, imageUrl) {
     return new Promise((resolve) => {
-        imgElement.onload = () => resolve();
-        imgElement.src = imageUrl;
+        // Check if the image is already in the cache
+        if (imageCache.has(imageUrl)) {
+            imgElement.src = imageUrl;
+            resolve();
+        } else {
+            imgElement.onload = () => {
+                // Add the image to the cache once it's loaded
+                imageCache.add(imageUrl);
+                resolve();
+            };
+            imgElement.src = imageUrl;
+        }
     });
+}
+
+// Function to manage the image cache
+function manageImageCache(imageUrl) {
+    const MAX_CACHE_SIZE = 50; // Set the maximum number of images to store in the cache
+
+    if (!imageCache.has(imageUrl)) {
+        if (imageCache.size >= MAX_CACHE_SIZE) {
+            // Remove the oldest image from the cache (first item added)
+            const firstImageUrl = imageCache.values().next().value;
+            imageCache.delete(firstImageUrl);
+        }
+        // Add the new image to the cache
+        imageCache.add(imageUrl);
+    }
 }
 
 // Event listeners for control buttons
@@ -227,11 +264,14 @@ document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
-// Check authentication and start updating on page load
-window.addEventListener('load', () => {
+// Check authentication and start updating on page load (only once)
+function initializeApp() {
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
-});
+}
+
+// Call initializeApp() only once on page load
+initializeApp();

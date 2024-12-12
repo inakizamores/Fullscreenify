@@ -7,7 +7,8 @@ const scopes = [
     'user-read-playback-state'
 ];
 
-let accessToken = null;
+let accessToken = localStorage.getItem('fullscreenify_access_token'); // Preload token
+let isLoggedIn = !!accessToken; // Assume logged in if token exists
 
 function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
@@ -29,6 +30,7 @@ function handleRedirect() {
     if (accessToken) {
         // Store the access token securely (e.g., local storage)
         localStorage.setItem('fullscreenify_access_token', accessToken);
+        isLoggedIn = true;
         // Hide the login screen
         document.getElementById('login-screen').style.display = 'none';
         // Show the main content
@@ -39,16 +41,13 @@ function handleRedirect() {
 }
 
 function checkAuthentication() {
-    accessToken = localStorage.getItem('fullscreenify_access_token');
-    if (!accessToken) {
+    if (!isLoggedIn) {
         // Show the login screen if not authenticated
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Show the main content
-        document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song if authenticated
-        getCurrentlyPlaying();
+        getCurrentlyPlaying(); 
     }
 }
 
@@ -56,6 +55,7 @@ function checkAuthentication() {
 function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
+    isLoggedIn = false;
 
     // Force a page refresh to clear the URL and state
     window.location.href = window.location.origin + window.location.pathname;
@@ -72,11 +72,14 @@ document.getElementById('login-btn').addEventListener('click', handleLogin);
 // Event listener for the logout button
 document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
-// Check for redirect and existing authentication on page load
-window.addEventListener('load', () => {
+// Check for redirect and existing authentication on page load (only once)
+function initializeAuthentication() {
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
-});
+}
+
+// Call initializeAuthentication() only once on page load
+initializeAuthentication();
