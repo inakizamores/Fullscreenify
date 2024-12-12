@@ -4,12 +4,10 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
-let currentBackgroundImageUrl = null; 
-let activeBackgroundIndex = 0; // Keep track of the active background index
 
 // Updated UI
 function updateUI(data) {
-    const timestamp = new Date().getTime();
+    const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
     const playPauseBtn = document.getElementById('play-pause-btn');
@@ -35,17 +33,13 @@ function updateUI(data) {
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Set the background using double buffering
-    if (currentBackgroundImageUrl !== imageUrl) {
-        const backgroundDivs = document.querySelectorAll('.background-image');
-        const nextBackgroundIndex = 1 - activeBackgroundIndex; // Alternate between 0 and 1
-
-        backgroundDivs[nextBackgroundIndex].style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-        backgroundDivs[nextBackgroundIndex].classList.add('active');
-        backgroundDivs[activeBackgroundIndex].classList.remove('active');
-
-        currentBackgroundImageUrl = imageUrl;
-        activeBackgroundIndex = nextBackgroundIndex;
+    // Update the background image only if the song has changed
+    if (currentSongId !== data.item.id) {
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        currentSongId = data.item.id; // Update the current song ID
     }
 
     // Show controls
@@ -85,10 +79,8 @@ function displayPlaceholder() {
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Use a solid background color when nothing is playing
-    const backgroundDivs = document.querySelectorAll('.background-image');
-    backgroundDivs.forEach(div => div.style.backgroundImage = 'none');
-    document.body.style.backgroundColor = '#222';
+    document.body.style.backgroundColor = '#222'; // Set to a default color
+    document.body.style.backgroundImage = 'none'; // Remove background image
 
     // Hide controls if nothing is playing
     document.querySelector('.controls').style.display = 'none';
