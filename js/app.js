@@ -4,6 +4,7 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
+let currentBackgroundImageUrl = null; // Add a variable to track the current background image URL
 
 // Updated UI
 function updateUI(data) {
@@ -34,10 +35,14 @@ function updateUI(data) {
     }
 
     // Set the background to the album art with a gradient overlay
-    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundRepeat = 'no-repeat';
+    // Only update if the URL has changed
+    if (currentBackgroundImageUrl !== imageUrl) {
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        currentBackgroundImageUrl = imageUrl; // Update the tracked background image URL
+    }
 
     // Show controls
     document.querySelector('.controls').style.display = 'flex';
