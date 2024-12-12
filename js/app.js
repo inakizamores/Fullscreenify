@@ -4,9 +4,14 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
+let isUpdating = false; // Flag to prevent multiple simultaneous updates
 
 // Updated UI
-function updateUI(data) {
+async function updateUI(data) {
+  if (isUpdating) return; // Prevent multiple updates at the same time
+  isUpdating = true;
+
+  try {
     const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
@@ -19,17 +24,17 @@ function updateUI(data) {
     manageImageCache(imageUrl);
 
     if (!isCdView) {
-        // Album cover view
-        updateImage(albumCover, imageUrl);
-        albumCover.style.display = 'block';
-        document.getElementById('cd-container').style.display = 'none';
-        document.getElementById('placeholder-text').style.display = 'none';
+      // Album cover view
+      await updateImage(albumCover, imageUrl); // Await image loading
+      albumCover.style.display = 'block';
+      document.getElementById('cd-container').style.display = 'none';
+      document.getElementById('placeholder-text').style.display = 'none';
     } else {
-        // CD view
-        updateImage(cdImage, imageUrl);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
+      // CD view
+      await updateImage(cdImage, imageUrl); // Await image loading
+      cdImage.style.display = 'block';
+      document.getElementById('album-cover').style.display = 'none';
+      document.getElementById('cd-container').style.display = 'flex';
     }
 
     // Update background image using a separate div
@@ -40,14 +45,17 @@ function updateUI(data) {
 
     // Update play/pause button icon based on the current state
     if (isPlaying) {
-        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        playPauseBtn.title = 'Pause';
-        cdImage.style.animationPlayState = 'running';
+      playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      playPauseBtn.title = 'Pause';
+      cdImage.style.animationPlayState = 'running';
     } else {
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        playPauseBtn.title = 'Play';
-        cdImage.style.animationPlayState = 'paused';
+      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      playPauseBtn.title = 'Play';
+      cdImage.style.animationPlayState = 'paused';
     }
+  } finally {
+    isUpdating = false; // Allow updates again
+  }
 }
 
 function displayPlaceholder() {
@@ -182,55 +190,64 @@ async function toggleCdView() {
     }
 }
 
-async function togglePlayPause() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
+// New function to debounce the play/pause action
+let playPauseDebounceTimer;
+function debouncePlayPause() {
+  clearTimeout(playPauseDebounceTimer);
+  playPauseDebounceTimer = setTimeout(async () => {
+    await togglePlayPauseAction();
+  }, 300); // 300ms debounce time (adjust as needed)
+}
+
+async function togglePlayPauseAction() {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const isPlaying = data.is_playing;
+
+      if (isPlaying) {
+        await pauseSong();
+      } else {
+        await playSong();
+      }
+
+      // Only fetch updated state if the response is not 204 No Content
+      if (response.status !== 204) {
+        const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            const isPlaying = data.is_playing;
-
-            if (isPlaying) {
-                await pauseSong();
-            } else {
-                await playSong();
-            }
-
-            // Only fetch updated state if the response is not 204 No Content
-            if (response.status !== 204) {
-                const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-
-                if (updatedResponse.ok) {
-                    const updatedData = await updatedResponse.json();
-                    updateUI(updatedData); // Update UI with the new state
-                } else {
-                    handleApiError(updatedResponse);
-                }
-            } else {
-                // Handle 204 No Content (e.g., nothing playing)
-                const playPauseBtn = document.getElementById('play-pause-btn');
-                if (!isPlaying) {
-                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    playPauseBtn.title = 'Pause';
-                } else {
-                    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    playPauseBtn.title = 'Play';
-                }
-            }
+        if (updatedResponse.ok) {
+          const updatedData = await updatedResponse.json();
+          updateUI(updatedData); // Update UI with the new state
         } else {
-            handleApiError(response);
+          handleApiError(updatedResponse);
         }
-    } catch (error) {
-        console.error('Error toggling play/pause:', error);
+      } else {
+        // Handle 204 No Content (e.g., nothing playing)
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        if (!isPlaying) {
+          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          playPauseBtn.title = 'Pause';
+        } else {
+          playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+          playPauseBtn.title = 'Play';
+        }
+      }
+    } else {
+      handleApiError(response);
     }
+  } catch (error) {
+    console.error('Error toggling play/pause:', error);
+  }
 }
 
 // Helper function to update an image element after the image has loaded
@@ -299,7 +316,7 @@ function updateBackgroundImage(imageUrl) {
 }
 
 // Event listeners for control buttons
-document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
+document.getElementById('play-pause-btn').addEventListener('click', debouncePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
