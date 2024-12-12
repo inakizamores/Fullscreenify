@@ -1,4 +1,4 @@
-const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Your actual Client ID
+cconst clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Your actual Client ID
 //const redirectUri = 'http://localhost:5500/'; // Your Redirect URI (e.g., http://localhost:5500/ or your Netlify URL)
 const redirectUri = 'https://fullscreenify.netlify.app/';
 const scopes = [
@@ -52,8 +52,21 @@ function checkAuthentication() {
     }
 }
 
+// Function to handle logout
+function handleLogout() {
+    // Remove the access token from local storage
+    localStorage.removeItem('fullscreenify_access_token');
+
+    // Update the UI (hide main content, show login screen)
+    document.getElementById('login-screen').style.display = 'flex';
+    document.querySelector('.fullscreenify-container').style.display = 'none';
+}
+
 // Event listener for the login button
 document.getElementById('login-btn').addEventListener('click', handleLogin);
+
+// Event listener for the logout button
+document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
 // Check for redirect and existing authentication on page load
 window.addEventListener('load', () => {

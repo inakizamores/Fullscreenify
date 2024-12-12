@@ -288,3 +288,33 @@ body {
     margin-bottom: 30px;
     font-family: 'Roboto', sans-serif;
 }
+
+/* Styles for logout button */
+.bottom-right-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px; /* Position on the bottom right */
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.bottom-right-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+.bottom-right-btn i {
+    font-size: 20px;
+    color: #000;
+}
