@@ -126,6 +126,7 @@ async function prevSong() {
         console.error('Network error while playing to previous song:', error);
     }
 }
+
 async function fetchPlaylistTracks(playlistId, nextTrackIndex) {
     try {
         const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?offset=${nextTrackIndex}&limit=1`, {
