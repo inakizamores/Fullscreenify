@@ -153,7 +153,7 @@ async function toggleCdView() {
         }
     } else {
         // Switch to album cover view
-        cdContainer.style.display = none;
+        cdContainer.style.display = 'none';
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -286,8 +286,7 @@ function updateBackgroundImage(imageUrl) {
     bgImageDiv.style.backgroundSize = 'cover';
     bgImageDiv.style.backgroundPosition = 'center';
     bgImageDiv.style.backgroundRepeat = 'no-repeat';
-    bgImageDiv.style.zIndex = '-1'; // Ensure it's behind other elements
-    bgImageDiv.style.filter = 'blur(20px)';
+    bgImageDiv.style.zIndex = '-2'; // Ensure it's behind other elements AND the blur div
     bgImageDiv.style.transition = 'background-image 0.5s ease-in-out'; // Add a transition
 
     // Set or update the background image with a gradient overlay

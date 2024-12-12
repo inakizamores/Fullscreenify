@@ -331,3 +331,13 @@ body {
     font-size: 20px;
     color: #000;
 }
+
+/* Remove background styles from body */
+body {
+  background: none; /* Remove background image from body */
+}
+
+/* Remove body::before pseudo-element */
+body::before {
+  content: none;
+}
