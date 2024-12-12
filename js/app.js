@@ -204,19 +204,10 @@ async function togglePlayPause() {
                 await playSong();
             }
 
-            // Fetch the updated state after toggling
-            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
+            // We do not need to fetch again, just update using the same data.
 
-            if (updatedResponse.ok) {
-                const updatedData = await updatedResponse.json();
-                updateUI(updatedData); // Update UI with the new state
-            } else {
-                handleApiError(updatedResponse);
-            }
+            updateUI(data); // Update UI with the new state
+
         } else {
             handleApiError(response);
         }

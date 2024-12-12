@@ -12,10 +12,19 @@ async function getCurrentlyPlaying() {
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
+
+            // Update play/pause button and CD state (even if nothing is playing)
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playPauseBtn.title = 'Play';
+            document.getElementById('cd-image').style.animationPlayState = 'paused';
+
         } else if (response.ok) {
             const data = await response.json();
             if (data.item.id !== currentSongId) {
                 currentSongId = data.item.id;
+                updateUI(data);
+            } else if (data.item.id == currentSongId) {
                 updateUI(data);
             }
 
