@@ -1,4 +1,4 @@
-async function getCurrentlyPlaying() {
+async function getCurrentlyPlaying(accessToken) {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
@@ -35,7 +35,7 @@ async function getCurrentlyPlaying() {
     }
 }
 
-async function playSong() {
+async function playSong(accessToken) {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/play', {
             method: 'PUT',
@@ -52,7 +52,7 @@ async function playSong() {
     }
 }
 
-async function pauseSong() {
+async function pauseSong(accessToken) {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/pause', {
             method: 'PUT',
@@ -69,7 +69,7 @@ async function pauseSong() {
     }
 }
 
-async function nextSong() {
+async function nextSong(accessToken) {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/next', {
             method: 'POST',
@@ -81,7 +81,7 @@ async function nextSong() {
         if (response.status === 204) {
             console.log('Skipped to next song successfully.');
             // Fetch the currently playing song to update the UI
-            await getCurrentlyPlaying();
+            await getCurrentlyPlaying(accessToken);
 
         } else {
             const text = await response.text(); // Get response as text first
@@ -98,7 +98,7 @@ async function nextSong() {
     }
 }
 
-async function prevSong() {
+async function prevSong(accessToken) {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
             method: 'POST',
@@ -110,7 +110,7 @@ async function prevSong() {
         if (response.status === 204) {
             console.log('Previous song played successfully.');
             // Fetch the currently playing song to update the UI
-            await getCurrentlyPlaying();
+            await getCurrentlyPlaying(accessToken);
 
         } else {
             const text = await response.text(); // Get response as text first
@@ -127,7 +127,7 @@ async function prevSong() {
     }
 }
 
-async function fetchPlaylistTracks(playlistId, nextTrackIndex) {
+async function fetchPlaylistTracks(accessToken, playlistId, nextTrackIndex) {
     try {
         const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?offset=${nextTrackIndex}&limit=1`, {
             headers: {

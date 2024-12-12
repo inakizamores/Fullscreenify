@@ -48,7 +48,7 @@ function checkAuthentication() {
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
         // Fetch the currently playing song if authenticated
-        getCurrentlyPlaying(); 
+        getCurrentlyPlaying(accessToken); 
     }
 }
 
@@ -84,3 +84,5 @@ function initializeAuthentication() {
 
 // Call initializeAuthentication() only once on page load
 initializeAuthentication();
+
+export { checkAuthentication };

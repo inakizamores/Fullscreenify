@@ -1,3 +1,6 @@
+import { checkAuthentication } from './auth.js';
+import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong, fetchPlaylistTracks } from './api.js';
+
 const ACTIVE_UPDATE_INTERVAL = 500; // 0.5 second (Faster update when playing)
 const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
@@ -5,7 +8,6 @@ let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
-import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong, fetchPlaylistTracks } from './api.js';
 // Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp
@@ -99,7 +101,7 @@ function startUpdatingSongInfo(interval) {
         clearInterval(updateIntervalId);
     }
     updateIntervalId = setInterval(async () => {
-        await getCurrentlyPlaying();
+        await getCurrentlyPlaying(accessToken);
     }, interval);
 }
 
@@ -200,9 +202,9 @@ async function togglePlayPause() {
             const isPlaying = data.is_playing;
 
             if (isPlaying) {
-                await pauseSong();
+                await pauseSong(accessToken);
             } else {
-                await playSong();
+                await playSong(accessToken);
             }
 
             // Immediately update the play/pause button icon
@@ -246,7 +248,7 @@ async function updatePlaybackState() {
                     const playlistId = data.context.uri.split(':')[2]; // Get playlist ID
                     const nextTrackIndex = data.item.track_number; // Get index of the next track
 
-                    fetchPlaylistTracks(playlistId, nextTrackIndex);
+                    fetchPlaylistTracks(accessToken, playlistId, nextTrackIndex);
                 }
 
                 updateUI(data);
@@ -324,11 +326,7 @@ document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView)
 
 // Check authentication and start updating on page load (only once)
 function initializeApp() {
-    if (window.location.hash) {
-        handleRedirect();
-    } else {
-        checkAuthentication();
-    }
+    checkAuthentication();
 }
 
 // Call initializeApp() only once on page load
