@@ -1,7 +1,7 @@
 const ACTIVE_UPDATE_INTERVAL = 500; // 0.5 second (Faster update when playing)
 const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
-let currentSongId = null;
+let currentSongId = null; // Store the currently playing song's ID
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
@@ -35,11 +35,11 @@ function updateUI(data) {
 
     // Update the background image only if the song has changed
     if (currentSongId !== data.item.id) {
+        currentSongId = data.item.id; // Update the current song ID first
         document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
         document.body.style.backgroundRepeat = 'no-repeat';
-        currentSongId = data.item.id; // Update the current song ID
     }
 
     // Show controls
@@ -56,6 +56,8 @@ function updateUI(data) {
         cdImage.style.animationPlayState = 'paused';
     }
 }
+
+// ... rest of the app.js code (no changes needed) ...
 
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
