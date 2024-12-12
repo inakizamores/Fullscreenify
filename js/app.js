@@ -35,12 +35,9 @@ function updateUI(data) {
     }
 
     // Set the background to the album art with a gradient overlay
-    // Only update if the URL has changed
+    const backgroundDiv = document.querySelector('.background-image');
     if (currentBackgroundImageUrl !== imageUrl) {
-        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundRepeat = 'no-repeat';
+        backgroundDiv.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
         currentBackgroundImageUrl = imageUrl; // Update the tracked background image URL
     }
 
