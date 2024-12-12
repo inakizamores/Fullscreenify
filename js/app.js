@@ -4,7 +4,6 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
-let currentBackgroundUrl = null; // Store the current background image URL
 
 // Updated UI
 function updateUI(data) {
@@ -33,14 +32,8 @@ function updateUI(data) {
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Update background only if the URL has changed
-    if (currentBackgroundUrl !== imageUrl) {
-        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundRepeat = 'no-repeat';
-        currentBackgroundUrl = imageUrl; // Update the stored URL
-    }
+    // Update background image using a separate div
+    updateBackgroundImage(imageUrl);
 
     // Show controls
     document.querySelector('.controls').style.display = 'flex';
@@ -80,8 +73,7 @@ function displayPlaceholder() {
     }
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
-    document.body.style.backgroundImage = 'none'; // Remove background image
-    currentBackgroundUrl = null; // Reset background URL
+    updateBackgroundImage(null); // Remove background image
 
     // Hide controls if nothing is playing
     document.querySelector('.controls').style.display = 'none';
@@ -161,7 +153,7 @@ async function toggleCdView() {
         }
     } else {
         // Switch to album cover view
-        cdContainer.style.display = 'none';
+        cdContainer.style.display = none;
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -271,6 +263,39 @@ function manageImageCache(imageUrl) {
         }
         // Add the new image to the cache
         imageCache.add(imageUrl);
+    }
+}
+
+// New function to update the background image using a separate div
+function updateBackgroundImage(imageUrl) {
+    let bgImageDiv = document.getElementById('bg-image');
+
+    // Create the div if it doesn't exist
+    if (!bgImageDiv) {
+        bgImageDiv = document.createElement('div');
+        bgImageDiv.id = 'bg-image';
+        document.body.appendChild(bgImageDiv); // Append to body
+    }
+
+    // Set styles for the div (only need to do this once, but it's safe to do it every time)
+    bgImageDiv.style.position = 'fixed';
+    bgImageDiv.style.top = '0';
+    bgImageDiv.style.left = '0';
+    bgImageDiv.style.width = '100%';
+    bgImageDiv.style.height = '100%';
+    bgImageDiv.style.backgroundSize = 'cover';
+    bgImageDiv.style.backgroundPosition = 'center';
+    bgImageDiv.style.backgroundRepeat = 'no-repeat';
+    bgImageDiv.style.zIndex = '-1'; // Ensure it's behind other elements
+    bgImageDiv.style.filter = 'blur(20px)';
+    bgImageDiv.style.transition = 'background-image 0.5s ease-in-out'; // Add a transition
+
+    // Set or update the background image with a gradient overlay
+    if (imageUrl) {
+        bgImageDiv.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
+    } else {
+        bgImageDiv.style.backgroundImage = 'none'; // Remove the image
+        bgImageDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'; // Semi-transparent black background
     }
 }
 
