@@ -1,3 +1,5 @@
+import { getCurrentlyPlaying } from './api.js';
+
 const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Your actual Client ID
 //const redirectUri = 'http://localhost:5500/'; // Your Redirect URI (e.g., http://localhost:5500/ or your Netlify URL)
 const redirectUri = 'https://fullscreenify.netlify.app/';
@@ -35,8 +37,7 @@ function handleRedirect() {
         document.getElementById('login-screen').style.display = 'none';
         // Show the main content
         document.querySelector('.fullscreenify-container').style.display = 'flex';
-        // Fetch the currently playing song
-        getCurrentlyPlaying();
+        initializeApp();
     }
 }
 

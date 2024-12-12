@@ -5,6 +5,7 @@ let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
+import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong, fetchPlaylistTracks } from './api.js';
 // Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp

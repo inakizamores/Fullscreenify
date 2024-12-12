@@ -82,9 +82,15 @@ async function nextSong() {
             console.log('Skipped to next song successfully.');
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
+
         } else {
-            const errorData = await response.json();
-            console.error('Error skipping to next song:', errorData);
+            const text = await response.text(); // Get response as text first
+            try {
+                const errorData = JSON.parse(text); // Try to parse as JSON
+                console.error('Error skipping to next song:', errorData);
+            } catch (e) {
+                console.error('Error skipping to next song (non-JSON response):', text);
+            }
             handleApiError(response);
         }
     } catch (error) {
@@ -101,15 +107,25 @@ async function prevSong() {
             }
         });
 
-        if (!response.ok) {
+        if (response.status === 204) {
+            console.log('Previous song played successfully.');
+            // Fetch the currently playing song to update the UI
+            await getCurrentlyPlaying();
+
+        } else {
+            const text = await response.text(); // Get response as text first
+            try {
+                const errorData = JSON.parse(text); // Try to parse as JSON
+                console.error('Error playing previous song:', errorData);
+            } catch (e) {
+                console.error('Error playing previous song (non-JSON response):', text);
+            }
             handleApiError(response);
         }
     } catch (error) {
-        console.error('Error moving to previous song:', error);
+        console.error('Network error while playing to previous song:', error);
     }
-
 }
-
 async function fetchPlaylistTracks(playlistId, nextTrackIndex) {
     try {
         const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?offset=${nextTrackIndex}&limit=1`, {
@@ -131,3 +147,5 @@ async function fetchPlaylistTracks(playlistId, nextTrackIndex) {
         console.error('Error fetching playlist tracks for preloading:', error);
     }
 }
+
+export { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong, fetchPlaylistTracks };
