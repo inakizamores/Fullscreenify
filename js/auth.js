@@ -35,9 +35,8 @@ function handleRedirect() {
         document.getElementById('login-screen').style.display = 'none';
         // Show the main content
         document.querySelector('.fullscreenify-container').style.display = 'flex';
-        // Fetch the currently playing song and update interval
+        // Fetch the currently playing song
         getCurrentlyPlaying();
-        startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
     }
 }
 

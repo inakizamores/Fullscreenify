@@ -1,7 +1,7 @@
 const ACTIVE_UPDATE_INTERVAL = 500; // 0.5 second (Faster update when playing)
 const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
-let currentSongId = null; // Store the currently playing song's ID
+let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
@@ -33,14 +33,11 @@ function updateUI(data) {
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Update the background image only if the song has changed
-    if (currentSongId !== data.item.id) {
-        currentSongId = data.item.id; // Update the current song ID first
-        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundRepeat = 'no-repeat';
-    }
+    // Set the background to the album art with a gradient overlay
+    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundRepeat = 'no-repeat';
 
     // Show controls
     document.querySelector('.controls').style.display = 'flex';
@@ -56,8 +53,6 @@ function updateUI(data) {
         cdImage.style.animationPlayState = 'paused';
     }
 }
-
-// ... rest of the app.js code (no changes needed) ...
 
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
@@ -209,10 +204,19 @@ async function togglePlayPause() {
                 await playSong();
             }
 
-            // We do not need to fetch again, just update using the same data.
+            // Fetch the updated state after toggling
+            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
 
-            updateUI(data); // Update UI with the new state
-
+            if (updatedResponse.ok) {
+                const updatedData = await updatedResponse.json();
+                updateUI(updatedData); // Update UI with the new state
+            } else {
+                handleApiError(updatedResponse);
+            }
         } else {
             handleApiError(response);
         }
