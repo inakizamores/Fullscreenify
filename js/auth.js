@@ -7,7 +7,8 @@ const scopes = [
     'user-read-playback-state'
 ];
 
-let accessToken = null;
+let accessToken = localStorage.getItem('fullscreenify_access_token'); // Preload token
+let isLoggedIn = !!accessToken; // Assume logged in if token exists
 
 function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
@@ -29,6 +30,7 @@ function handleRedirect() {
     if (accessToken) {
         // Store the access token securely (e.g., local storage)
         localStorage.setItem('fullscreenify_access_token', accessToken);
+        isLoggedIn = true;
         // Hide the login screen
         document.getElementById('login-screen').style.display = 'none';
         // Show the main content
@@ -39,14 +41,11 @@ function handleRedirect() {
 }
 
 function checkAuthentication() {
-    accessToken = localStorage.getItem('fullscreenify_access_token');
-    if (!accessToken) {
+    if (!isLoggedIn) {
         // Show the login screen if not authenticated
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Do NOT show the main content here.
-        // It should be handled AFTER getCurrentlyPlaying() in api.js is successful.
         // Fetch the currently playing song if authenticated
         getCurrentlyPlaying(); 
     }
@@ -56,6 +55,7 @@ function checkAuthentication() {
 function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
+    isLoggedIn = false;
 
     // Force a page refresh to clear the URL and state
     window.location.href = window.location.origin + window.location.pathname;

@@ -204,19 +204,12 @@ async function togglePlayPause() {
                 await playSong();
             }
 
-            // Fetch the updated state after toggling
-            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
+            // Wait a short moment for the playback state to update on Spotify's end
+            await new Promise(resolve => setTimeout(resolve, 250)); 
 
-            if (updatedResponse.ok) {
-                const updatedData = await updatedResponse.json();
-                updateUI(updatedData); // Update UI with the new state
-            } else {
-                handleApiError(updatedResponse);
-            }
+            // Fetch the updated state after toggling
+            await getCurrentlyPlaying(); // Update UI only after getting the new state
+
         } else {
             handleApiError(response);
         }
