@@ -204,17 +204,60 @@ async function togglePlayPause() {
                 await playSong();
             }
 
-            // Wait a short moment for the playback state to update on Spotify's end
-            await new Promise(resolve => setTimeout(resolve, 250)); 
+            // Immediately update the play/pause button icon
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            if (isPlaying) {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playPauseBtn.title = 'Play';
+            } else {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                playPauseBtn.title = 'Pause';
+            }
 
-            // Fetch the updated state after toggling
-            await getCurrentlyPlaying(); // Update UI only after getting the new state
+            // Update the playback state after a short delay
+            setTimeout(updatePlaybackState, 250);
 
         } else {
             handleApiError(response);
         }
     } catch (error) {
         console.error('Error toggling play/pause:', error);
+    }
+}
+
+async function updatePlaybackState() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            // Check if the song has changed
+            if (data.item.id !== currentSongId) {
+                currentSongId = data.item.id;
+                updateUI(data); // Update UI only if the song has changed
+            } else {
+                // Update only the play/pause button if the song is the same
+                const playPauseBtn = document.getElementById('play-pause-btn');
+                if (data.is_playing) {
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    playPauseBtn.title = 'Pause';
+                    cdImage.style.animationPlayState = 'running';
+                } else {
+                    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playPauseBtn.title = 'Play';
+                    cdImage.style.animationPlayState = 'paused';
+                }
+            }
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error updating playback state:', error);
     }
 }
 
