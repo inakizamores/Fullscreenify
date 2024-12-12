@@ -239,7 +239,16 @@ async function updatePlaybackState() {
             // Check if the song has changed
             if (data.item.id !== currentSongId) {
                 currentSongId = data.item.id;
-                updateUI(data); // Update UI only if the song has changed
+
+                // Preload next probable album art
+                if (data.context && data.context.type === 'playlist' && data.context.uri) {
+                    const playlistId = data.context.uri.split(':')[2]; // Get playlist ID
+                    const nextTrackIndex = data.item.track_number; // Get index of the next track
+
+                    fetchPlaylistTracks(playlistId, nextTrackIndex);
+                }
+
+                updateUI(data);
             } else {
                 // Update only the play/pause button if the song is the same
                 const playPauseBtn = document.getElementById('play-pause-btn');
@@ -269,12 +278,19 @@ async function updateImage(imgElement, imageUrl) {
             imgElement.src = imageUrl;
             resolve();
         } else {
-            imgElement.onload = () => {
+            const img = new Image();
+            img.onload = () => {
                 // Add the image to the cache once it's loaded
                 imageCache.add(imageUrl);
+                imgElement.src = imageUrl;
                 resolve();
             };
-            imgElement.src = imageUrl;
+            img.onerror = () => {
+                // Handle image loading error (optional)
+                console.error('Error loading image:', imageUrl);
+                resolve(); // Resolve even on error to avoid infinite loading
+            };
+            img.src = imageUrl;
         }
     });
 }
@@ -292,6 +308,11 @@ function manageImageCache(imageUrl) {
         // Add the new image to the cache
         imageCache.add(imageUrl);
     }
+}
+
+function preloadImage(url) {
+    const img = new Image();
+    img.src = url;
 }
 
 // Event listeners for control buttons

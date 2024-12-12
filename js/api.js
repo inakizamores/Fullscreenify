@@ -107,4 +107,27 @@ async function prevSong() {
     } catch (error) {
         console.error('Error moving to previous song:', error);
     }
+
+}
+
+async function fetchPlaylistTracks(playlistId, nextTrackIndex) {
+    try {
+        const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?offset=${nextTrackIndex}&limit=1`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.ok) {
+            const playlistData = await response.json();
+            if (playlistData.items && playlistData.items.length > 0) {
+                const nextImageUrl = playlistData.items[0].track.album.images[0].url;
+                preloadImage(nextImageUrl);
+            }
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error fetching playlist tracks for preloading:', error);
+    }
 }
