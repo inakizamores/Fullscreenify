@@ -47,7 +47,7 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
     z-index: 0;
-    cursor: pointer;
+    /* Remove cursor style */
 }
 
 /* Album cover hover effects */
@@ -195,7 +195,7 @@ body {
     animation-play-state: paused; /* Initially paused */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Add initial shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
-    cursor: pointer;
+    /* Remove cursor style */
 }
 
 /* CD hover effects */
