@@ -237,13 +237,25 @@ body {
     width: 100%;
     height: 100%;
     background-color: #222;
-    display: none;
+    display: flex;
+    flex-direction: column; /* Set flex-direction to column */
     justify-content: center;
     align-items: center;
     z-index: 100;
-    background: linear-gradient(135deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 1) 50%, rgba(30, 185, 84, 0.05) 100%); /* Very subtle green gradient */
+    background: linear-gradient(135deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 1) 50%, rgba(30, 185, 84, 0.05) 100%);
     background-size: 250% 250%;
-    animation: gradientAnimation 10s ease infinite; /* Animate the gradient */
+    animation: gradientAnimation 10s ease infinite;
+}
+
+/* Reset styles for logout state */
+#login-screen.logout {
+    background: linear-gradient(135deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 1) 50%, rgba(30, 185, 84, 0.05) 100%);
+    background-size: 250% 250%;
+    animation: gradientAnimation 10s ease infinite;
+}
+
+#login-screen.logout body::before {
+    content: none; /* Remove background image on logout */
 }
 
 /* Keyframes for gradient animation */
@@ -280,6 +292,20 @@ body {
     margin-bottom: 20px;
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase; /* Make the app name all caps */
+    animation: titleAnimation 2s infinite; /* Add animation */
+}
+
+/* Keyframes for title animation */
+@keyframes titleAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Style for app description */

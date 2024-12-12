@@ -57,8 +57,12 @@ function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
 
+    // Force a page refresh to clear the URL and state
+    window.location.href = window.location.origin + window.location.pathname;
+
     // Update the UI (hide main content, show login screen)
-    document.getElementById('login-screen').style.display = 'block'; // Corrected line
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
     document.querySelector('.fullscreenify-container').style.display = 'none';
 }
 
