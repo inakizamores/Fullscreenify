@@ -4,6 +4,7 @@ let updateIntervalId = null;
 let currentSongId = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
+let currentBackgroundUrl = null; // Store the current background image URL
 
 // Updated UI
 function updateUI(data) {
@@ -29,15 +30,17 @@ function updateUI(data) {
         updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('placeholder-text').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Set the background to the album art with a gradient overlay
-    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundRepeat = 'no-repeat';
+    // Update background only if the URL has changed
+    if (currentBackgroundUrl !== imageUrl) {
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        currentBackgroundUrl = imageUrl; // Update the stored URL
+    }
 
     // Show controls
     document.querySelector('.controls').style.display = 'flex';
@@ -78,6 +81,7 @@ function displayPlaceholder() {
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
     document.body.style.backgroundImage = 'none'; // Remove background image
+    currentBackgroundUrl = null; // Reset background URL
 
     // Hide controls if nothing is playing
     document.querySelector('.controls').style.display = 'none';
@@ -204,18 +208,30 @@ async function togglePlayPause() {
                 await playSong();
             }
 
-            // Fetch the updated state after toggling
-            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
+            // Only fetch updated state if the response is not 204 No Content
+            if (response.status !== 204) {
+                const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
 
-            if (updatedResponse.ok) {
-                const updatedData = await updatedResponse.json();
-                updateUI(updatedData); // Update UI with the new state
+                if (updatedResponse.ok) {
+                    const updatedData = await updatedResponse.json();
+                    updateUI(updatedData); // Update UI with the new state
+                } else {
+                    handleApiError(updatedResponse);
+                }
             } else {
-                handleApiError(updatedResponse);
+                // Handle 204 No Content (e.g., nothing playing)
+                const playPauseBtn = document.getElementById('play-pause-btn');
+                if (!isPlaying) {
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    playPauseBtn.title = 'Pause';
+                } else {
+                    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playPauseBtn.title = 'Play';
+                }
             }
         } else {
             handleApiError(response);
