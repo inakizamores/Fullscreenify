@@ -12,36 +12,41 @@ body::before {
     background-size: cover;
     background-position: center;
     filter: blur(20px); /* Adjust blur amount as needed */
-    z-index: -1; /* Place it behind other elements */
+    z-index: -3; /* Place it behind other elements */
     transform: scale(1.1);
 }
 
 body {
     margin: 0;
     font-family: 'Helvetica Neue', sans-serif;
-    background-color: #222;
+    background-color: #222; /* Solid background color */
     color: #fff;
     overflow: hidden; /* Hide scrollbars */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    transition: background-color 0.5s ease; /* Smooth background transition */
 }
 
 /* Background Image Container */
 .background-image {
-    position: fixed; /* Or absolute */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-size: cover;
     background-position: center;
-    filter: blur(20px); /* Adjust blur amount as needed */
-    z-index: -1; /* Place it behind other elements */
+    filter: blur(20px);
+    z-index: -2; /* Behind other elements */
     transform: scale(1.1);
-    transition: background-image 0.5s ease-in-out; /* Add a smooth transition */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.5s ease-in-out; /* Smooth opacity transition */
+}
+
+.background-image.active {
+    opacity: 1; /* Make active background visible */
+    z-index: -1;
 }
 
 /* Container styles */
