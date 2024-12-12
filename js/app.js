@@ -40,9 +40,11 @@ function updateUI(data) {
     if (isPlaying) {
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         playPauseBtn.title = 'Pause';
+        cdImage.style.animationPlayState = 'running';
     } else {
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         playPauseBtn.title = 'Play';
+        cdImage.style.animationPlayState = 'paused';
     }
 }
 
@@ -125,6 +127,13 @@ async function toggleCdView() {
                     await updateImage(cdImage, data.item.album.images[0].url);
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
+
+                    // Pause or resume CD animation based on playback state
+                    if (data.is_playing) {
+                        cdImage.style.animationPlayState = 'running';
+                    } else {
+                        cdImage.style.animationPlayState = 'paused';
+                    }
                 } else {
                     handleApiError(response);
                 }
