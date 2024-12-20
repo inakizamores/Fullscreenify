@@ -22,7 +22,7 @@ function updateUI(data) {
     manageImageCache(imageUrl);
 
     // Update body background image only if the song is different
-    if (currentSongId !== data.item.id) {
+    if (data.item.id !== currentSongId) {
         document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
         currentBackgroundImage = imageUrl; // Update the current background image URL
     }
@@ -43,14 +43,16 @@ function updateUI(data) {
     }
 
     // Update play/pause button icon based on the current state
-    if (isPlaying) {
-        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        playPauseBtn.title = 'Pause';
-        cdImage.style.animationPlayState = 'running';
-    } else {
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        playPauseBtn.title = 'Play';
-        cdImage.style.animationPlayState = 'paused';
+    if (isPlaying !== currentIsPlaying) {
+        if (isPlaying) {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            playPauseBtn.title = 'Pause';
+            cdImage.style.animationPlayState = 'running';
+        } else {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playPauseBtn.title = 'Play';
+            cdImage.style.animationPlayState = 'paused';
+        }
     }
     imageContainer.classList.remove('placeholder-active');
 }
@@ -150,12 +152,7 @@ async function toggleCdView() {
             } catch (error) {
                 console.error('Error fetching currently playing song for CD image:', error);
             }
-        } else {
-            const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-            await updateImage(cdImage, placeholderImageUrl);
-            cdImage.style.display = 'block';
-            placeholderText.style.display = 'block';
-        }
+        } 
     } else {
         // Switch to album cover view
         cdContainer.style.display = 'none';
@@ -178,11 +175,6 @@ async function toggleCdView() {
             } catch (error) {
                 console.error('Error fetching currently playing song for album cover:', error);
             }
-        } else {
-            const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-            await updateImage(albumCover, placeholderImageUrl);
-            albumCover.style.display = 'block';
-            placeholderText.style.display = 'block';
         }
     }
 }
@@ -204,20 +196,7 @@ async function togglePlayPause() {
             } else {
                 await playSong();
             }
-
-            // Fetch the updated state after toggling
-            const updatedResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            if (updatedResponse.ok) {
-                const updatedData = await updatedResponse.json();
-                updateUI(updatedData); // Update UI with the new state
-            } else {
-                handleApiError(updatedResponse);
-            }
+            await getCurrentlyPlaying();
         } else {
             handleApiError(response);
         }
