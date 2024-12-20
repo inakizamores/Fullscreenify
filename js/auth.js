@@ -1,5 +1,4 @@
-const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Your actual Client ID
-//const redirectUri = 'http://localhost:5500/'; // Your Redirect URI (e.g., http://localhost:5500/ or your Netlify URL)
+const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923';
 const redirectUri = 'https://fullscreenify.netlify.app/';
 const scopes = [
     'user-read-currently-playing',
@@ -7,8 +6,8 @@ const scopes = [
     'user-read-playback-state'
 ];
 
-let accessToken = localStorage.getItem('fullscreenify_access_token'); // Preload token
-let isLoggedIn = !!accessToken; // Assume logged in if token exists
+let accessToken = localStorage.getItem('fullscreenify_access_token');
+let isLoggedIn = !!accessToken;
 
 // Function to initiate the Spotify authentication process
 function handleLogin() {
@@ -42,6 +41,9 @@ function handleRedirect() {
         document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song
         getCurrentlyPlaying();
+
+        // Clear the hash from the URL
+        clearHashFromUrl();
     }
 }
 
@@ -84,6 +86,17 @@ function initializeAuthentication() {
         handleRedirect();
     } else {
         checkAuthentication();
+    }
+}
+
+// Function to remove the access token from the URL
+function clearHashFromUrl() {
+    if (window.history && window.history.pushState) {
+        // Using pushState to change the URL without reloading the page
+        window.history.pushState({}, document.title, window.location.pathname);
+    } else {
+        // Fallback for older browsers
+        window.location.hash = '';
     }
 }
 

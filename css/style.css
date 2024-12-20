@@ -110,7 +110,7 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Add transform transition */
+    transition: background-color: 0.3s ease, transform 0.3s ease; /* Add transform transition */
 }
 
 .control-btn:hover {
@@ -184,7 +184,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 .bottom-left-btn:hover {
@@ -372,7 +372,7 @@ body {
     transform: translate(-50%, -50%);
     /* Center the modal */
     background-color: #222;
-    padding: 40px;
+    padding: 30px; /* Adjusted padding */
     border-radius: 20px;
     /* More rounded corners */
     text-align: center;
@@ -382,19 +382,22 @@ body {
     max-width: 400px;
     /* Limit modal width */
     width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
 }
 
 .modal-content h2 {
     font-size: 28px;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 10px; /* Adjusted margin */
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
 }
 
 .modal-content p {
     font-size: 16px;
-    margin-bottom: 25px;
+    margin-bottom: 20px; /* Adjusted margin */
     font-family: 'Roboto', sans-serif;
 }
 
@@ -413,6 +416,7 @@ body {
     align-items: center;
     animation: pulsate 2s infinite;
     /* Add the pulsate animation */
+    margin: 0 auto; /* Center button */
 }
 
 #re-authenticate-btn i {
