@@ -6,10 +6,9 @@ let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
-let isToggling = false;
 
 // Updated UI
-async function updateUI(data) {
+function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
@@ -21,10 +20,8 @@ async function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-
-     // Update body background image only if the song is different
+    // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
-        await preloadImage(imageUrl); // Preload the new background image
         document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
         currentBackgroundImage = imageUrl;
     }
@@ -32,36 +29,35 @@ async function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
-        await updateImage(albumCover, imageUrl);
+        updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        await updateImage(cdImage, imageUrl);
+        updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-
-        // Update play/pause button icon based on the current state
-       if (isPlaying !== currentIsPlaying) {
-            if (isPlaying) {
-                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                playPauseBtn.title = 'Pause';
-                if(isCdView) {
-                    cdImage.style.animationPlayState = 'running';
-                }
-            } else {
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-                playPauseBtn.title = 'Play';
-                if(isCdView){
-                   cdImage.style.animationPlayState = 'paused';
-                }
+    // Update play/pause button icon based on the current state
+    if (isPlaying !== currentIsPlaying) {
+        if (isPlaying) {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            playPauseBtn.title = 'Pause';
+            if(isCdView) {
+                cdImage.style.animationPlayState = 'running';
+            }
+        } else {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playPauseBtn.title = 'Play';
+            if(isCdView){
+               cdImage.style.animationPlayState = 'paused';
             }
         }
+    }
     imageContainer.classList.remove('placeholder-active');
 }
 
@@ -82,7 +78,7 @@ function displayPlaceholder() {
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
-         updateImage(cdImage, placeholderImageUrl);
+        updateImage(cdImage, placeholderImageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
@@ -154,131 +150,96 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-     if (isToggling) return; // Prevent multiple calls
-
-    isToggling = true;
     isCdView = !isCdView;
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
     const cdImage = document.getElementById('cd-image');
     const placeholderText = document.getElementById('placeholder-text');
 
-   if (currentSongId){
-          const currentToken = localStorage.getItem('fullscreenify_access_token');
-
-         try {
-              const {status, data, error} = await getCurrentlyPlaying();
-                if (status === 200){
-                    currentIsPlaying = data.is_playing
-                    await updateUI(data)
-
-                }else {
-                   handleApiError(error);
-                }
-
-         } catch (error) {
-             console.error('Error fetching currently playing song for CD image:', error);
-         }
-    }
-     if (isCdView) {
+    if (isCdView) {
          // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
+        if(currentSongId){
+            try {
+                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                    await updateImage(cdImage, imageUrl);
+                    cdImage.style.display = 'block';
+                    placeholderText.style.display = 'none';
+                     // Pause or resume CD animation based on playback state
+                    if (data.is_playing) {
+                        cdImage.style.animationPlayState = 'running';
+                    } else {
+                        cdImage.style.animationPlayState = 'paused';
+                    }
+                }else {
+                    handleApiError(response);
+                }
+            }catch (error) {
+                console.error('Error fetching currently playing song for CD image:', error);
+            }
+        }
 
-     } else {
+    } else {
          // Switch to album cover view
-         cdContainer.style.display = 'none';
-     }
-     isToggling = false; //Allow future calls
+        cdContainer.style.display = 'none';
+        if(currentSongId){
+            try {
+                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                    await updateImage(albumCover, imageUrl);
+                    albumCover.style.display = 'block';
+                    placeholderText.style.display = 'none';
+                }else {
+                   handleApiError(response);
+                }
+            }catch(error){
+                console.error('Error fetching currently playing song for album cover:', error);
+            }
+        }
 
+    }
 }
 
+
 async function togglePlayPause() {
-    const currentToken = localStorage.getItem('fullscreenify_access_token');
     try {
-         const {status, data, error} = await getCurrentlyPlaying();
-
-        if (status === 200) {
-            currentIsPlaying = data.is_playing;
-             await updateUI(data)
-
-            if (currentIsPlaying) {
-                await pauseSong(currentToken);
-            } else {
-                await playSong(currentToken);
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
             }
-              await getCurrentlyPlaying();
+        });
 
+        if (response.ok) {
+            const data = await response.json();
+            const isPlaying = data.is_playing;
 
+            if (isPlaying) {
+                await pauseSong();
+            } else {
+                await playSong();
+            }
+            await getCurrentlyPlaying();
         } else {
-            handleApiError(error);
+            handleApiError(response);
         }
     } catch (error) {
         console.error('Error toggling play/pause:', error);
     }
 }
-
-async function getCurrentlyPlaying() {
-    try {
-         const {status, data, error} =  await getCurrentlyPlayingApi()
-        if (status === 204) {
-            // No content - nothing is playing
-            displayPlaceholder();
-            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-        } else if (status === 200) {
-             currentIsPlaying = data.is_playing
-            // Update UI if the song or playback state has changed
-            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-               await updateUI(data);
-               currentSongId = data.item.id;
-
-            }
-
-            // Adjust update interval based on playing state
-            if (data.is_playing) {
-                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-            } else {
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            }
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-            hideSessionExpiredModal()
-        } else {
-            handleApiError(error);
-        }
-    } catch (error) {
-        console.error('Error fetching currently playing song:', error);
-    }
-}
-async function getCurrentlyPlayingApi() {
-    try {
-         const token = localStorage.getItem('fullscreenify_access_token');
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.status === 204) {
-            // No content - nothing is playing
-             return {status:204};
-        } else if (response.ok) {
-            const data = await response.json();
-           
-            return {status:200, data:data};
-
-        } else {
-            handleApiError(response);
-            return {status:'error', error: response}
-        }
-    } catch (error) {
-        console.error('Error fetching currently playing song:', error);
-          return {status:'error', error: error}
-    }
-}
-
 
 
 async function updateImage(imgElement, imageUrl) {
@@ -287,11 +248,11 @@ async function updateImage(imgElement, imageUrl) {
             imgElement.src = imageUrl;
             resolve();
         } else {
-             imgElement.onload = () => {
-                 imageCache.add(imageUrl);
-                 resolve();
-             };
-             imgElement.src = imageUrl;
+            imgElement.onload = () => {
+                imageCache.add(imageUrl);
+                resolve();
+            };
+            imgElement.src = imageUrl;
         }
     });
 }
@@ -322,16 +283,6 @@ function scheduleTokenRefresh() {
             refreshToken();
         }, refreshTimeout);
     }
-}
-
-
-async function preloadImage(imageUrl) {
-   return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = imageUrl;
-        img.onload = resolve;
-        img.onerror = reject;
-    });
 }
 
 
