@@ -8,14 +8,18 @@ async function getCurrentlyPlaying() {
 
         if (response.status === 204) {
             // No content - nothing is playing
+            currentSongId = null; // Reset current song ID
+            currentIsPlaying = null; // Reset current playing status
             displayPlaceholder();
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
         } else if (response.ok) {
             const data = await response.json();
-            if (data.item.id !== currentSongId) {
+            // Update UI if the song or playback state has changed
+            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
                 currentSongId = data.item.id;
+                currentIsPlaying = data.is_playing;
                 updateUI(data);
             }
 

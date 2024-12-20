@@ -2,6 +2,8 @@ const ACTIVE_UPDATE_INTERVAL = 500; // 0.5 second (Faster update when playing)
 const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
 let currentSongId = null;
+let currentIsPlaying = null;
+let currentBackgroundImage = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
@@ -19,6 +21,12 @@ function updateUI(data) {
     // Manage image cache
     manageImageCache(imageUrl);
 
+    // Update body background image only if the URL is different
+    if (currentBackgroundImage !== imageUrl) {
+        document.body.style.backgroundImage = `url(${imageUrl})`;
+        currentBackgroundImage = imageUrl; // Update the current background image URL
+    }
+
     if (!isCdView) {
         // Album cover view
         updateImage(albumCover, imageUrl);
@@ -33,12 +41,6 @@ function updateUI(data) {
         document.getElementById('placeholder-text').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
     }
-
-    // Set the background to the album art with a gradient overlay
-    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url(${imageUrl})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundRepeat = 'no-repeat';
 
     // Update play/pause button icon based on the current state
     if (isPlaying) {
@@ -78,6 +80,7 @@ function displayPlaceholder() {
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
     document.body.style.backgroundImage = 'none'; // Remove background image
+    currentBackgroundImage = null; // Reset the current background image URL
     imageContainer.classList.add('placeholder-active');
 }
 
