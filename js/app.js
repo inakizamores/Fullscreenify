@@ -4,12 +4,11 @@ let updateIntervalId = null;
 let currentSongId = null;
 let currentIsPlaying = null;
 let currentBackgroundImage = null;
-let previousAlbumImage = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
 // Updated UI
-async function updateUI(data) {
+function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
@@ -24,17 +23,19 @@ async function updateUI(data) {
 
     // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
-        updateBackgroundImages(imageUrl);
-        updateAlbumImages(imageUrl);
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+        currentBackgroundImage = imageUrl; // Update the current background image URL
     }
 
     if (!isCdView) {
         // Album cover view
+        updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
+        updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
@@ -54,63 +55,6 @@ async function updateUI(data) {
         }
     }
     imageContainer.classList.remove('placeholder-active');
-}
-
-function updateBackgroundImages(imageUrl) {
-    const body = document.body;
-
-    // If there's a previous background image, set it to body::after for crossfading
-    if (currentBackgroundImage) {
-        body.style.setProperty('--previous-background', `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${currentBackgroundImage})`);
-        body.classList.add('crossfade');
-    }
-
-    // Add a transitionrun event listener to the body element
-    body.addEventListener('transitionrun', function crossfadeHandler() {
-        // Update the current background image URL
-        currentBackgroundImage = imageUrl;
-
-        // Remove the crossfade class after the transition is complete
-        body.classList.remove('crossfade');
-
-        // Remove the event listener after it's executed once
-        body.removeEventListener('transitionrun', crossfadeHandler);
-    });
-
-    // Set the new image to body::before
-    body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-}
-
-function updateAlbumImages(imageUrl) {
-    const imageContainer = document.querySelector('.image-container');
-    const albumCover = document.getElementById('album-cover');
-    const previousAlbumCover = document.getElementById('previous-album-cover');
-    const cdImage = document.getElementById('cd-image');
-
-    // If there's a previous album image, set it to previousAlbumCover for crossfading
-    if (previousAlbumImage) {
-        previousAlbumCover.src = previousAlbumImage;
-        previousAlbumCover.style.display = 'block';
-    }
-
-    // Update the current album image
-    updateImage(albumCover, imageUrl);
-    updateImage(cdImage, imageUrl);
-
-    // Add the 'crossfade' class to the image container to trigger the transition
-    imageContainer.classList.add('crossfade');
-
-    // Add a transitionrun event listener to the image container
-    imageContainer.addEventListener('transitionrun', function crossfadeHandler() {
-        // Update the previous album image URL
-        previousAlbumImage = imageUrl;
-        
-        // Remove the 'crossfade' class after the transition is complete
-        imageContainer.classList.remove('crossfade');
-
-        // Remove the event listener after it's executed once
-        imageContainer.removeEventListener('transitionrun', crossfadeHandler);
-    });
 }
 
 function displayPlaceholder() {
