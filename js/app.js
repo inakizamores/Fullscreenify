@@ -47,7 +47,7 @@ async function updateUI(data) {
 
 
         // Update play/pause button icon based on the current state
-        if (isPlaying !== currentIsPlaying) {
+       if (isPlaying !== currentIsPlaying) {
             if (isPlaying) {
                 playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 playPauseBtn.title = 'Pause';
@@ -62,7 +62,6 @@ async function updateUI(data) {
                 }
             }
         }
-
     imageContainer.classList.remove('placeholder-active');
 }
 
@@ -164,55 +163,35 @@ async function toggleCdView() {
     const cdImage = document.getElementById('cd-image');
     const placeholderText = document.getElementById('placeholder-text');
 
+    if (currentSongId){
+         try {
+             const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                 headers: {
+                     'Authorization': `Bearer ${accessToken}`
+                 }
+             });
+            if (response.ok) {
+                const data = await response.json();
+               currentIsPlaying = data.is_playing
+               await updateUI(data);
 
+
+            }else {
+               handleApiError(response);
+            }
+         }catch(error){
+             console.error('Error fetching currently playing song for CD image:', error);
+         }
+    }
      if (isCdView) {
          // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
-         if(currentSongId){
-             try {
-                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                     headers: {
-                         'Authorization': `Bearer ${accessToken}`
-                     }
-                 });
-                if (response.ok) {
-                    const data = await response.json();
-                     currentIsPlaying = data.is_playing
-                    await updateUI(data)
-
-                }else {
-                   handleApiError(response);
-                }
-             }catch(error){
-                 console.error('Error fetching currently playing song for CD image:', error);
-             }
-        }
 
 
      } else {
          // Switch to album cover view
          cdContainer.style.display = 'none';
-          if(currentSongId){
-            try {
-                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (response.ok) {
-                   const data = await response.json();
-                     currentIsPlaying = data.is_playing
-                    await updateUI(data)
-
-                }else {
-                    handleApiError(response);
-                 }
-            }catch(error){
-                console.error('Error fetching currently playing song for album cover:', error);
-            }
-        }
-
      }
      isToggling = false; //Allow future calls
 
@@ -229,21 +208,61 @@ async function togglePlayPause() {
         if (response.ok) {
             const data = await response.json();
             currentIsPlaying = data.is_playing;
-             await updateUI(data)
 
             if (currentIsPlaying) {
                 await pauseSong();
             } else {
                 await playSong();
             }
-            await getCurrentlyPlaying();
 
-
+          await getCurrentlyPlaying();
+           
         } else {
             handleApiError(response);
         }
     } catch (error) {
         console.error('Error toggling play/pause:', error);
+    }
+}
+
+async function getCurrentlyPlaying() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No content - nothing is playing
+            displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+        } else if (response.ok) {
+            const data = await response.json();
+            currentIsPlaying = data.is_playing
+            // Update UI if the song or playback state has changed
+            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+               await updateUI(data);
+               currentSongId = data.item.id;
+               
+            }
+
+            // Adjust update interval based on playing state
+            if (data.is_playing) {
+                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+            } else {
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            }
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+            hideSessionExpiredModal()
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error fetching currently playing song:', error);
     }
 }
 
