@@ -65,7 +65,7 @@ body {
 }
 
 /* Show controls on hover of image container */
-.image-container:hover + #placeholder-text + .controls {
+.image-container:hover .controls {
     opacity: 1;
 }
 
