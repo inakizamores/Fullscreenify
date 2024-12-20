@@ -30,19 +30,19 @@ function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
-        imageContainer.style.display = "flex"; // Show image container
+        imageContainer.style.display = "flex";
         updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         cdContainer.style.display = 'none'; // Hide CD container
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        imageContainer.style.display = "flex"; // Show image container *** This was missing
+        imageContainer.style.display = "flex";
         updateImage(cdImage, imageUrl);
+        cdContainer.style.display = 'flex'; // Show CD container
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
-        cdContainer.style.display = 'flex'; // Show CD container
     }
 
     // Update play/pause button icon based on the current state
@@ -155,14 +155,11 @@ async function toggleCdView() {
     const placeholderText = document.getElementById('placeholder-text');
     const imageContainer = document.querySelector('.image-container');
 
-    // Hide both images initially
-    albumCover.style.display = 'none';
-    cdImage.style.display = 'none';
-
     if (isCdView) {
         // Switch to CD view
-        imageContainer.style.display = "flex"; // Show image container
+        imageContainer.style.display = "flex";
         cdContainer.style.display = 'flex'; // Show CD container
+        albumCover.style.display = 'none'; // Hide album cover
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -192,8 +189,9 @@ async function toggleCdView() {
         } 
     } else {
         // Switch to album cover view
-        imageContainer.style.display = "flex"; // Show image container
+        imageContainer.style.display = "flex";
         cdContainer.style.display = 'none'; // Hide CD container
+        cdImage.style.display = 'none'; // Hide CD image
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
