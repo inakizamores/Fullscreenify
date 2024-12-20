@@ -37,7 +37,7 @@ function updateUI(data) {
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        imageContainer.style.display = "flex"; // Show image container
+        imageContainer.style.display = "flex"; // Show image container *** This was missing
         updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
