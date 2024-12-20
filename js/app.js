@@ -6,24 +6,24 @@ let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
-let isCdToggleActive = false;
 
 // Updated UI
-async function updateUI(data) {
+function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector('.image-container');
-    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
+    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
 
-    // Background image transition logic
+    // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
-        await transitionBackground(imageUrl);
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+        currentBackgroundImage = imageUrl;
     }
 
 
@@ -59,27 +59,6 @@ async function updateUI(data) {
         }
     }
     imageContainer.classList.remove('placeholder-active');
-}
-
-
-async function transitionBackground(newImageUrl) {
-    const body = document.body;
-    // If the current background is the same as the new image we don't need to do anything.
-    if(currentBackgroundImage === newImageUrl) return;
-
-    body.classList.add('changing-background');
-
-    // Use a promise for the transition to complete
-    await new Promise((resolve) => {
-        setTimeout(() => {
-            body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${newImageUrl})`;
-            currentBackgroundImage = newImageUrl;
-           resolve();
-        }, 500); // Match the transition duration
-    });
-
-
-    body.classList.remove('changing-background');
 }
 
 
@@ -171,11 +150,6 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-     if (isCdToggleActive) {
-        return;
-    }
-    isCdToggleActive = true;
-
     isCdView = !isCdView;
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
@@ -238,10 +212,6 @@ async function toggleCdView() {
         }
 
     }
-
-    setTimeout(() => {
-        isCdToggleActive = false;
-    }, 1000)
 }
 
 
