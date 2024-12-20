@@ -39,9 +39,6 @@ function updateUI(data) {
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundRepeat = 'no-repeat';
 
-    // Show controls
-    document.querySelector('.controls').style.display = 'flex';
-
     // Update play/pause button icon based on the current state
     if (isPlaying) {
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
@@ -78,9 +75,6 @@ function displayPlaceholder() {
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
     document.body.style.backgroundImage = 'none'; // Remove background image
-
-    // Hide controls if nothing is playing
-    document.querySelector('.controls').style.display = 'none';
 }
 
 function handleApiError(response) {

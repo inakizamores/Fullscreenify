@@ -47,12 +47,21 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
     z-index: 0;
+    cursor: pointer;
 }
 
-/* Album cover hover effects */
-#album-cover:hover {
+/* Hover effects for album cover and CD image */
+#album-cover:hover,
+#cd-image:hover {
     transform: scale(1.05); /* Enlarge on hover */
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
+}
+
+/* Show controls on hover of album cover or CD image */
+#album-cover:hover + #cd-container + #placeholder-text + .controls,
+#cd-image:hover + #placeholder-text + .controls,
+#album-cover:hover + #placeholder-text + .controls {
+    opacity: 1;
 }
 
 /* Control buttons container styles */
@@ -68,16 +77,6 @@ body {
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 10; /* Ensure controls are above the blurred background */
-}
-
-/* Show controls on image hover for regular view */
-#album-cover:hover + .controls {
-    opacity: 1;
-}
-
-/* Show controls on CD container hover for CD view */
-#cd-container:hover .controls {
-    opacity: 1;
 }
 
 /* Individual control button styles */
@@ -191,11 +190,6 @@ body {
     align-items: center;
 }
 
-/* CD Container Hover Effect for Controls */
-#cd-container:hover .controls {
-    opacity: 1;
-}
-
 #cd-image {
     max-width: 85%; /* Adjust size as needed */
     max-height: 85%; /* Adjust size as needed */
@@ -205,12 +199,7 @@ body {
     animation-play-state: paused; /* Initially paused */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Add initial shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
-}
-
-/* CD hover effects */
-#cd-container:hover #cd-image {
-    transform: scale(1.05) rotate(0deg); /* Enlarge on hover, maintain rotation */
-    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
+    cursor: pointer;
 }
 
 /* Keyframes for CD rotation animation */
