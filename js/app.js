@@ -202,7 +202,7 @@ async function toggleCdView() {
                 });
                 if (response.ok) {
                    const data = await response.json();
-                    currentIsPlaying = data.is_playing
+                     currentIsPlaying = data.is_playing
                     await updateUI(data)
 
                 }else {
@@ -229,13 +229,16 @@ async function togglePlayPause() {
         if (response.ok) {
             const data = await response.json();
             currentIsPlaying = data.is_playing;
+             await updateUI(data)
 
             if (currentIsPlaying) {
                 await pauseSong();
             } else {
                 await playSong();
             }
-             await getCurrentlyPlaying();
+            await getCurrentlyPlaying();
+
+
         } else {
             handleApiError(response);
         }
