@@ -335,7 +335,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 .bottom-right-btn:hover {
@@ -347,8 +347,6 @@ body {
     font-size: 20px;
     color: #000;
 }
-
-/* ... existing styles ... */
 
 /* Session Expired Modal Styles */
 #session-expired-modal {
@@ -375,11 +373,12 @@ body {
     /* Center the modal */
     background-color: #222;
     padding: 40px;
-    border-radius: 10px;
+    border-radius: 20px;
+    /* More rounded corners */
     text-align: center;
     color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    /* Add a subtle shadow */
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
+    /* Similar shadow as album image */
     max-width: 400px;
     /* Limit modal width */
     width: 80%;
@@ -397,6 +396,35 @@ body {
     font-size: 16px;
     margin-bottom: 25px;
     font-family: 'Roboto', sans-serif;
+}
+
+/* Style for re-authenticate button (same as login button) */
+#re-authenticate-btn {
+    background-color: #1DB954;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    animation: pulsate 2s infinite;
+    /* Add the pulsate animation */
+}
+
+#re-authenticate-btn i {
+    margin-right: 10px;
+    /* Add some space between the icon and text */
+    font-size: 24px;
+    /* Adjust icon size as needed */
+}
+
+/* Add glow effect to the re-authenticate button */
+#re-authenticate-btn:hover {
+    box-shadow: 0 0 15px #1DB954;
 }
 
 /* Test Button Styles */
@@ -417,7 +445,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 #test-expiry-btn:hover {

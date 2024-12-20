@@ -86,16 +86,6 @@ function displayPlaceholder() {
     imageContainer.classList.add('placeholder-active');
 }
 
-function handleApiError(response) {
-    if (response.status === 401) {
-        // Unauthorized - token expired or invalid.
-        localStorage.removeItem('fullscreenify_access_token');
-        checkAuthentication();
-    } else {
-        console.error('API Error:', response.status, response.statusText);
-    }
-}
-
 // Function to show the session expired modal
 function showSessionExpiredModal() {
     const modal = document.getElementById('session-expired-modal');
@@ -114,10 +104,28 @@ document.getElementById('re-authenticate-btn').addEventListener('click', () => {
     handleLogin(); // Call the existing login function
 });
 
+// Function to simulate token expiration (for testing)
+function simulateTokenExpiration() {
+    console.log("Simulating token expiration...");
+    accessToken = null; // Clear the access token
+    localStorage.removeItem('fullscreenify_access_token'); // Remove the token from local storage
+    showSessionExpiredModal();
+}
+
 // Attach event listener to the test expiry button (for development/testing)
 document.getElementById('test-expiry-btn').addEventListener('click', () => {
-    showSessionExpiredModal();
+    simulateTokenExpiration();
 });
+
+function handleApiError(response) {
+    if (response.status === 401) {
+        // Unauthorized - token expired or invalid.
+        localStorage.removeItem('fullscreenify_access_token');
+        showSessionExpiredModal()
+    } else {
+        console.error('API Error:', response.status, response.statusText);
+    }
+}
 
 function startUpdatingSongInfo(interval) {
     if (updateIntervalId) {
