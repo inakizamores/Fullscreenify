@@ -1,4 +1,4 @@
-const ACTIVE_UPDATE_INTERVAL = 500; // 0.5 second (Faster update when playing)
+const ACTIVE_UPDATE_INTERVAL = 250; // 0.25 second (Faster update when playing)
 const INACTIVE_UPDATE_INTERVAL = 2000; // 2 seconds (Faster update when paused)
 let updateIntervalId = null;
 let currentSongId = null;
@@ -21,9 +21,9 @@ function updateUI(data) {
     // Manage image cache
     manageImageCache(imageUrl);
 
-    // Update body background image only if the URL is different
-    if (currentBackgroundImage !== imageUrl) {
-        document.body.style.backgroundImage = `url(${imageUrl})`;
+    // Update body background image only if the song is different
+    if (currentSongId !== data.item.id) {
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
         currentBackgroundImage = imageUrl; // Update the current background image URL
     }
 
