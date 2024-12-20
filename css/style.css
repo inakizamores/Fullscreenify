@@ -14,7 +14,6 @@ body::before {
     filter: blur(20px); /* Adjust blur amount as needed */
     z-index: -1; /* Place it behind other elements */
     transform: scale(1.1);
-    transition: background-image 0.5s ease; /* Add smooth transition for background image changes */
 }
 
 body {
@@ -55,6 +54,12 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
     display: block; /* Ensure it behaves like a block element */
+    opacity: 1; /* Initially fully visible */
+    transition: opacity 0.5s ease-in-out; /* Set the transition for the opacity change */
+}
+
+#album-cover.hidden {
+    opacity: 0;
 }
 
 /* Hover effects for album cover and CD image */
@@ -218,6 +223,12 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
     cursor: pointer;
     display: block;
+    opacity: 1; /* Initially fully visible */
+    transition: opacity 0.5s ease-in-out; /* Set the transition for the opacity change */
+}
+
+#cd-image.hidden {
+    opacity: 0;
 }
 
 /* Keyframes for CD rotation animation */

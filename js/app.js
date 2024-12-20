@@ -8,7 +8,7 @@ let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
 // Updated UI
-function updateUI(data) {
+async function updateUI(data) {
     const timestamp = new Date().getTime(); // Get current timestamp
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
@@ -23,19 +23,32 @@ function updateUI(data) {
 
     // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
-        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-        currentBackgroundImage = imageUrl; // Update the current background image URL
+        // Add the 'hidden' class to the images to trigger the fade-out effect
+        albumCover.classList.add('hidden');
+        cdImage.classList.add('hidden');
+
+        // Set a timeout to update the background image after the fade-out transition
+        setTimeout(() => {
+            document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+            currentBackgroundImage = imageUrl; // Update the current background image URL
+
+            // Update the images with the new URL
+            updateImage(albumCover, imageUrl);
+            updateImage(cdImage, imageUrl);
+
+            // Remove the 'hidden' class to trigger the fade-in effect
+            albumCover.classList.remove('hidden');
+            cdImage.classList.remove('hidden');
+        }, 500); // Timeout duration should match the CSS transition duration
     }
 
     if (!isCdView) {
         // Album cover view
-        updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
