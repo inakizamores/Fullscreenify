@@ -4,6 +4,7 @@ let updateIntervalId = null;
 let currentSongId = null;
 let currentIsPlaying = null;
 let currentBackgroundImage = null;
+let previousAlbumImage = null;
 let isCdView = false; // Track CD view state
 const imageCache = new Set(); // Track cached image URLs
 
@@ -23,23 +24,8 @@ async function updateUI(data) {
 
     // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
-        // Add the 'hidden' class to the images to trigger the fade-out effect
-        albumCover.classList.add('hidden');
-        cdImage.classList.add('hidden');
-
-        // Set a timeout to update the background image after the fade-out transition
-        setTimeout(() => {
-            document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-            currentBackgroundImage = imageUrl; // Update the current background image URL
-
-            // Update the images with the new URL
-            updateImage(albumCover, imageUrl);
-            updateImage(cdImage, imageUrl);
-
-            // Remove the 'hidden' class to trigger the fade-in effect
-            albumCover.classList.remove('hidden');
-            cdImage.classList.remove('hidden');
-        }, 500); // Timeout duration should match the CSS transition duration
+        updateBackgroundImages(imageUrl);
+        updateAlbumImages(imageUrl);
     }
 
     if (!isCdView) {
@@ -68,6 +54,56 @@ async function updateUI(data) {
         }
     }
     imageContainer.classList.remove('placeholder-active');
+}
+
+function updateBackgroundImages(imageUrl) {
+    const body = document.body;
+
+    // Set the new image to body::before
+    body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+
+    // If there's a previous background image, set it to body::after for crossfading
+    if (currentBackgroundImage) {
+        body.style.setProperty('--previous-background', `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${currentBackgroundImage})`);
+        body.classList.add('crossfade');
+
+        // Remove the crossfade class after the transition is complete
+        setTimeout(() => {
+            body.classList.remove('crossfade');
+        }, 500); // 500ms matches the transition duration in CSS
+    }
+
+    // Update the current background image URL
+    currentBackgroundImage = imageUrl;
+}
+
+function updateAlbumImages(imageUrl) {
+    const imageContainer = document.querySelector('.image-container');
+    const albumCover = document.getElementById('album-cover');
+    const previousAlbumCover = document.getElementById('previous-album-cover');
+    const cdImage = document.getElementById('cd-image');
+
+    // If there's a previous album image, set it to previousAlbumCover for crossfading
+    if (previousAlbumImage) {
+        previousAlbumCover.src = previousAlbumImage;
+        previousAlbumCover.style.display = 'block';
+    }
+
+    // Update the current album image
+    updateImage(albumCover, imageUrl);
+    updateImage(cdImage, imageUrl);
+
+    // Add the 'crossfade' class to the image container to trigger the transition
+    imageContainer.classList.add('crossfade');
+
+    // Remove the 'crossfade' class after the transition is complete
+    setTimeout(() => {
+        imageContainer.classList.remove('crossfade');
+        previousAlbumCover.style.display = 'none';
+    }, 500); // 500ms matches the transition duration in CSS
+
+    // Update the previous album image URL
+    previousAlbumImage = imageUrl;
 }
 
 function displayPlaceholder() {
