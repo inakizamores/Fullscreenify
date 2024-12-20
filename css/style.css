@@ -70,8 +70,12 @@ body {
     z-index: 10; /* Ensure controls are above the blurred background */
 }
 
-/* Show controls only on image hover - CORRECTED */
-#album-cover:hover + .controls,
+/* Show controls on image hover for regular view */
+#album-cover:hover + .controls {
+    opacity: 1;
+}
+
+/* Show controls on CD container hover for CD view */
 #cd-container:hover .controls {
     opacity: 1;
 }
@@ -204,7 +208,7 @@ body {
 }
 
 /* CD hover effects */
-.fullscreenify-container:hover #cd-image {
+#cd-container:hover #cd-image {
     transform: scale(1.05) rotate(0deg); /* Enlarge on hover, maintain rotation */
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
