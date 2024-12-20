@@ -28,6 +28,18 @@
         </div>
     </div>
 
+    <!-- Session Expired Modal -->
+    <div id="session-expired-modal">
+        <div class="modal-content">
+            <h2>Session Expired</h2>
+            <p>Your session has expired. Please log in again to continue.</p>
+            <button id="re-authenticate-btn" class="login-btn">
+                <i class="fab fa-spotify"></i>
+                Login with Spotify
+            </button>
+        </div>
+    </div>
+
     <div class="fullscreenify-container" style="display: none;">
         <div class="image-container">
             <img id="album-cover" src="" alt="Album Cover">
@@ -60,6 +72,11 @@
         <!-- Logout Button -->
         <button id="logout-btn" class="bottom-right-btn" title="Logout">
             <i class="fas fa-sign-out-alt"></i>
+        </button>
+
+        <!-- Test Expiry Button -->
+        <button id="test-expiry-btn" title="Test Session Expiry">
+            <i class="fas fa-exclamation-triangle"></i>
         </button>
     </div>
 

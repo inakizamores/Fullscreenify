@@ -96,6 +96,29 @@ function handleApiError(response) {
     }
 }
 
+// Function to show the session expired modal
+function showSessionExpiredModal() {
+    const modal = document.getElementById('session-expired-modal');
+    modal.style.display = 'block';
+}
+
+// Function to hide the session expired modal
+function hideSessionExpiredModal() {
+    const modal = document.getElementById('session-expired-modal');
+    modal.style.display = 'none';
+}
+
+// Attach event listener to the re-authenticate button in the modal
+document.getElementById('re-authenticate-btn').addEventListener('click', () => {
+    hideSessionExpiredModal();
+    handleLogin(); // Call the existing login function
+});
+
+// Attach event listener to the test expiry button (for development/testing)
+document.getElementById('test-expiry-btn').addEventListener('click', () => {
+    showSessionExpiredModal();
+});
+
 function startUpdatingSongInfo(interval) {
     if (updateIntervalId) {
         clearInterval(updateIntervalId);

@@ -10,6 +10,7 @@ const scopes = [
 let accessToken = localStorage.getItem('fullscreenify_access_token'); // Preload token
 let isLoggedIn = !!accessToken; // Assume logged in if token exists
 
+// Function to initiate the Spotify authentication process
 function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
     const params = {
@@ -20,9 +21,12 @@ function handleLogin() {
         show_dialog: true
     };
     authUrl.search = new URLSearchParams(params).toString();
+
+    // Redirect to the Spotify authorization URL
     window.location.href = authUrl.toString();
 }
 
+// Function to handle the redirect from Spotify after authentication
 function handleRedirect() {
     const hashParams = new URLSearchParams(window.location.hash.substr(1));
     accessToken = hashParams.get('access_token');
@@ -31,8 +35,9 @@ function handleRedirect() {
         // Store the access token securely (e.g., local storage)
         localStorage.setItem('fullscreenify_access_token', accessToken);
         isLoggedIn = true;
-        // Hide the login screen
+        // Hide the login screen and the session expired modal
         document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('session-expired-modal').style.display = 'none';
         // Show the main content
         document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song
@@ -40,6 +45,7 @@ function handleRedirect() {
     }
 }
 
+// Function to check the user's authentication status
 function checkAuthentication() {
     if (!isLoggedIn) {
         // Show the login screen if not authenticated
