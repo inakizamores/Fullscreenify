@@ -203,38 +203,26 @@ body {
 /* Styles for CD display (increased size and responsive scaling) */
 #cd-container {
     display: none;
-    position: absolute;
+    position: relative;
     width: 90%;
-    /* Set width to be responsive, same as .image-container */
     height: 0;
-    /* Height will be determined by padding-bottom */
     padding-bottom: 90%;
-    /* Maintain 1:1 aspect ratio based on width */
     justify-content: center;
     align-items: center;
 }
 
 #cd-image {
     position: absolute;
-    /* Position absolutely within the container */
     top: 0;
     left: 0;
     width: 100%;
-    /* Make the image fill the container */
     height: 100%;
-    /* Make the image fill the container */
     object-fit: cover;
-    /* This is the key property for cropping */
     border-radius: 50%;
-    /* Makes the image circular */
     animation: rotateCD 10s linear infinite;
-    /* Add the rotation animation */
     animation-play-state: paused;
-    /* Initially paused */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    /* Add initial shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Add transitions */
     cursor: pointer;
     display: block;
 }

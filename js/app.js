@@ -37,7 +37,7 @@ function updateUI(data) {
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        imageContainer.style.display = "block"; // Show image container
+        imageContainer.style.display = "flex"; // Show image container
         updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
@@ -161,7 +161,7 @@ async function toggleCdView() {
 
     if (isCdView) {
         // Switch to CD view
-        imageContainer.style.display = "block"; // Show image container
+        imageContainer.style.display = "flex"; // Show image container
         cdContainer.style.display = 'flex'; // Show CD container
         if (currentSongId) {
             try {
