@@ -153,7 +153,6 @@ async function toggleCdView() {
     const placeholderText = document.getElementById('placeholder-text');
 
     if (isCdView) {
-        // Switch to CD view
         cdContainer.style.display = 'flex';
         albumCover.style.display = 'none';
         if (currentSongId) {
@@ -169,13 +168,6 @@ async function toggleCdView() {
                     await updateImage(cdImage, imageUrl);
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
-
-                    // Pause or resume CD animation based on playback state
-                    if (data.is_playing) {
-                        cdImage.style.animationPlayState = 'running';
-                    } else {
-                        cdImage.style.animationPlayState = 'paused';
-                    }
                 } else {
                     handleApiError(response);
                 }
@@ -184,7 +176,6 @@ async function toggleCdView() {
             }
         }
     } else {
-        // Switch to album cover view
         cdContainer.style.display = 'none';
         cdImage.style.display = 'none';
         if (currentSongId) {
