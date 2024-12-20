@@ -109,6 +109,7 @@ function simulateTokenExpiration() {
     console.log("Simulating token expiration...");
     accessToken = null; // Clear the access token
     localStorage.removeItem('fullscreenify_access_token'); // Remove the token from local storage
+    localStorage.removeItem('fullscreenify_token_expiration'); // Remove the token expiration from local storage
     showSessionExpiredModal();
 }
 
@@ -120,8 +121,8 @@ document.getElementById('test-expiry-btn').addEventListener('click', () => {
 function handleApiError(response) {
     if (response.status === 401) {
         // Unauthorized - token expired or invalid.
-        localStorage.removeItem('fullscreenify_access_token');
-        showSessionExpiredModal()
+        console.error('API Error 401: Unauthorized. Access token expired.');
+        showSessionExpiredModal(); // Show the session expired modal
     } else {
         console.error('API Error:', response.status, response.statusText);
     }
@@ -269,6 +270,22 @@ function manageImageCache(imageUrl) {
     }
 }
 
+// Function to schedule token refresh
+function scheduleTokenRefresh() {
+    const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
+    if (expirationTime) {
+        const timeUntilExpiration = expirationTime - Date.now();
+        // Refresh 60 seconds before expiration
+        const refreshTimeout = Math.max(0, timeUntilExpiration - 60000);
+
+        console.log(`Scheduling token refresh in ${refreshTimeout / 1000} seconds.`);
+
+        setTimeout(() => {
+            refreshToken();
+        }, refreshTimeout);
+    }
+}
+
 // Event listeners for control buttons
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
@@ -282,6 +299,7 @@ function initializeApp() {
     } else {
         checkAuthentication();
     }
+    scheduleTokenRefresh(); // Start the refresh cycle
 }
 
 // Call initializeApp() only once on page load

@@ -12,7 +12,9 @@ Fullscreenify is a web application that displays the album cover of your current
 -   **Dynamic Updates:** Updates the displayed album art in real-time when the song changes. The update frequency is adjusted based on whether music is actively playing or paused.
 -   **Responsive Design:** Adapts to different screen sizes (desktop and mobile) for optimal viewing.
 -   **Hover Effects:** Control buttons, album art, and CD image have hover effects for visual feedback.
--   **Automatic Login Persistence:** Stores the Spotify access token in local storage to automatically log the user in on subsequent visits (until the token expires).
+-   **Automatic Login Persistence:** Stores the Spotify access token in local storage to automatically log the user in on subsequent visits.
+-   **Automatic Token Refresh:** Silently refreshes the Spotify access token in the background using a hidden iframe to ensure uninterrupted playback.
+-   **Session Expiration Handling:** Gracefully handles token expiration by displaying a modal that prompts the user to re-authenticate.
 -   **Dedicated Login Screen:** Presents a separate login screen with:
     -   **App Name and Description:** Clearly presents the app name "FULLSCREENIFY" and a brief description of its features.
     -   **Pulsating Spotify Button:** A visually engaging login button with the Spotify logo that pulsates subtly.
@@ -28,7 +30,15 @@ The application consists of the following core components:
     -   Handles user authentication with Spotify using the OAuth 2.0 flow.
     -   Implements a dedicated login screen that appears before the main content is loaded.
     -   Redirects users to the Spotify login page to grant access to their account.
-    -   Retrieves the access token after successful login and stores it in the browser's local storage.
+    -   Retrieves the access token and its expiration time after successful login and stores them in the browser's local storage.
+    -   Implements automatic token refresh using a hidden iframe:
+        -   A hidden iframe is created and loads the Spotify authorization URL with `show_dialog=false` to attempt silent re-authentication.
+        -   If the user is still logged into Spotify and the browser allows it, Spotify redirects back within the iframe without user interaction.
+        -   The main app window listens for a message from the iframe containing the new access token.
+        -   The access token and expiration time are updated in local storage.
+        -   This process is scheduled to run shortly before the current token expires.
+    -   Handles session expiration by detecting 401 errors from the Spotify API and displaying a re-authentication modal.
+    -   Provides a logout function that clears the stored token and expiration time.
 
 -   **API Interaction (`api.js`):**
     -   Communicates with the Spotify Web API to fetch data and control playback.
@@ -38,15 +48,17 @@ The application consists of the following core components:
         -   Pause a song (`pauseSong`).
         -   Skip to the next song (`nextSong`).
         -   Go to the previous song (`prevSong`).
+    -   Handles API errors, specifically 401 errors to detect token expiration.
 
 -   **User Interface (`app.js`):**
     -   Manages the UI elements and updates them based on the song data.
     -   Sets the album art as the full-screen background and applies the blur effect.
     -   Dynamically updates the play/pause button icon based on the current playback state.
     -   Implements intelligent polling to update the UI at different intervals depending on whether music is playing or paused.
-    -   Handles API errors (e.g., expired tokens) and prompts re-authentication.
+    -   Handles the display and behavior of the session expiration modal.
     -   Provides a toggle to switch between album art and CD display.
     -   Displays placeholder content when no music is playing.
+    -   Schedules the token refresh mechanism.
 
 -   **Styling (`style.css`):**
     -   Defines the visual appearance of the application, including layout, colors, typography, and animations.
@@ -59,6 +71,7 @@ The application consists of the following core components:
         -   A brief app description.
         -   A pulsating Spotify login button with a subtle glow effect.
         -   A very subtle, animated background gradient.
+    -   Styles the session expiration modal.
     -   Ensures responsiveness across different screen sizes.
 
 ## Prerequisites
@@ -96,6 +109,10 @@ The application consists of the following core components:
     -   Set the production branch (usually `main` or `master`).
 4. Update the Redirect URI in your Spotify Developer Dashboard to include your Netlify site's URL.
 
+## Limitations
+
+-   The automatic token refresh mechanism relies on a hidden iframe and may be affected by browser restrictions or if the user is not logged into Spotify. In such cases, manual re-authentication through the session expiration modal will be required.
+
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. (You can add a LICENSE file if you want to specify licensing terms)LICENSE file if you want to specify licensing terms)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. (You can add a LICENSE file if you want to specify licensing terms)

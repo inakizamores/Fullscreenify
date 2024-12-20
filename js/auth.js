@@ -29,10 +29,14 @@ function handleLogin() {
 function handleRedirect() {
     const hashParams = new URLSearchParams(window.location.hash.substr(1));
     accessToken = hashParams.get('access_token');
+    const expiresIn = hashParams.get('expires_in');
 
     if (accessToken) {
-        // Store the access token securely (e.g., local storage)
+        // Store the access token and expiration time
+        const expirationTime = Date.now() + parseInt(expiresIn) * 1000;
         localStorage.setItem('fullscreenify_access_token', accessToken);
+        localStorage.setItem('fullscreenify_token_expiration', expirationTime);
+
         isLoggedIn = true;
         // Hide the login screen and the session expired modal
         document.getElementById('login-screen').style.display = 'none';
@@ -63,6 +67,7 @@ function checkAuthentication() {
 function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
+    localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
     isLoggedIn = false;
 
     // Force a page refresh to clear the URL and state
@@ -72,6 +77,64 @@ function handleLogout() {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
     document.querySelector('.fullscreenify-container').style.display = 'none';
+}
+
+// Function to refresh the access token
+function refreshToken() {
+    console.log('Refreshing access token...');
+
+    // Create a hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.name = 'hidden-auth-iframe';
+    document.body.appendChild(iframe);
+
+    // Set the source of the iframe to the Spotify authorization URL
+    const authUrl = new URL('https://accounts.spotify.com/authorize');
+    const params = {
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        scope: scopes.join(' '),
+        response_type: 'token',
+        show_dialog: false // Try silent authentication
+    };
+    authUrl.search = new URLSearchParams(params).toString();
+    iframe.src = authUrl.toString();
+
+    // Listen for messages from the iframe
+    window.addEventListener('message', handleIframeMessage);
+
+    // Handle the message received from the iframe
+    function handleIframeMessage(event) {
+        // Check if the message is from Spotify and if it's from the hidden iframe
+        if (event.origin === 'https://accounts.spotify.com' && event.source === iframe.contentWindow) {
+            const hashParams = new URLSearchParams(event.data);
+            const newAccessToken = hashParams.get('access_token');
+            const expiresIn = hashParams.get('expires_in');
+
+            if (newAccessToken) {
+                // Update the access token and expiration time
+                const expirationTime = Date.now() + parseInt(expiresIn) * 1000;
+                accessToken = newAccessToken;
+                localStorage.setItem('fullscreenify_access_token', newAccessToken);
+                localStorage.setItem('fullscreenify_token_expiration', expirationTime);
+
+                console.log('Access token refreshed successfully.');
+                // Schedule the next refresh
+                scheduleTokenRefresh();
+                // Refresh the currently playing song
+                getCurrentlyPlaying();
+            } else {
+                console.error('Failed to refresh access token.');
+                // Handle refresh failure (e.g., show session expired modal)
+                showSessionExpiredModal();
+            }
+
+            // Clean up: remove the iframe and event listener
+            document.body.removeChild(iframe);
+            window.removeEventListener('message', handleIframeMessage);
+        }
+    }
 }
 
 // Event listener for the login button
