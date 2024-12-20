@@ -46,9 +46,9 @@ body {
     max-height: 90%;
     z-index: 0;
     cursor: pointer;
-    display: flex; /* Added for consistent sizing */
-    align-items: center; /* Added for consistent sizing */
-    justify-content: center; /* Added for consistent sizing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -208,9 +208,9 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    max-width: 90%; /* Added for consistent sizing */
-    max-height: 90%; /* Added for consistent sizing */
-    display: flex; /* Added for consistent sizing */
+    max-width: 94.5%; /* Increased max-width by ~5% (90% * 1.05) */
+    max-height: 94.5%; /* Increased max-height by ~5% (90% * 1.05) */
+    display: flex;
 }
 
 #cd-image {
