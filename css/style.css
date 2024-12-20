@@ -69,8 +69,8 @@ body {
     opacity: 1;
 }
 
-/* Hide controls when placeholder text is visible */
-#placeholder-text:not([style*="display: none"]) + .controls {
+/* Hide controls when placeholder is active */
+.image-container.placeholder-active .controls {
     opacity: 0;
 }
 

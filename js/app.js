@@ -12,6 +12,7 @@ function updateUI(data) {
     const cdImage = document.getElementById('cd-image');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
+    const imageContainer = document.querySelector('.image-container');
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
@@ -49,6 +50,7 @@ function updateUI(data) {
         playPauseBtn.title = 'Play';
         cdImage.style.animationPlayState = 'paused';
     }
+    imageContainer.classList.remove('placeholder-active');
 }
 
 function displayPlaceholder() {
@@ -57,6 +59,7 @@ function displayPlaceholder() {
     placeholderText.style.display = 'block';
 
     const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+    const imageContainer = document.querySelector('.image-container');
 
     if (!isCdView) {
         // Album cover view
@@ -75,6 +78,7 @@ function displayPlaceholder() {
 
     document.body.style.backgroundColor = '#222'; // Set to a default color
     document.body.style.backgroundImage = 'none'; // Remove background image
+    imageContainer.classList.add('placeholder-active');
 }
 
 function handleApiError(response) {
