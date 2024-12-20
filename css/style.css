@@ -199,27 +199,23 @@ body {
 
 /* Styles for CD display (increased size and responsive scaling) */
 #cd-container {
-    display: none;
+    display: none; /* Initially hidden */
     position: relative;
-    width: 90%;
-    height: 0;
-    padding-bottom: 90%;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
 #cd-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    /* Remove max-width and max-height */
     border-radius: 50%;
-    animation: rotateCD 10s linear infinite;
-    animation-play-state: paused;
-    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Add position for pseudo-element */
+    animation: rotateCD 10s linear infinite; /* Add the rotation animation */
+    animation-play-state: paused; /* Initially paused */
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Add initial shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
     cursor: pointer;
     display: block;
 }
@@ -227,10 +223,10 @@ body {
 /* Keyframes for CD rotation animation */
 @keyframes rotateCD {
     from {
-        transform: rotate(0deg);
+        transform: rotate(0deg) scale(1); /* Start with normal scale */
     }
     to {
-        transform: rotate(360deg);
+        transform: rotate(360deg) scale(1); /* Maintain normal scale during rotation */
     }
 }
 

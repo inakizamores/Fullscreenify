@@ -15,7 +15,6 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector('.image-container');
-    const cdContainer = document.getElementById('cd-container');
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
@@ -32,15 +31,15 @@ function updateUI(data) {
         // Album cover view
         updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
-        cdContainer.style.display = 'none';
+        document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
         updateImage(cdImage, imageUrl);
-        cdContainer.style.display = 'flex';
         cdImage.style.display = 'block';
-        albumCover.style.display = 'none';
+        document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
+        document.getElementById('cd-container').style.display = 'flex';
     }
 
     // Update play/pause button icon based on the current state
@@ -152,9 +151,13 @@ async function toggleCdView() {
     const cdImage = document.getElementById('cd-image');
     const placeholderText = document.getElementById('placeholder-text');
 
+    // Hide both images initially
+    albumCover.style.display = 'none';
+    cdImage.style.display = 'none';
+
     if (isCdView) {
+        // Switch to CD view
         cdContainer.style.display = 'flex';
-        albumCover.style.display = 'none';
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -168,16 +171,23 @@ async function toggleCdView() {
                     await updateImage(cdImage, imageUrl);
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
+
+                    // Pause or resume CD animation based on playback state
+                    if (data.is_playing) {
+                        cdImage.style.animationPlayState = 'running';
+                    } else {
+                        cdImage.style.animationPlayState = 'paused';
+                    }
                 } else {
                     handleApiError(response);
                 }
             } catch (error) {
                 console.error('Error fetching currently playing song for CD image:', error);
             }
-        }
+        } 
     } else {
+        // Switch to album cover view
         cdContainer.style.display = 'none';
-        cdImage.style.display = 'none';
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
