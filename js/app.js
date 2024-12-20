@@ -15,6 +15,7 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector('.image-container');
+    const cdContainer = document.getElementById('cd-container');
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
@@ -31,7 +32,7 @@ function updateUI(data) {
         // Album cover view
         updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
-        document.getElementById('cd-container').style.display = 'none';
+        cdContainer.style.display = 'none'; // Hide CD container
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
@@ -39,7 +40,7 @@ function updateUI(data) {
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
+        cdContainer.style.display = 'flex'; // Show CD container
     }
 
     // Update play/pause button icon based on the current state
@@ -157,7 +158,7 @@ async function toggleCdView() {
 
     if (isCdView) {
         // Switch to CD view
-        cdContainer.style.display = 'flex';
+        cdContainer.style.display = 'flex'; // Show CD container
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -187,7 +188,7 @@ async function toggleCdView() {
         } 
     } else {
         // Switch to album cover view
-        cdContainer.style.display = 'none';
+        cdContainer.style.display = 'none'; // Hide CD container
         if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {

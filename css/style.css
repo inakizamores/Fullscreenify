@@ -46,6 +46,9 @@ body {
     max-height: 90%; /* Adjust size as needed */
     z-index: 0;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Album cover styles */
@@ -200,18 +203,22 @@ body {
 /* Styles for CD display (increased size and responsive scaling) */
 #cd-container {
     display: none;
-    /* Initially hidden */
     position: relative;
-    width: 400px;
-    /* Set a fixed width for the square container */
-    height: 400px;
-    /* Set a fixed height for the square container */
+    width: 90%;
+    /* Set width to be responsive, same as .image-container */
+    height: 0;
+    /* Height will be determined by padding-bottom */
+    padding-bottom: 90%;
+    /* Maintain 1:1 aspect ratio based on width */
     justify-content: center;
     align-items: center;
-    padding: 20px;
 }
 
 #cd-image {
+    position: absolute;
+    /* Position absolutely within the container */
+    top: 0;
+    left: 0;
     width: 100%;
     /* Make the image fill the container */
     height: 100%;
