@@ -47,7 +47,6 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
     z-index: 0;
-    cursor: pointer;
 }
 
 /* Album cover hover effects */
@@ -71,7 +70,9 @@ body {
     z-index: 10; /* Ensure controls are above the blurred background */
 }
 
-.fullscreenify-container:hover .controls {
+/* Show controls only on image hover */
+#album-cover:hover + .controls,
+#cd-container:hover .controls {
     opacity: 1;
 }
 
@@ -195,7 +196,6 @@ body {
     animation-play-state: paused; /* Initially paused */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Add initial shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
-    cursor: pointer;
 }
 
 /* CD hover effects */
