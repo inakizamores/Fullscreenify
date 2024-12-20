@@ -59,22 +59,26 @@ async function updateUI(data) {
 function updateBackgroundImages(imageUrl) {
     const body = document.body;
 
-    // Set the new image to body::before
-    body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-
     // If there's a previous background image, set it to body::after for crossfading
     if (currentBackgroundImage) {
         body.style.setProperty('--previous-background', `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${currentBackgroundImage})`);
         body.classList.add('crossfade');
-
-        // Remove the crossfade class after the transition is complete
-        setTimeout(() => {
-            body.classList.remove('crossfade');
-        }, 500); // 500ms matches the transition duration in CSS
     }
 
-    // Update the current background image URL
-    currentBackgroundImage = imageUrl;
+    // Add a transitionrun event listener to the body element
+    body.addEventListener('transitionrun', function crossfadeHandler() {
+        // Update the current background image URL
+        currentBackgroundImage = imageUrl;
+
+        // Remove the crossfade class after the transition is complete
+        body.classList.remove('crossfade');
+
+        // Remove the event listener after it's executed once
+        body.removeEventListener('transitionrun', crossfadeHandler);
+    });
+
+    // Set the new image to body::before
+    body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
 }
 
 function updateAlbumImages(imageUrl) {
@@ -96,14 +100,17 @@ function updateAlbumImages(imageUrl) {
     // Add the 'crossfade' class to the image container to trigger the transition
     imageContainer.classList.add('crossfade');
 
-    // Remove the 'crossfade' class after the transition is complete
-    setTimeout(() => {
+    // Add a transitionrun event listener to the image container
+    imageContainer.addEventListener('transitionrun', function crossfadeHandler() {
+        // Update the previous album image URL
+        previousAlbumImage = imageUrl;
+        
+        // Remove the 'crossfade' class after the transition is complete
         imageContainer.classList.remove('crossfade');
-        previousAlbumCover.style.display = 'none';
-    }, 500); // 500ms matches the transition duration in CSS
 
-    // Update the previous album image URL
-    previousAlbumImage = imageUrl;
+        // Remove the event listener after it's executed once
+        imageContainer.removeEventListener('transitionrun', crossfadeHandler);
+    });
 }
 
 function displayPlaceholder() {
