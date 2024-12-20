@@ -39,29 +39,33 @@ body {
     align-items: center;
 }
 
-/* Album cover styles */
-#album-cover {
+/* Image container styles */
+.image-container {
     position: relative;
     max-width: 90%; /* Adjust size as needed */
     max-height: 90%; /* Adjust size as needed */
-    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
     z-index: 0;
     cursor: pointer;
 }
 
+/* Album cover styles */
+#album-cover {
+    position: relative;
+    width: 100%; /* Occupy the full width of the container */
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transition */
+    display: block; /* Ensure it behaves like a block element */
+}
+
 /* Hover effects for album cover and CD image */
-#album-cover:hover,
-#cd-image:hover,
-#cd-container:hover #cd-image {
+.image-container:hover #album-cover,
+.image-container:hover #cd-image {
     transform: scale(1.05); /* Enlarge on hover */
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
 
-/* Show controls on hover of album cover or CD image */
-#album-cover:hover + * + .controls,
-#cd-image:hover + .controls,
-#cd-container:hover .controls{
+/* Show controls on hover of image container */
+.image-container:hover + #placeholder-text + .controls {
     opacity: 1;
 }
 
@@ -201,6 +205,7 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Add initial shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions */
     cursor: pointer;
+    display: block;
 }
 
 /* Keyframes for CD rotation animation */
