@@ -69,6 +69,11 @@ body {
     opacity: 1;
 }
 
+/* Hide controls when placeholder text is visible */
+#placeholder-text:not([style*="display: none"]) + .controls {
+    opacity: 0;
+}
+
 /* Control buttons container styles */
 .controls {
     position: absolute;
