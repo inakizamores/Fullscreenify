@@ -1,4 +1,4 @@
-/* Fullscreenify/css/style.css */
+/* === General Styles === */
 
 /* Body styles */
 body::before {
@@ -29,7 +29,7 @@ body {
     height: 100vh;
 }
 
-/* Container styles */
+/* Main container styles */
 .fullscreenify-container {
     position: relative;
     width: 100%;
@@ -38,6 +38,8 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+/* === Image Display Styles === */
 
 /* Image container styles */
 .image-container {
@@ -50,7 +52,6 @@ body {
     align-items: center;
     justify-content: center;
 }
-
 
 /* Album cover styles */
 #album-cover {
@@ -75,7 +76,6 @@ body {
      box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
 }
 
-
 /* Show controls on hover of image container */
 .image-container:hover .controls{
     opacity: 1;
@@ -84,6 +84,9 @@ body {
 .image-container.placeholder-active .controls {
     opacity: 0;
 }
+
+/* === Control Buttons Styles === */
+
 /* Control buttons container styles */
 .controls {
     position: absolute;
@@ -131,6 +134,8 @@ body {
     height: 100%;
 }
 
+/* === Login Button Styles === */
+
 /* Login button styles */
 #login-btn {
     background-color: #1DB954;
@@ -169,6 +174,8 @@ body {
     }
 }
 
+/* === Bottom UI Buttons Styles === */
+
 /* Styles for CD toggle button */
 .bottom-left-btn {
     position: absolute;
@@ -199,7 +206,39 @@ body {
     color: #000;
 }
 
-/* Styles for CD display (increased size and responsive scaling) */
+/* Styles for logout button */
+.bottom-right-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
+}
+
+.bottom-right-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+.bottom-right-btn i {
+    font-size: 20px;
+    color: #000;
+}
+
+/* === CD Display Styles === */
+
+/* Styles for CD container */
 #cd-container {
     display: none;
     position: relative;
@@ -208,11 +247,12 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    max-width: 94.5%; /* Increased max-width by ~5% (90% * 1.05) */
-    max-height: 94.5%; /* Increased max-height by ~5% (90% * 1.05) */
+    max-width: 94.5%;
+    max-height: 94.5%;
     display: flex;
 }
 
+/* Styles for CD image */
 #cd-image {
     border-radius: 50%;
     position: relative;
@@ -237,6 +277,8 @@ body {
     }
 }
 
+/* === Placeholder Text Style === */
+
 /* Placeholder text styles */
 #placeholder-text {
     position: absolute;
@@ -252,6 +294,8 @@ body {
     text-transform: uppercase;
     display: none;
 }
+
+/* === Login Screen Styles === */
 
 /* Login screen styles */
 #login-screen {
@@ -325,39 +369,7 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-/* Styles for logout button */
-.bottom-right-btn {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
-}
-
-.bottom-right-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-.bottom-right-btn i {
-    font-size: 20px;
-    color: #000;
-}
-
-/* Fullscreenify/css/style.css */
-
-/* ... other existing styles ... */
+/* === Session Expired Modal Styles === */
 
 /* Session Expired Modal Styles */
 #session-expired-modal {
@@ -428,6 +440,8 @@ body {
 #re-authenticate-btn:hover {
     box-shadow: 0 0 15px #1DB954;
 }
+
+/* === Test Button Styles === */
 
 /* Test Button Styles */
 #test-expiry-btn {
