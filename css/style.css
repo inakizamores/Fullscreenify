@@ -52,7 +52,9 @@ body {
 
 /* Hover effects for album cover and CD image */
 #album-cover:hover,
-#cd-image:hover {
+#cd-image:hover,
+#cd-container:hover #cd-image,
+.fullscreenify-container:hover #album-cover {
     transform: scale(1.05); /* Enlarge on hover */
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add a bigger shadow on hover */
 }
@@ -60,7 +62,9 @@ body {
 /* Show controls on hover of album cover or CD image */
 #album-cover:hover + #cd-container + #placeholder-text + .controls,
 #cd-image:hover + #placeholder-text + .controls,
-#album-cover:hover + #placeholder-text + .controls {
+#album-cover:hover + #placeholder-text + .controls,
+#cd-container:hover .controls,
+.fullscreenify-container:hover .controls {
     opacity: 1;
 }
 
