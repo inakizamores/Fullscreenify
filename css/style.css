@@ -348,6 +348,10 @@ body {
     color: #000;
 }
 
+/* Fullscreenify/css/style.css */
+
+/* ... other existing styles ... */
+
 /* Session Expired Modal Styles */
 #session-expired-modal {
     display: none;
@@ -372,7 +376,7 @@ body {
     transform: translate(-50%, -50%);
     /* Center the modal */
     background-color: #222;
-    padding: 40px; /* Increased padding */
+    padding: 40px;
     border-radius: 20px;
     /* More rounded corners */
     text-align: center;
@@ -384,22 +388,22 @@ body {
     width: 80%;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
     align-items: center; /* Center content horizontally */
-    height: 250px;
 }
 
 .modal-content h2 {
     font-size: 28px;
     font-weight: bold;
-    margin-bottom: 0px; /* Adjusted margin */
+    margin-top: 0; /* Remove any default margin */
+    margin-bottom: 20px; /* Space between title and description */
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
 }
 
 .modal-content p {
     font-size: 16px;
-    margin-bottom: 0px; /* Adjusted margin */
+    margin-top: 0; /* Remove any default margin */
+    margin-bottom: 20px; /* Space between description and button */
     font-family: 'Roboto', sans-serif;
 }
 
@@ -418,9 +422,8 @@ body {
     align-items: center;
     animation: pulsate 2s infinite;
     /* Add the pulsate animation */
-    margin: 0 auto; /* Center button */
+    margin: 0 auto; /* Center button horizontally*/
 }
-
 #re-authenticate-btn i {
     margin-right: 10px;
     /* Add some space between the icon and text */
