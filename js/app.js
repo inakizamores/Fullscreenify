@@ -6,7 +6,7 @@ let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
-let isToggling = false; // Add a flag to prevent multiple toggle calls
+let isToggling = false;
 
 // Updated UI
 async function updateUI(data) {
@@ -21,8 +21,10 @@ async function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Update body background image only if the song is different
+
+     // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
+        await preloadImage(imageUrl); // Preload the new background image
         document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
         currentBackgroundImage = imageUrl;
     }
@@ -30,7 +32,7 @@ async function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
-         await updateImage(albumCover, imageUrl);
+        await updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
@@ -43,22 +45,24 @@ async function updateUI(data) {
         document.getElementById('cd-container').style.display = 'flex';
     }
 
-    // Update play/pause button icon based on the current state
-    if (isPlaying !== currentIsPlaying) {
-        if (isPlaying) {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            playPauseBtn.title = 'Pause';
-            if(isCdView) {
-                cdImage.style.animationPlayState = 'running';
-            }
-        } else {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            playPauseBtn.title = 'Play';
-            if(isCdView){
-               cdImage.style.animationPlayState = 'paused';
+
+        // Update play/pause button icon based on the current state
+        if (isPlaying !== currentIsPlaying) {
+            if (isPlaying) {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                playPauseBtn.title = 'Pause';
+                if(isCdView) {
+                    cdImage.style.animationPlayState = 'running';
+                }
+            } else {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playPauseBtn.title = 'Play';
+                if(isCdView){
+                   cdImage.style.animationPlayState = 'paused';
+                }
             }
         }
-    }
+
     imageContainer.classList.remove('placeholder-active');
 }
 
@@ -174,16 +178,9 @@ async function toggleCdView() {
                  });
                 if (response.ok) {
                     const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(cdImage, imageUrl);
-                    cdImage.style.display = 'block';
-                    placeholderText.style.display = 'none';
-                     // Pause or resume CD animation based on playback state
-                    if (data.is_playing) {
-                        cdImage.style.animationPlayState = 'running';
-                    } else {
-                        cdImage.style.animationPlayState = 'paused';
-                    }
+                     currentIsPlaying = data.is_playing
+                    await updateUI(data)
+
                 }else {
                    handleApiError(response);
                 }
@@ -205,10 +202,9 @@ async function toggleCdView() {
                 });
                 if (response.ok) {
                    const data = await response.json();
-                   const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                   await updateImage(albumCover, imageUrl);
-                   albumCover.style.display = 'block';
-                   placeholderText.style.display = 'none';
+                    currentIsPlaying = data.is_playing
+                    await updateUI(data)
+
                 }else {
                     handleApiError(response);
                  }
@@ -232,9 +228,9 @@ async function togglePlayPause() {
 
         if (response.ok) {
             const data = await response.json();
-            const isPlaying = data.is_playing;
+            currentIsPlaying = data.is_playing;
 
-            if (isPlaying) {
+            if (currentIsPlaying) {
                 await pauseSong();
             } else {
                 await playSong();
@@ -290,6 +286,16 @@ function scheduleTokenRefresh() {
             refreshToken();
         }, refreshTimeout);
     }
+}
+
+
+async function preloadImage(imageUrl) {
+   return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = imageUrl;
+        img.onload = resolve;
+        img.onerror = reject;
+    });
 }
 
 
