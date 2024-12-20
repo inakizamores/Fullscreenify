@@ -203,7 +203,7 @@ body {
 /* Styles for CD display (increased size and responsive scaling) */
 #cd-container {
     display: none;
-    position: relative;
+    position: absolute;
     width: 90%;
     /* Set width to be responsive, same as .image-container */
     height: 0;

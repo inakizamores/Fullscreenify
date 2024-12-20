@@ -30,12 +30,14 @@ function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
+        imageContainer.style.display = "flex"; // Show image container
         updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         cdContainer.style.display = 'none'; // Hide CD container
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
+        imageContainer.style.display = "block"; // Show image container
         updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
@@ -151,6 +153,7 @@ async function toggleCdView() {
     const cdContainer = document.getElementById('cd-container');
     const cdImage = document.getElementById('cd-image');
     const placeholderText = document.getElementById('placeholder-text');
+    const imageContainer = document.querySelector('.image-container');
 
     // Hide both images initially
     albumCover.style.display = 'none';
@@ -158,6 +161,7 @@ async function toggleCdView() {
 
     if (isCdView) {
         // Switch to CD view
+        imageContainer.style.display = "block"; // Show image container
         cdContainer.style.display = 'flex'; // Show CD container
         if (currentSongId) {
             try {
@@ -188,6 +192,7 @@ async function toggleCdView() {
         } 
     } else {
         // Switch to album cover view
+        imageContainer.style.display = "flex"; // Show image container
         cdContainer.style.display = 'none'; // Hide CD container
         if (currentSongId) {
             try {
