@@ -7,7 +7,6 @@ let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
-let activeBackgroundLayer = 1;
 
 // Updated UI
 function updateUI(data) {
@@ -22,23 +21,14 @@ function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Preload and crossfade the new background image
+    // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
         preloadBackgroundImage(imageUrl, () => {
-            // Determine the next background layer to use
-            const nextBackgroundLayer = activeBackgroundLayer === 1 ? 2 : 1;
-
-            // Set the new image on the next layer
-            const nextLayer = document.getElementById(`background-layer-${nextBackgroundLayer}`);
-            nextLayer.style.backgroundImage = `url(${imageUrl})`;
-
-            // Toggle the active class to trigger the crossfade
-            document.getElementById(`background-layer-${activeBackgroundLayer}`).classList.remove('active');
-            nextLayer.classList.add('active');
-
-            // Update the active background layer and current image
-            activeBackgroundLayer = nextBackgroundLayer;
-            currentBackgroundImage = imageUrl;
+            // Once the new image is loaded, update the background if it's still the correct image
+            if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+                currentBackgroundImage = imageUrl;
+            }
         });
     }
 
@@ -114,9 +104,7 @@ function displayPlaceholder() {
         document.getElementById('cd-container').style.display = 'flex';
     }
     document.body.style.backgroundColor = '#222';
-    // Ensure background layers are cleared or set to a default state
-    document.getElementById('background-layer-1').style.backgroundImage = 'none';
-    document.getElementById('background-layer-2').style.backgroundImage = 'none';
+    document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
     imageContainer.classList.add('placeholder-active');
 }
