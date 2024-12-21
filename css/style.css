@@ -14,14 +14,7 @@ body::before {
     filter: blur(20px);
     z-index: -1;
     transform: scale(1.1);
-    /* Transition for the background image */
-    transition: background-image 0.5s ease, opacity 0.5s ease;
-    opacity: 1;
-
-}
-
-body.transitioning::before{
-    opacity: 0;
+    transition: background-image 0.5s ease;
 }
 
 body {

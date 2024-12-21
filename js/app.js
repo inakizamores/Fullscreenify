@@ -5,7 +5,6 @@ let currentSongId = null;
 let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
-let isTogglingCdView = false; // To manage the buffer
 const imageCache = new Set();
 
 // Updated UI
@@ -16,29 +15,15 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector('.image-container');
-    const body = document.body;
-
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
 
-    // Update body background image with transition
+    // Update body background image only if the song is different
     if (data.item.id !== currentSongId) {
-        if(currentBackgroundImage){
-            body.classList.add('transitioning');
-            setTimeout(() => {
-                body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-                currentBackgroundImage = imageUrl;
-            }, 250);
-             setTimeout(() => {
-                body.classList.remove('transitioning');
-            }, 500);
-        } else {
-            body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-            currentBackgroundImage = imageUrl;
-        }
-
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+        currentBackgroundImage = imageUrl;
     }
 
 
@@ -165,13 +150,6 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-        if (isTogglingCdView) return;
-    
-        isTogglingCdView = true;
-        setTimeout(() => {
-            isTogglingCdView = false;
-        }, 1000);
-
     isCdView = !isCdView;
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
