@@ -21,14 +21,16 @@ function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Preload the new background image
-    preloadBackgroundImage(imageUrl, () => {
-        // Once the new image is loaded, update the background
-        if (data.item.id !== currentSongId) {
-            document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-            currentBackgroundImage = imageUrl;
-        }
-    });
+    // Preload the new background image only if it's different from the current one
+    if (imageUrl !== currentBackgroundImage) {
+        preloadBackgroundImage(imageUrl, () => {
+            // Once the new image is loaded, update the background if it's still the correct image
+            if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+                currentBackgroundImage = imageUrl;
+            }
+        });
+    }
 
     if (!isCdView) {
         // Album cover view
