@@ -355,9 +355,10 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 90%; /* Adjust width as needed */
-    max-width: 600px; /* Maximum width of the container */
-    margin: auto; /* Center the container */
+    width: 70%; 
+    max-width: 500px; 
+    margin: auto;
+    padding: 0 20px;
 }
 
 /* Center content inside login screen */
@@ -371,20 +372,27 @@ body {
     width: 100%;
 }
 
+/* Style for app logo */
+.logo {
+    max-width: 100px;
+    margin-bottom: 1em;
+}
+
 /* Style for app name */
 .login-content h1 {
-    font-size: 2em; /* Responsive font size */
+    font-size: 3em; 
     font-weight: bold;
-    margin-bottom: 1em; /* Responsive margin */
+    margin-bottom: 0.5em; 
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
 }
 
 /* Style for app description */
 .login-content p {
-    font-size: 1em; /* Responsive font size */
-    margin-bottom: 1.5em; /* Responsive margin */
+    font-size: 1.2em; 
+    margin-bottom: 1.5em; 
     font-family: 'Roboto', sans-serif;
+    line-height: 1.4;
 }
 
 /* === Session Expired Modal Styles === */
@@ -495,36 +503,49 @@ body {
 
 @media (max-width: 768px) {
     .login-content h1 {
-        font-size: 1.8em; /* Smaller font size on smaller screens */
-        margin-bottom: 0.8em;
+        font-size: 2.5em; 
+        margin-bottom: 0.4em;
     }
 
     .login-content p {
-        font-size: 0.9em; /* Smaller font size on smaller screens */
-        margin-bottom: 1.2em;
+        font-size: 1.1em;
+        margin-bottom: 1em;
     }
 
     #login-btn {
-        font-size: 18px; /* Smaller font size on smaller screens */
+        font-size: 18px; 
         padding: 12px 25px;
     }
 
     .login-container {
-        width: 95%; /* Adjust container width on smaller screens */
+        width: 80%; 
+    }
+
+    .logo {
+        max-width: 80px; 
+        margin-bottom: 0.8em;
     }
 }
 
 @media (max-width: 480px) {
     .login-content h1 {
-        font-size: 1.5em;
+        font-size: 2em;
     }
 
     .login-content p {
-        font-size: 0.8em;
+        font-size: 1em;
     }
 
     #login-btn {
         font-size: 16px;
         padding: 10px 20px;
+    }
+
+    .login-container {
+        width: 90%;
+    }
+
+    .logo {
+        max-width: 70px;
     }
 }
