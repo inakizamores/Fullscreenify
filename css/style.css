@@ -382,7 +382,7 @@ body {
 .login-content h1 {
     font-size: 3em; 
     font-weight: bold;
-    margin-bottom: 0.5em; 
+    margin-bottom: 0.3em; 
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
 }
@@ -390,7 +390,8 @@ body {
 /* Style for app description */
 .login-content p {
     font-size: 1.2em; 
-    margin-bottom: 1.5em; 
+    margin-top: 0em;
+    margin-bottom: 2.5em; 
     font-family: 'Roboto', sans-serif;
     line-height: 1.4;
 }
