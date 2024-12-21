@@ -6,6 +6,7 @@ let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
+let isToggleDisabled = false; // Flag to disable toggle during cooldown
 
 // Updated UI
 function updateUI(data) {
@@ -25,7 +26,6 @@ function updateUI(data) {
         document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
         currentBackgroundImage = imageUrl;
     }
-
 
     if (!isCdView) {
         // Album cover view
@@ -61,7 +61,6 @@ function updateUI(data) {
     imageContainer.classList.remove('placeholder-active');
 }
 
-
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
@@ -89,24 +88,20 @@ function displayPlaceholder() {
     imageContainer.classList.add('placeholder-active');
 }
 
-
 function showSessionExpiredModal() {
     const modal = document.getElementById('session-expired-modal');
     modal.style.display = 'block';
 }
-
 
 function hideSessionExpiredModal() {
     const modal = document.getElementById('session-expired-modal');
     modal.style.display = 'none';
 }
 
-
 document.getElementById('re-authenticate-btn').addEventListener('click', () => {
     hideSessionExpiredModal();
     handleLogin();
 });
-
 
 function simulateTokenExpiration() {
     console.log("Simulating token expiration...");
@@ -116,11 +111,9 @@ function simulateTokenExpiration() {
     showSessionExpiredModal();
 }
 
-
 document.getElementById('test-expiry-btn').addEventListener('click', () => {
     simulateTokenExpiration();
 });
-
 
 function handleApiError(response) {
     if (response.status === 401) {
@@ -131,7 +124,6 @@ function handleApiError(response) {
     }
 }
 
-
 function startUpdatingSongInfo(interval) {
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
@@ -141,7 +133,6 @@ function startUpdatingSongInfo(interval) {
     }, interval);
 }
 
-
 function stopUpdatingSongInfo() {
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
@@ -150,6 +141,11 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
+    // Disable toggle button immediately
+    isToggleDisabled = true;
+    document.getElementById('cd-toggle-btn').disabled = true;
+    document.getElementById('cd-toggle-btn').classList.add('disabled');
+
     isCdView = !isCdView;
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
@@ -212,8 +208,14 @@ async function toggleCdView() {
         }
 
     }
-}
 
+    // Re-enable toggle button after 1 second
+    setTimeout(() => {
+        isToggleDisabled = false;
+        document.getElementById('cd-toggle-btn').disabled = false;
+        document.getElementById('cd-toggle-btn').classList.remove('disabled');
+    }, 1000);
+}
 
 async function togglePlayPause() {
     try {
@@ -241,7 +243,6 @@ async function togglePlayPause() {
     }
 }
 
-
 async function updateImage(imgElement, imageUrl) {
     return new Promise((resolve) => {
         if (imageCache.has(imageUrl)) {
@@ -257,7 +258,6 @@ async function updateImage(imgElement, imageUrl) {
     });
 }
 
-
 function manageImageCache(imageUrl) {
     const MAX_CACHE_SIZE = 50;
 
@@ -269,7 +269,6 @@ function manageImageCache(imageUrl) {
         imageCache.add(imageUrl);
     }
 }
-
 
 function scheduleTokenRefresh() {
     const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
@@ -285,12 +284,10 @@ function scheduleTokenRefresh() {
     }
 }
 
-
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-
 
 function initializeApp() {
     if (window.location.hash) {

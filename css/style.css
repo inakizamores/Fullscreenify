@@ -201,6 +201,16 @@ body {
     transform: scale(1.1);
 }
 
+.bottom-left-btn.disabled {
+    background-color: rgba(80, 80, 80, 0.7); /* Dimmed color */
+    cursor: default; /* Indicate non-interactable */
+    pointer-events: none; /* Disable click events */
+}
+
+.bottom-left-btn.disabled:hover {
+    transform: scale(1); /* Remove scaling on hover */
+}
+
 .bottom-left-btn i {
     font-size: 20px;
     color: #000;
