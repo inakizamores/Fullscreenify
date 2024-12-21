@@ -21,11 +21,14 @@ function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Update body background image only if the song is different
-    if (data.item.id !== currentSongId) {
-        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-        currentBackgroundImage = imageUrl;
-    }
+    // Preload the new background image
+    preloadBackgroundImage(imageUrl, () => {
+        // Once the new image is loaded, update the background
+        if (data.item.id !== currentSongId) {
+            document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+            currentBackgroundImage = imageUrl;
+        }
+    });
 
     if (!isCdView) {
         // Album cover view
@@ -59,6 +62,22 @@ function updateUI(data) {
         }
     }
     imageContainer.classList.remove('placeholder-active');
+}
+
+// Function to preload the background image
+function preloadBackgroundImage(imageUrl, callback) {
+    const img = new Image();
+    img.src = imageUrl;
+
+    if (img.complete) {
+        // Image already loaded (cached)
+        callback();
+    } else {
+        // Image not yet loaded, set onload to trigger the callback
+        img.onload = () => {
+            callback();
+        };
+    }
 }
 
 function displayPlaceholder() {
