@@ -1,22 +1,6 @@
 /* === General Styles === */
 
 /* Body styles */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: inherit;
-    background-size: cover;
-    background-position: center;
-    filter: blur(20px);
-    z-index: -1;
-    transform: scale(1.1);
-    transition: background-image 0.5s ease;
-}
-
 body {
     margin: 0;
     font-family: 'Helvetica Neue', sans-serif;
@@ -27,6 +11,48 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+/* Background layers */
+.background-layers {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out; /* Adjust timing as needed */
+}
+
+.background-layer.active {
+    opacity: 1;
+}
+
+/* Apply blur to background layers */
+.background-layer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px);
+    z-index: -1;
+    transform: scale(1.1);
 }
 
 /* Main container styles */
@@ -480,5 +506,4 @@ body {
 
 #test-expiry-btn i {
     font-size: 20px;
-    color: #000;
-}
+    color:
