@@ -349,6 +349,17 @@ body {
     }
 }
 
+/* Styles for the login container */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%; /* Adjust width as needed */
+    max-width: 600px; /* Maximum width of the container */
+    margin: auto; /* Center the container */
+}
+
 /* Center content inside login screen */
 .login-content {
     display: flex;
@@ -357,25 +368,22 @@ body {
     align-items: center;
     text-align: center;
     color: white;
-    padding: 0 40px;
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 /* Style for app name */
 .login-content h1 {
-    font-size: 48px;
+    font-size: 2em; /* Responsive font size */
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 1em; /* Responsive margin */
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
 }
 
 /* Style for app description */
 .login-content p {
-    font-size: 18px;
-    margin-bottom: 30px;
+    font-size: 1em; /* Responsive font size */
+    margin-bottom: 1.5em; /* Responsive margin */
     font-family: 'Roboto', sans-serif;
 }
 
@@ -481,4 +489,42 @@ body {
 #test-expiry-btn i {
     font-size: 20px;
     color: #000;
+}
+
+/* === Responsive Design === */
+
+@media (max-width: 768px) {
+    .login-content h1 {
+        font-size: 1.8em; /* Smaller font size on smaller screens */
+        margin-bottom: 0.8em;
+    }
+
+    .login-content p {
+        font-size: 0.9em; /* Smaller font size on smaller screens */
+        margin-bottom: 1.2em;
+    }
+
+    #login-btn {
+        font-size: 18px; /* Smaller font size on smaller screens */
+        padding: 12px 25px;
+    }
+
+    .login-container {
+        width: 95%; /* Adjust container width on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .login-content h1 {
+        font-size: 1.5em;
+    }
+
+    .login-content p {
+        font-size: 0.8em;
+    }
+
+    #login-btn {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
 }
