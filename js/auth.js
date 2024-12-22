@@ -52,14 +52,18 @@ function handleRedirect() {
 }
 
 // Function to check the user's authentication status
-function checkAuthentication() {
+async function checkAuthentication() {
     if (!isLoggedIn) {
         // Show the login screen if not authenticated
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
         // Fetch the currently playing song if authenticated
-        getCurrentlyPlaying(); 
+        await getCurrentlyPlaying();
+        if (currentSongId === null) {
+            displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+        }
     }
 }
 

@@ -124,12 +124,18 @@ function displayPlaceholder() {
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
 
+    // Set the placeholder image URL
+    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+
+    // Reset the image display based on isCdView
     if (!isCdView) {
         // Album cover view
+        updateImage(albumCover, placeholderImageUrl); // Update the album cover image
         albumCover.style.display = 'block';
         cdContainer.style.display = 'none';
     } else {
         // CD view
+        updateImage(cdImage, placeholderImageUrl); // Update the CD image
         cdImage.style.display = 'block';
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
@@ -138,15 +144,7 @@ function displayPlaceholder() {
     // Reset CD animation state
     cdImage.style.animationPlayState = "paused";
 
-    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-
-    if (!isCdView) {
-         // Album cover view
-         updateImage(albumCover, placeholderImageUrl);
-    } else {
-        // CD view
-        updateImage(cdImage, placeholderImageUrl);
-    }
+    // Ensure the background is reset
     document.body.style.backgroundColor = '#222';
     document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
@@ -392,12 +390,14 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 function initializeApp() {
+    const INITIAL_UPDATE_INTERVAL = 250; // Use a shorter initial interval
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
     scheduleTokenRefresh();
+    startUpdatingSongInfo(INITIAL_UPDATE_INTERVAL); // Start with a shorter interval
 }
 
 initializeApp();
