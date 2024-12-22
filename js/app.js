@@ -246,6 +246,9 @@ async function toggleCdView() {
         // Switch to album cover view
         cdContainer.style.display = 'none';
 
+        // Make album cover visible immediately
+        albumCover.style.display = 'block';
+
         // Remove the wrapper when switching back to album view
         if (cdImage.parentNode.classList.contains('cd-image-wrapper')) {
             const wrapper = cdImage.parentNode;
@@ -253,7 +256,7 @@ async function toggleCdView() {
             wrapper.parentNode.removeChild(wrapper);
         }
 
-        if(currentSongId){
+        if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                     headers: {
@@ -263,17 +266,17 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(albumCover, imageUrl);
-                    albumCover.style.display = 'block';
+                    
+                    // Update the image, but don't await it here
+                    updateImage(albumCover, imageUrl);
                     placeholderText.style.display = 'none';
-                }else {
-                   handleApiError(response);
+                } else {
+                    handleApiError(response);
                 }
-            }catch(error){
+            } catch (error) {
                 console.error('Error fetching currently playing song for album cover:', error);
             }
         }
-
     }
 
     // Re-enable toggle button after 1 second
