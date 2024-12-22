@@ -75,16 +75,14 @@ function updateUI(data) {
         if (isPlaying) {
             playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             playPauseBtn.title = 'Pause';
-            if(isCdView) {
-                cdImage.style.animationPlayState = 'running';
-                cdImage.style.animation = 'rotateCD 10s linear infinite, speedUpCD 1s forwards';
+            if (isCdView) {
+              cdImage.style.animation = 'speedUpCD 1s linear forwards'; // Apply only speedUpCD on play
             }
         } else {
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             playPauseBtn.title = 'Play';
-            if(isCdView){
-                cdImage.style.animation = 'rotateCD 10s linear infinite, slowDownCD 1s forwards';
-                cdImage.style.animationPlayState = 'paused';
+            if (isCdView) {
+              cdImage.style.animation = 'slowDownCD 1s ease-out forwards'; // Apply only slowDownCD on pause
             }
         }
     }
@@ -231,13 +229,10 @@ async function toggleCdView() {
                     await updateImage(cdImage, imageUrl);
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
-                     // Pause or resume CD animation based on playback state
-                     if (data.is_playing) {
-                        cdImage.style.animationPlayState = 'running';
-                        cdImage.style.animation = 'rotateCD 10s linear infinite, speedUpCD 1s forwards';
+                    if (data.is_playing) {
+                        cdImage.style.animation = 'speedUpCD 1s linear forwards'; // Apply only speedUpCD on entering CD view (if playing)
                     } else {
-                        cdImage.style.animation = 'rotateCD 10s linear infinite, slowDownCD 1s forwards';
-                        cdImage.style.animationPlayState = 'paused';
+                        cdImage.style.animation = 'slowDownCD 1s ease-out forwards'; // Apply only slowDownCD on entering CD view (if paused)
                     }
                 }else {
                     handleApiError(response);
@@ -271,6 +266,8 @@ async function toggleCdView() {
                     await updateImage(albumCover, imageUrl);
                     albumCover.style.display = 'block';
                     placeholderText.style.display = 'none';
+                    // Stop any ongoing slowdown/speedup animation when leaving CD view
+                    cdImage.style.animation = 'none';
                 }else {
                    handleApiError(response);
                 }

@@ -225,7 +225,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-right-btn:hover {
@@ -274,9 +274,8 @@ body {
     height: 100%;
     border-radius: 50%;
     position: relative;
-    animation: rotateCD 10s linear infinite;
+    animation: rotateCD 10s linear infinite; /* Default rotation animation */
     animation-play-state: paused;
-    /* Removed transition from here */
     cursor: pointer;
     display: block;
     object-fit: cover;
@@ -292,27 +291,27 @@ body {
     }
 }
 
-/* Keyframes for CD slowdown animation */
+/* Keyframes for CD slowdown animation - starts fast and slows to a stop*/
 @keyframes slowDownCD {
-    from {
+    0% { 
+        transform: rotate(0deg); 
         animation-timing-function: linear;
-        transform: rotate(360deg);
     }
-    to {
+    100% { 
+        transform: rotate(120deg); 
         animation-timing-function: ease-out;
-        transform: rotate(460deg);
     }
 }
 
-/* Keyframes for CD speedup animation */
+/* Keyframes for CD speedup animation - starts slow and speeds up to constant speed*/
 @keyframes speedUpCD {
-    from {
+    0% { 
+        transform: rotate(0deg); 
         animation-timing-function: ease-in;
-        transform: rotate(0deg);
     }
-    to {
+    100% { 
+        transform: rotate(240deg); 
         animation-timing-function: linear;
-        transform: rotate(360deg);
     }
 }
 
