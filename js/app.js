@@ -1,343 +1,559 @@
-const ACTIVE_UPDATE_INTERVAL = 250;
-const INACTIVE_UPDATE_INTERVAL = 2000;
-let updateIntervalId = null;
-let currentSongId = null;
-let currentIsPlaying = null;
-let currentBackgroundImage = null;
-let isCdView = false;
-const imageCache = new Set();
-let isToggleDisabled = false; // Flag to disable toggle during cooldown
+/* === General Styles === */
 
-// Updated UI
-function updateUI(data) {
-    const timestamp = new Date().getTime();
-    const albumCover = document.getElementById('album-cover');
-    const cdImage = document.getElementById('cd-image');
-    const playPauseBtn = document.getElementById('play-pause-btn');
-    const isPlaying = data.is_playing;
-    const imageContainer = document.querySelector('.image-container');
-    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
+/* Body styles */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px);
+    z-index: -1;
+    transform: scale(1.1);
+    transition: background-image 0.5s ease;
+}
 
-    manageImageCache(imageUrl);
+body {
+    margin: 0;
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #222;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-    // Calculate aspect ratio
-    const aspectRatio = data.item.album.images[0].width / data.item.album.images[0].height;
+/* Main container styles */
+.fullscreenify-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    // Preload the new background image only if it's different from the current one
-    if (imageUrl !== currentBackgroundImage) {
-        preloadBackgroundImage(imageUrl, () => {
-            // Once the new image is loaded, update the background if it's still the correct image
-            if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-                currentBackgroundImage = imageUrl;
-            }
-        });
+/* === Image Display Styles === */
+
+/* Image container styles */
+.image-container {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    z-index: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Album cover styles */
+#album-cover {
+    position: relative;
+    width: 100%;
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+}
+
+/* Hover effects for album cover and CD image */
+.image-container:hover #album-cover{
+    transform: scale(1.05);
+    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
+}
+
+.image-container:hover #cd-container{
+    transform: scale(1.05);
+}
+
+.image-container:hover #cd-image-inner{
+     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
+}
+
+/* Show controls on hover of image container */
+.image-container:hover .controls{
+    opacity: 1;
+}
+
+.image-container.placeholder-active .controls {
+    opacity: 0;
+}
+
+/* === Control Buttons Styles === */
+
+/* Control buttons container styles */
+.controls {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 400px;
+    display: flex;
+    justify-content: space-around;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+/* Individual control button styles */
+.control-btn {
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 15px;
+    margin: 0 10px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
+}
+
+.control-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+.control-btn i {
+    margin: 0;
+    font-size: 24px;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* === Login Button Styles === */
+
+/* Login button styles */
+#login-btn {
+    background-color: #1DB954;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    animation: pulsate 2s infinite;
+}
+
+#login-btn i {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+#login-btn:hover {
+    box-shadow: 0 0 15px #1DB954;
+}
+
+/* Pulsate animation keyframes */
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
     }
-
-    if (!isCdView) {
-        // Album cover view
-        imageContainer.style.paddingTop = ''; // Reset padding for album view
-        imageContainer.style.height = '';
-        // Set max-height based on aspect ratio
-        imageContainer.style.maxHeight = `calc(90% * ${aspectRatio})`;
-        updateImage(albumCover, imageUrl);
-        albumCover.style.display = 'block';
-        document.getElementById('cd-container').style.display = 'none';
-        document.getElementById('placeholder-text').style.display = 'none';
-    } else {
-        // CD view
-        imageContainer.style.maxHeight = '';
-        updateImage(cdImage, imageUrl);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('placeholder-text').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
+    50% {
+        transform: scale(1.05);
     }
-
-    // Update play/pause button icon based on the current state
-    if (isPlaying !== currentIsPlaying) {
-        if (isPlaying) {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            playPauseBtn.title = 'Pause';
-            if(isCdView) {
-                cdImage.style.animationPlayState = 'running';
-            }
-        } else {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            playPauseBtn.title = 'Play';
-            if(isCdView){
-               cdImage.style.animationPlayState = 'paused';
-            }
-        }
-    }
-    imageContainer.classList.remove('placeholder-active');
-}
-
-// Function to preload the background image
-function preloadBackgroundImage(imageUrl, callback) {
-    const img = new Image();
-    img.src = imageUrl;
-
-    if (img.complete) {
-        // Image already loaded (cached)
-        callback();
-    } else {
-        // Image not yet loaded, set onload to trigger the callback
-        img.onload = () => {
-            callback();
-        };
-    }
-}
-
-function displayPlaceholder() {
-    const placeholderText = document.getElementById('placeholder-text');
-    placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
-    placeholderText.style.display = 'block';
-    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-    const imageContainer = document.querySelector('.image-container');
-
-    if (!isCdView) {
-         // Album cover view
-         const albumCover = document.getElementById('album-cover');
-         imageContainer.style.paddingTop = ''; // Reset padding for album view
-         imageContainer.style.height = '';
-         imageContainer.style.maxHeight = `calc(90% * 1)`; // Assuming placeholder is square
-         updateImage(albumCover, placeholderImageUrl);
-         albumCover.style.display = 'block';
-         document.getElementById('cd-container').style.display = 'none';
-    } else {
-        // CD view
-        imageContainer.style.maxHeight = '';
-        const cdImage = document.getElementById('cd-image');
-        updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
-    }
-    document.body.style.backgroundColor = '#222';
-    document.body.style.backgroundImage = 'none';
-    currentBackgroundImage = null;
-    imageContainer.classList.add('placeholder-active');
-}
-
-function showSessionExpiredModal() {
-    const modal = document.getElementById('session-expired-modal');
-    modal.style.display = 'block';
-}
-
-function hideSessionExpiredModal() {
-    const modal = document.getElementById('session-expired-modal');
-    modal.style.display = 'none';
-}
-
-document.getElementById('re-authenticate-btn').addEventListener('click', () => {
-    hideSessionExpiredModal();
-    handleLogin();
-});
-
-function simulateTokenExpiration() {
-    console.log("Simulating token expiration...");
-    accessToken = null;
-    localStorage.removeItem('fullscreenify_access_token');
-    localStorage.removeItem('fullscreenify_token_expiration');
-    showSessionExpiredModal();
-}
-
-document.getElementById('test-expiry-btn').addEventListener('click', () => {
-    simulateTokenExpiration();
-});
-
-function handleApiError(response) {
-    if (response.status === 401) {
-        console.error('API Error 401: Unauthorized. Access token expired.');
-        showSessionExpiredModal();
-    } else {
-        console.error('API Error:', response.status, response.statusText);
-    }
-}
-
-function startUpdatingSongInfo(interval) {
-    if (updateIntervalId) {
-        clearInterval(updateIntervalId);
-    }
-    updateIntervalId = setInterval(async () => {
-        await getCurrentlyPlaying();
-    }, interval);
-}
-
-function stopUpdatingSongInfo() {
-    if (updateIntervalId) {
-        clearInterval(updateIntervalId);
-        updateIntervalId = null;
-    }
-}
-
-async function toggleCdView() {
-    // Disable toggle button immediately
-    isToggleDisabled = true;
-    document.getElementById('cd-toggle-btn').disabled = true;
-    document.getElementById('cd-toggle-btn').classList.add('disabled');
-
-    isCdView = !isCdView;
-    const albumCover = document.getElementById('album-cover');
-    const cdContainer = document.getElementById('cd-container');
-    const cdImage = document.getElementById('cd-image');
-    const placeholderText = document.getElementById('placeholder-text');
-    const imageContainer = document.querySelector('.image-container');
-
-    if (isCdView) {
-         // Switch to CD view
-        albumCover.style.display = 'none';
-        imageContainer.style.maxHeight = '';
-        cdContainer.style.display = 'flex';
-        if(currentSongId){
-            try {
-                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(cdImage, imageUrl);
-                    cdImage.style.display = 'block';
-                    placeholderText.style.display = 'none';
-                     // Pause or resume CD animation based on playback state
-                    if (data.is_playing) {
-                        cdImage.style.animationPlayState = 'running';
-                    } else {
-                        cdImage.style.animationPlayState = 'paused';
-                    }
-                }else {
-                    handleApiError(response);
-                }
-            }catch (error) {
-                console.error('Error fetching currently playing song for CD image:', error);
-            }
-        }
-
-    } else {
-        // Switch to album cover view
-        cdContainer.style.display = 'none';
-        imageContainer.style.paddingTop = ''; // Reset padding for album view
-        imageContainer.style.height = '';
-
-        if (currentSongId) {
-            try {
-                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-
-                    // Calculate aspect ratio
-                    const aspectRatio = data.item.album.images[0].width / data.item.album.images[0].height;
-                    // Set max-height based on aspect ratio
-                    imageContainer.style.maxHeight = `calc(90% * ${aspectRatio})`;
-
-                    await updateImage(albumCover, imageUrl);
-                    albumCover.style.display = 'block';
-                    placeholderText.style.display = 'none';
-                } else {
-                    handleApiError(response);
-                }
-            } catch (error) {
-                console.error('Error fetching currently playing song for album cover:', error);
-            }
-        }
-    }
-
-    // Re-enable toggle button after 1 second
-    setTimeout(() => {
-        isToggleDisabled = false;
-        document.getElementById('cd-toggle-btn').disabled = false;
-        document.getElementById('cd-toggle-btn').classList.remove('disabled');
-    }, 1000);
-}
-
-async function togglePlayPause() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const isPlaying = data.is_playing;
-
-            if (isPlaying) {
-                await pauseSong();
-            } else {
-                await playSong();
-            }
-            await getCurrentlyPlaying();
-        } else {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error toggling play/pause:', error);
+    100% {
+        transform: scale(1);
     }
 }
 
-async function updateImage(imgElement, imageUrl) {
-    return new Promise((resolve) => {
-        if (imageCache.has(imageUrl)) {
-            imgElement.src = imageUrl;
-            resolve();
-        } else {
-            imgElement.onload = () => {
-                imageCache.add(imageUrl);
-                resolve();
-            };
-            imgElement.src = imageUrl;
-        }
-    });
+/* === Bottom UI Buttons Styles === */
+
+/* Styles for CD toggle button */
+.bottom-left-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
-function manageImageCache(imageUrl) {
-    const MAX_CACHE_SIZE = 50;
+.bottom-left-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
 
-    if (!imageCache.has(imageUrl)) {
-        if (imageCache.size >= MAX_CACHE_SIZE) {
-            const firstImageUrl = imageCache.values().next().value;
-            imageCache.delete(firstImageUrl);
-        }
-        imageCache.add(imageUrl);
+.bottom-left-btn.disabled {
+    background-color: rgba(80, 80, 80, 0.7); /* Dimmed color */
+    cursor: default; /* Indicate non-interactable */
+    pointer-events: none; /* Disable click events */
+}
+
+.bottom-left-btn.disabled:hover {
+    transform: scale(1); /* Remove scaling on hover */
+}
+
+.bottom-left-btn i {
+    font-size: 20px;
+    color: #000;
+}
+
+/* Styles for logout button */
+.bottom-right-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
+}
+
+.bottom-right-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+.bottom-right-btn i {
+    font-size: 20px;
+    color: #000;
+}
+
+/* === CD Display Styles === */
+
+/* Styles for CD container */
+#cd-container {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    max-width: 94.5%;
+    max-height: 94.5%;
+    display: flex;
+}
+
+/* Styles for CD image */
+#cd-image {
+    border-radius: 50%;
+    position: relative;
+    animation: rotateCD 10s linear infinite;
+    animation-play-state: paused;
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#cd-image-inner{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Keyframes for CD rotation animation */
+@keyframes rotateCD {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+    to {
+        transform: rotate(360deg) scale(1);
     }
 }
 
-function scheduleTokenRefresh() {
-    const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
-    if (expirationTime) {
-        const timeUntilExpiration = expirationTime - Date.now();
-        const refreshTimeout = Math.max(0, timeUntilExpiration - 60000);
+/* === Placeholder Text Style === */
 
-        console.log(`Scheduling token refresh in ${refreshTimeout / 1000} seconds.`);
+/* Placeholder text styles */
+#placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    z-index: 10;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    display: none;
+}
 
-        setTimeout(() => {
-            refreshToken();
-        }, refreshTimeout);
+/* === Login Screen Styles === */
+
+/* Login screen styles */
+#login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(135deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 1) 50%, rgba(30, 185, 84, 0.05) 100%);
+    background-size: 250% 250%;
+    animation: gradientAnimation 10s ease infinite;
+}
+
+/* Reset styles for logout state */
+#login-screen.logout {
+    background: linear-gradient(135deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 1) 50%, rgba(30, 185, 84, 0.05) 100%);
+    background-size: 250% 250%;
+    animation: gradientAnimation 10s ease infinite;
+}
+
+#login-screen.logout body::before {
+    content: none;
+}
+
+/* Keyframes for gradient animation */
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
     }
 }
 
-document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
-document.getElementById('next-btn').addEventListener('click', nextSong);
-document.getElementById('prev-btn').addEventListener('click', prevSong);
-document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-
-function initializeApp() {
-    if (window.location.hash) {
-        handleRedirect();
-    } else {
-        checkAuthentication();
-    }
-    scheduleTokenRefresh();
+/* Styles for the login container */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%; 
+    max-width: 500px; 
+    margin: auto;
+    padding: 0 20px;
 }
 
-initializeApp();
+/* Center content inside login screen */
+.login-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    width: 100%;
+}
+
+/* Style for app logo */
+.logo {
+    max-width: 100px;
+    margin-bottom: 1em;
+}
+
+/* Style for app name */
+.login-content h1 {
+    font-size: 3em; 
+    font-weight: bold;
+    margin-bottom: 0.3em; 
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+}
+
+/* Style for app description */
+.login-content p {
+    font-size: 1.2em; 
+    margin-top: 0em;
+    margin-bottom: 2.5em; 
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.4;
+}
+
+/* === Session Expired Modal Styles === */
+
+/* Session Expired Modal Styles */
+#session-expired-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #222;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
+    max-width: 400px;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-content h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+}
+
+.modal-content p {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+#re-authenticate-btn {
+    background-color: #1DB954;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    animation: pulsate 2s infinite;
+    margin: 0 auto;
+}
+#re-authenticate-btn i {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+#re-authenticate-btn:hover {
+    box-shadow: 0 0 15px #1DB954;
+}
+
+/* === Test Button Styles === */
+
+/* Test Button Styles */
+#test-expiry-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 80px;
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
+}
+
+#test-expiry-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+#test-expiry-btn i {
+    font-size: 20px;
+    color: #000;
+}
+
+/* === Responsive Design === */
+
+@media (max-width: 768px) {
+    .login-content h1 {
+        font-size: 2.5em; 
+        margin-bottom: 0.4em;
+    }
+
+    .login-content p {
+        font-size: 1.1em;
+        margin-bottom: 1em;
+    }
+
+    #login-btn {
+        font-size: 18px; 
+        padding: 12px 25px;
+    }
+
+    .login-container {
+        width: 80%; 
+    }
+
+    .logo {
+        max-width: 80px; 
+        margin-bottom: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-content h1 {
+        font-size: 2em;
+    }
+
+    .login-content p {
+        font-size: 1em;
+    }
+
+    #login-btn {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+
+    .login-container {
+        width: 90%;
+    }
+
+    .logo {
+        max-width: 70px;
+    }
+}
