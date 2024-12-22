@@ -203,9 +203,18 @@ async function toggleCdView() {
     const placeholderText = document.getElementById('placeholder-text');
 
     if (isCdView) {
-         // Switch to CD view
+        // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
+
+        // Add the wrapper dynamically
+        if (!cdImage.parentNode.classList.contains('cd-image-wrapper')) {
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('cd-image-wrapper');
+            cdImage.parentNode.insertBefore(wrapper, cdImage);
+            wrapper.appendChild(cdImage);
+        }
+
         if(currentSongId){
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -234,8 +243,16 @@ async function toggleCdView() {
         }
 
     } else {
-         // Switch to album cover view
+        // Switch to album cover view
         cdContainer.style.display = 'none';
+
+        // Remove the wrapper when switching back to album view
+        if (cdImage.parentNode.classList.contains('cd-image-wrapper')) {
+            const wrapper = cdImage.parentNode;
+            wrapper.parentNode.insertBefore(cdImage, wrapper);
+            wrapper.parentNode.removeChild(wrapper);
+        }
+
         if(currentSongId){
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
