@@ -44,40 +44,43 @@ body {
 /* Image container styles */
 .image-container {
     position: relative;
-    max-width: 90%;
-    max-height: 90%;
-    z-index: 0;
-    cursor: pointer;
+    width: 100%; /* Use full width */
+    height: 100%; /* Use full height */
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* Ensure content doesn't overflow */
 }
 
 /* Album cover styles */
 #album-cover {
     position: relative;
-    width: 100%;
+    width: auto; /* Let width adjust based on height */
+    height: 90%; /* Constrain height within viewport */
+    max-width: 90%; /* Prevent image from exceeding viewport width */
+    max-height: 90vh; /* Prevent image from exceeding viewport height */
+    object-fit: contain; /* Maintain aspect ratio */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
 }
 
 /* Hover effects for album cover and CD image */
-.image-container:hover #album-cover{
+.image-container:hover #album-cover {
     transform: scale(1.05);
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
 }
 
-.image-container:hover #cd-container{
+.image-container:hover #cd-container {
     transform: scale(1.05);
 }
 
-.image-container:hover #cd-image{
-     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
+.image-container:hover #cd-image {
+    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
 }
 
 /* Show controls on hover of image container */
-.image-container:hover .controls{
+.image-container:hover .controls {
     opacity: 1;
 }
 
