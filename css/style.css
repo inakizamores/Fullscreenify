@@ -37,6 +37,19 @@ body {
     align-items: center;
 }
 
+/* Invisible Frame Styles */
+#invisible-frame {
+    position: absolute;
+    top: 2.5%;
+    left: 2.5%;
+    width: 95%;
+    height: 95%;
+    border: 2px solid red; /* For debugging - make this transparent later */
+    box-sizing: border-box;
+    z-index: 1;
+    pointer-events: none;
+}
+
 /* === Image Display Styles === */
 
 .image-wrapper {
@@ -62,12 +75,14 @@ body {
 
 #album-cover {
     position: relative;
-    width: 100%; /* Occupy the container */
-    height: 100%;
-    object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
+    max-width: 100%; /* Occupy the container */
+    max-height: 100%;
+    object-fit: contain; /* Ensure the image covers the container while maintaining aspect ratio */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
+    width: auto;
+    height: auto;
 }
 
 .image-container:hover #album-cover{
@@ -186,7 +201,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-left-btn:hover {
@@ -225,7 +240,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-right-btn:hover {
@@ -270,8 +285,8 @@ body {
 
 /* Styles for CD image */
 #cd-image {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     border-radius: 50%;
     position: relative;
     animation: rotateCD 10s linear infinite;
@@ -279,7 +294,9 @@ body {
     /* Removed transition from here */
     cursor: pointer;
     display: block;
-    object-fit: cover;
+    object-fit: contain;
+    width: auto;
+    height: auto;
 }
 
 /* Keyframes for CD rotation animation */

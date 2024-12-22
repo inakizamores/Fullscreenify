@@ -57,13 +57,17 @@ function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
-        updateImage(albumCover, imageUrl);
+        updateImage(albumCover, imageUrl).then(() => {
+            resizeImageWithinFrame(albumCover);
+        });
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        updateImage(cdImage, imageUrl);
+        updateImage(cdImage, imageUrl).then(() => {
+            resizeImageWithinFrame(cdImage);
+        });
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
@@ -118,13 +122,17 @@ function displayPlaceholder() {
     if (!isCdView) {
          // Album cover view
          const albumCover = document.getElementById('album-cover');
-         updateImage(albumCover, placeholderImageUrl);
+         updateImage(albumCover, placeholderImageUrl).then(() => {
+            resizeImageWithinFrame(albumCover);
+        });
          albumCover.style.display = 'block';
          document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
-        updateImage(cdImage, placeholderImageUrl);
+        updateImage(cdImage, placeholderImageUrl).then(() => {
+            resizeImageWithinFrame(cdImage);
+        });
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
@@ -225,7 +233,9 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(cdImage, imageUrl);
+                    await updateImage(cdImage, imageUrl).then(() => {
+                        resizeImageWithinFrame(cdImage);
+                    });
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
                      // Pause or resume CD animation based on playback state
@@ -263,7 +273,9 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(albumCover, imageUrl);
+                    await updateImage(albumCover, imageUrl).then(() => {
+                        resizeImageWithinFrame(albumCover);
+                    });
                     albumCover.style.display = 'block';
                     placeholderText.style.display = 'none';
                 }else {
@@ -337,6 +349,30 @@ function scheduleTokenRefresh() {
             refreshToken();
         }, refreshTimeout);
     }
+}
+
+// Function to resize the image to fit within the frame
+function resizeImageWithinFrame(image) {
+    const frame = document.getElementById('invisible-frame');
+    const frameRect = frame.getBoundingClientRect();
+    const imageRect = image.getBoundingClientRect();
+
+    let newWidth = imageRect.width;
+    let newHeight = imageRect.height;
+
+    if (imageRect.width > frameRect.width || imageRect.height > frameRect.height) {
+        const widthRatio = frameRect.width / imageRect.width;
+        const heightRatio = frameRect.height / imageRect.height;
+        const scaleFactor = Math.min(widthRatio, heightRatio);
+
+        newWidth = imageRect.width * scaleFactor;
+        newHeight = imageRect.height * scaleFactor;
+    }
+
+    image.style.width = newWidth + 'px';
+    image.style.height = newHeight + 'px';
+    image.style.maxWidth = 'none';
+    image.style.maxHeight = 'none';
 }
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
