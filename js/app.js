@@ -174,10 +174,10 @@ async function toggleCdView() {
     const placeholderText = document.getElementById('placeholder-text');
 
     if (isCdView) {
-         // Switch to CD view
+        // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
-        if(currentSongId){
+        if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                     headers: {
@@ -187,7 +187,11 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(cdImage, imageUrl);
+
+                    // Crop image to square for CD view
+                    const croppedImageUrl = await cropImageToSquare(imageUrl);
+                    await updateImage(cdImage, croppedImageUrl);
+
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
                      // Pause or resume CD animation based on playback state
@@ -303,6 +307,34 @@ function scheduleTokenRefresh() {
             refreshToken();
         }, refreshTimeout);
     }
+}
+
+async function cropImageToSquare(imageUrl) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        // Allow cross-origin loading of the image
+        img.crossOrigin = "Anonymous";
+        img.src = imageUrl;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = Math.min(img.width, img.height);
+            canvas.width = size;
+            canvas.height = size;
+
+            const xOffset = (img.width - size) / 2;
+            const yOffset = (img.height - size) / 2;
+
+            ctx.drawImage(img, xOffset, yOffset, size, size, 0, 0, size, size);
+
+            // Resolve the promise with the cropped image data URL
+            resolve(canvas.toDataURL());
+        };
+        img.onerror = (error) => {
+            console.error('Error loading image:', error);
+            resolve(imageUrl); // Resolve with original URL on error
+        };
+    });
 }
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
