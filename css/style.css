@@ -82,13 +82,11 @@ body {
 }
 
 .image-container:hover #cd-container{
-    transform: scale(1.05); /* Add scale for consistency */
+    transform: scale(1.05);
 }
 
 .image-container:hover #cd-image{
-    transform: scale(1); /* Remove the additional scale inside @keyframes, this fixes distorsion */
-    box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9); /* Add the same box-shadow as the album cover */
-    /* transition: transform 0.3s ease, box-shadow 0.3s ease; not needed here as its already defined for cd-image */
+     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
 }
 
 /* Show controls on hover of image container */
@@ -281,7 +279,7 @@ body {
     animation: rotateCD 10s linear infinite;
     animation-play-state: paused;
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for a smoother effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     display: block;
     object-fit: cover;
@@ -499,7 +497,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 #test-expiry-btn:hover {
