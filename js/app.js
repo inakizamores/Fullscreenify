@@ -161,17 +161,6 @@ function stopUpdatingSongInfo() {
     }
 }
 
-function setCdWrapperSize() {
-    const cdContainer = document.getElementById('cd-container');
-    const cdWrapper = document.querySelector('.cd-image-wrapper');
-  
-    if (cdContainer && cdWrapper) {
-      const size = Math.min(cdContainer.offsetWidth, cdContainer.offsetHeight);
-      cdWrapper.style.width = `${size}px`;
-      cdWrapper.style.height = `${size}px`;
-    }
-}
-
 async function toggleCdView() {
     // Disable toggle button immediately
     isToggleDisabled = true;
@@ -214,9 +203,6 @@ async function toggleCdView() {
                 console.error('Error fetching currently playing song for CD image:', error);
             }
         }
-        
-        // Set CD wrapper size after updating the image
-        setCdWrapperSize();
 
     } else {
          // Switch to album cover view
@@ -251,9 +237,6 @@ async function toggleCdView() {
         document.getElementById('cd-toggle-btn').classList.remove('disabled');
     }, 1000);
 }
-
-// Call setCdWrapperSize on window resize
-window.addEventListener('resize', setCdWrapperSize);
 
 async function togglePlayPause() {
     try {
