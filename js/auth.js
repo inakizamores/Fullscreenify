@@ -26,7 +26,7 @@ function handleLogin() {
 }
 
 // Function to handle the redirect from Spotify after authentication
-function handleRedirect() {
+async function handleRedirect() {
     const hashParams = new URLSearchParams(window.location.hash.substr(1));
     accessToken = hashParams.get('access_token');
     const expiresIn = hashParams.get('expires_in');
@@ -44,7 +44,10 @@ function handleRedirect() {
         // Show the main content
         document.querySelector('.fullscreenify-container').style.display = 'flex';
         // Fetch the currently playing song
-        getCurrentlyPlaying();
+        await getCurrentlyPlaying();
+        if (currentSongId === null) {
+            displayPlaceholder();
+        }
 
         // Clear the hash from the URL
         clearHashFromUrl();
@@ -58,7 +61,7 @@ async function checkAuthentication() {
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Fetch the currently playing song if authenticated
+        // Only fetch currently playing song if authenticated
         await getCurrentlyPlaying();
         if (currentSongId === null) {
             displayPlaceholder();

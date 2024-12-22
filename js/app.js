@@ -141,6 +141,14 @@ function displayPlaceholder() {
         cdContainer.style.display = 'flex';
     }
 
+    // Add the CD wrapper if it's not already there
+    if (isCdView && !cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("cd-image-wrapper");
+        cdImage.parentNode.insertBefore(wrapper, cdImage);
+        wrapper.appendChild(cdImage);
+    }
+
     // Reset CD animation state
     cdImage.style.animationPlayState = "paused";
 
