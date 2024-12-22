@@ -263,13 +263,13 @@ body {
 
 /* Styles for CD image wrapper */
 .cd-image-wrapper {
-    /* Take the smaller value between the width and height of the parent */
+    /* Remove any fixed width or height */
     width: auto;
     height: auto;
-    min-width: 0;
-    min-height: 0;
-    max-width: 100%;
-    max-height: 100%;
+    min-width: 0; /* Allow shrinking below any previously set size */
+    min-height: 0; /* Allow shrinking below any previously set size */
+    max-width: none; /* Allow exceeding any previously set size */
+    max-height: none; /* Allow exceeding any previously set size */
     overflow: hidden;
     border-radius: 50%; /* Apply circular shape to the wrapper */
     display: flex;
@@ -288,7 +288,6 @@ body {
     cursor: pointer;
     display: block;
     object-fit: cover; /* Scale and crop to fill the wrapper */
-    /* Make sure the image takes the full space of the wrapper */
     width: 100%;
     height: 100%;
 }
