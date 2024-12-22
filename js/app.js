@@ -196,25 +196,13 @@ async function toggleCdView() {
   document.getElementById("cd-toggle-btn").disabled = true;
   document.getElementById("cd-toggle-btn").classList.add("disabled");
 
-  isCdView = !isCdView;
   const albumCover = document.getElementById("album-cover");
   const cdContainer = document.getElementById("cd-container");
   const cdImage = document.getElementById("cd-image");
   const placeholderText = document.getElementById("placeholder-text");
 
-  if (isCdView) {
-    // Switch to CD view
-    albumCover.style.display = "none";
-    cdContainer.style.display = "flex";
-
-    // Add the wrapper dynamically
-    if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-      const wrapper = document.createElement("div");
-      wrapper.classList.add("cd-image-wrapper");
-      cdImage.parentNode.insertBefore(wrapper, cdImage);
-      wrapper.appendChild(cdImage);
-    }
-
+  if (!isCdView) {
+    // Intention to switch to CD view
     if (currentSongId) {
       try {
         const response = await fetch(
@@ -228,9 +216,24 @@ async function toggleCdView() {
         if (response.ok) {
           const data = await response.json();
           const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-          updateImage(cdImage, imageUrl);
+          // Await the image update before switching the view
+          await updateImage(cdImage, imageUrl);
+
+          // Switch to CD view
+          isCdView = true;
+          albumCover.style.display = "none";
           cdImage.style.display = "block";
+          cdContainer.style.display = "flex";
           placeholderText.style.display = "none";
+
+          // Add the wrapper dynamically
+          if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("cd-image-wrapper");
+            cdImage.parentNode.insertBefore(wrapper, cdImage);
+            wrapper.appendChild(cdImage);
+          }
+
           // Pause or resume CD animation based on playback state
           if (data.is_playing) {
             cdImage.style.animationPlayState = "running";
@@ -241,23 +244,14 @@ async function toggleCdView() {
           handleApiError(response);
         }
       } catch (error) {
-        console.error("Error fetching currently playing song for CD image:", error);
+        console.error(
+          "Error fetching currently playing song for CD image:",
+          error
+        );
       }
     }
   } else {
-    // Switch to album cover view
-    cdContainer.style.display = "none";
-
-    // Make album cover visible immediately
-    albumCover.style.display = "block";
-
-    // Remove the wrapper when switching back to album view
-    if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-      const wrapper = cdImage.parentNode;
-      wrapper.parentNode.insertBefore(cdImage, wrapper);
-      wrapper.parentNode.removeChild(wrapper);
-    }
-
+    // Intention to switch to album cover view
     if (currentSongId) {
       try {
         const response = await fetch(
@@ -271,13 +265,29 @@ async function toggleCdView() {
         if (response.ok) {
           const data = await response.json();
           const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-          updateImage(albumCover, imageUrl);
+          // Await the image update before switching the view
+          await updateImage(albumCover, imageUrl);
+
+          // Switch to album cover view
+          isCdView = false;
+          cdContainer.style.display = "none";
+          albumCover.style.display = "block";
           placeholderText.style.display = "none";
+
+          // Remove the wrapper when switching back to album view
+          if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+            const wrapper = cdImage.parentNode;
+            wrapper.parentNode.insertBefore(cdImage, wrapper);
+            wrapper.parentNode.removeChild(wrapper);
+          }
         } else {
           handleApiError(response);
         }
       } catch (error) {
-        console.error("Error fetching currently playing song for album cover:", error);
+        console.error(
+          "Error fetching currently playing song for album cover:",
+          error
+        );
       }
     }
   }
