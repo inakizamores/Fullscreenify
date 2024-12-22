@@ -41,41 +41,22 @@ body {
 
 /* === Image Display Styles === */
 
-/* Viewport frame styles */
-.viewport-frame {
-    position: relative;
-    width: 90vw; /* 90% of the viewport width */
-    height: 90vh; /* 90% of the viewport height */
-    max-width: 90%; /* Maximum width is 90% of the viewport */
-    max-height: 90%; /* Maximum height is 90% of the viewport */
-    margin: 5vh auto; /* Center vertically and horizontally with 5% top/bottom margin */
-}
-
 /* Image container styles */
 .image-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 640px; /* Explicit width */
-    height: 640px; /* Explicit height */
-    max-width: 100%; /* Responsive max-width */
-    max-height: 100%; /* Responsive max-height */
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
     z-index: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
 }
 
 /* Album cover styles */
 #album-cover {
     position: relative;
-    width: 100%; /* Occupy the container */
-    height: auto;
-    max-height: 100%;
-    object-fit: contain; /* Ensure the image covers the container while maintaining aspect ratio */
+    width: 100%;
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
@@ -271,11 +252,14 @@ body {
 #cd-container {
     display: none;
     position: relative;
-    width: 100%; /* Occupy the parent */
-    height: 100%; /* Occupy the parent */
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    padding: 20px;
+    max-width: 94.5%;
+    max-height: 94.5%;
+    display: flex;
 }
 
 /* Styles for CD image */
@@ -288,7 +272,7 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     display: block;
-    object-fit: cover;
+    object-fit: contain;
     width: 100%;
     height: 100%;
 }
