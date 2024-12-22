@@ -39,13 +39,7 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-
-    // Display placeholder if no song is playing
-    if (!data.item) {
-        displayPlaceholder();
-        return;
-    }
-
+  
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
   
     manageImageCache(imageUrl);
@@ -116,43 +110,25 @@ function preloadBackgroundImage(imageUrl, callback) {
 
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
-    const albumCover = document.getElementById('album-cover');
-    const cdContainer = document.getElementById('cd-container');
-    const cdImage = document.getElementById('cd-image');
-    const imageContainer = document.querySelector('.image-container');
-
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
-
-    // Set the placeholder image URL
     const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+    const imageContainer = document.querySelector('.image-container');
 
-    // Reset the image display based on isCdView
     if (!isCdView) {
-        // Album cover view
-        updateImage(albumCover, placeholderImageUrl); // Update the album cover image
-        albumCover.style.display = 'block';
-        cdContainer.style.display = 'none';
+         // Album cover view
+         const albumCover = document.getElementById('album-cover');
+         updateImage(albumCover, placeholderImageUrl);
+         albumCover.style.display = 'block';
+         document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
-        updateImage(cdImage, placeholderImageUrl); // Update the CD image
+        const cdImage = document.getElementById('cd-image');
+        updateImage(cdImage, placeholderImageUrl);
         cdImage.style.display = 'block';
-        albumCover.style.display = 'none';
-        cdContainer.style.display = 'flex';
+        document.getElementById('album-cover').style.display = 'none';
+        document.getElementById('cd-container').style.display = 'flex';
     }
-
-    // Add the CD wrapper if it's not already there
-    if (isCdView && !cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-        const wrapper = document.createElement("div");
-        wrapper.classList.add("cd-image-wrapper");
-        cdImage.parentNode.insertBefore(wrapper, cdImage);
-        wrapper.appendChild(cdImage);
-    }
-
-    // Reset CD animation state
-    cdImage.style.animationPlayState = "paused";
-
-    // Ensure the background is reset
     document.body.style.backgroundColor = '#222';
     document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
@@ -215,23 +191,10 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-    // Immediately toggle the view if no song is playing
-    if (!currentSongId) {
-        isCdView = !isCdView;
-        displayPlaceholder();
-        // Re-enable toggle button after cooldown
-        setTimeout(() => {
-            isToggleDisabled = false;
-            document.getElementById("cd-toggle-btn").disabled = false;
-            document.getElementById("cd-toggle-btn").classList.remove("disabled");
-        }, 1000);
-        return;
-    }
-
-    // Disable toggle button immediately
-    isToggleDisabled = true;
-    document.getElementById("cd-toggle-btn").disabled = true;
-    document.getElementById("cd-toggle-btn").classList.add("disabled");
+  // Disable toggle button immediately
+  isToggleDisabled = true;
+  document.getElementById("cd-toggle-btn").disabled = true;
+  document.getElementById("cd-toggle-btn").classList.add("disabled");
 
   const albumCover = document.getElementById("album-cover");
   const cdContainer = document.getElementById("cd-container");
@@ -398,14 +361,12 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 function initializeApp() {
-    const INITIAL_UPDATE_INTERVAL = 250; // Use a shorter initial interval
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
     scheduleTokenRefresh();
-    startUpdatingSongInfo(INITIAL_UPDATE_INTERVAL); // Start with a shorter interval
 }
 
 initializeApp();
