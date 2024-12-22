@@ -16,10 +16,12 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector('.image-container');
-
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
+
+    // Calculate aspect ratio
+    const aspectRatio = data.item.album.images[0].width / data.item.album.images[0].height;
 
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
@@ -34,12 +36,17 @@ function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
+        imageContainer.style.paddingTop = ''; // Reset padding for album view
+        imageContainer.style.height = '';
+        // Set max-height based on aspect ratio
+        imageContainer.style.maxHeight = `calc(90% * ${aspectRatio})`;
         updateImage(albumCover, imageUrl);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
+        imageContainer.style.maxHeight = '';
         updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
@@ -92,11 +99,15 @@ function displayPlaceholder() {
     if (!isCdView) {
          // Album cover view
          const albumCover = document.getElementById('album-cover');
+         imageContainer.style.paddingTop = ''; // Reset padding for album view
+         imageContainer.style.height = '';
+         imageContainer.style.maxHeight = `calc(90% * 1)`; // Assuming placeholder is square
          updateImage(albumCover, placeholderImageUrl);
          albumCover.style.display = 'block';
          document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
+        imageContainer.style.maxHeight = '';
         const cdImage = document.getElementById('cd-image');
         updateImage(cdImage, placeholderImageUrl);
         cdImage.style.display = 'block';
@@ -172,10 +183,12 @@ async function toggleCdView() {
     const cdContainer = document.getElementById('cd-container');
     const cdImage = document.getElementById('cd-image');
     const placeholderText = document.getElementById('placeholder-text');
+    const imageContainer = document.querySelector('.image-container');
 
     if (isCdView) {
          // Switch to CD view
         albumCover.style.display = 'none';
+        imageContainer.style.maxHeight = '';
         cdContainer.style.display = 'flex';
         if(currentSongId){
             try {
@@ -205,9 +218,12 @@ async function toggleCdView() {
         }
 
     } else {
-         // Switch to album cover view
+        // Switch to album cover view
         cdContainer.style.display = 'none';
-        if(currentSongId){
+        imageContainer.style.paddingTop = ''; // Reset padding for album view
+        imageContainer.style.height = '';
+
+        if (currentSongId) {
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                     headers: {
@@ -217,17 +233,22 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+
+                    // Calculate aspect ratio
+                    const aspectRatio = data.item.album.images[0].width / data.item.album.images[0].height;
+                    // Set max-height based on aspect ratio
+                    imageContainer.style.maxHeight = `calc(90% * ${aspectRatio})`;
+
                     await updateImage(albumCover, imageUrl);
                     albumCover.style.display = 'block';
                     placeholderText.style.display = 'none';
-                }else {
-                   handleApiError(response);
+                } else {
+                    handleApiError(response);
                 }
-            }catch(error){
+            } catch (error) {
                 console.error('Error fetching currently playing song for album cover:', error);
             }
         }
-
     }
 
     // Re-enable toggle button after 1 second
