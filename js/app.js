@@ -7,25 +7,22 @@ let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
-let lastImageUpdateSongId = null; // Add a variable to track the song ID associated with the last image update
 
 // Function to update image with debugging
-function updateImage(imgElement, imageUrl, songId) {
-    return new Promise((resolve) => {
-        console.log("Updating image:", imgElement.id, "to", imageUrl, "for song ID:", songId);
-        if (imageCache.has(imageUrl)) {
-            imgElement.src = imageUrl;
-            lastImageUpdateSongId = songId; // Update the lastImageUpdateSongId when the image is successfully loaded
-            resolve();
-        } else {
-            imgElement.onload = () => {
-                imageCache.add(imageUrl);
-                lastImageUpdateSongId = songId; // Update the lastImageUpdateSongId when the image is successfully loaded
-                resolve();
-            };
-            imgElement.src = imageUrl;
-        }
-    });
+function updateImage(imgElement, imageUrl) {
+  return new Promise((resolve) => {
+    console.log("Updating image:", imgElement.id, "to", imageUrl);
+    if (imageCache.has(imageUrl)) {
+      imgElement.src = imageUrl;
+      resolve();
+    } else {
+      imgElement.onload = () => {
+        imageCache.add(imageUrl);
+        resolve();
+      };
+      imgElement.src = imageUrl;
+    }
+  });
 }
 
 // Function to check and log the size of the image wrapper
@@ -37,63 +34,63 @@ function logImageWrapperSize() {
 // Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime();
-    const albumCover = document.getElementById('album-cover');
-    const cdImage = document.getElementById('cd-image');
-    const playPauseBtn = document.getElementById('play-pause-btn');
+    const albumCover = document.getElementById("album-cover");
+    const cdImage = document.getElementById("cd-image");
+    const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
-    const imageContainer = document.querySelector('.image-container');
-
+    const imageContainer = document.querySelector(".image-container");
+  
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-
+  
     manageImageCache(imageUrl);
-
+  
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
-        preloadBackgroundImage(imageUrl, () => {
-            // Once the new image is loaded, update the background if it's still the correct image
-            if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-                currentBackgroundImage = imageUrl;
-            }
-        });
+      preloadBackgroundImage(imageUrl, () => {
+        // Once the new image is loaded, update the background if it's still the correct image
+        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          currentBackgroundImage = imageUrl;
+        }
+      });
     }
-
+  
     if (!isCdView) {
-        // Album cover view
-        updateImage(albumCover, imageUrl, currentSongId);
-        albumCover.style.display = 'block';
-        document.getElementById('cd-container').style.display = 'none';
-        document.getElementById('placeholder-text').style.display = 'none';
+      // Album cover view
+      updateImage(albumCover, imageUrl);
+      albumCover.style.display = "block";
+      document.getElementById("cd-container").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
     } else {
-        // CD view
-        updateImage(cdImage, imageUrl, currentSongId);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('placeholder-text').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
+      // CD view
+      updateImage(cdImage, imageUrl);
+      cdImage.style.display = "block";
+      document.getElementById("album-cover").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
+      document.getElementById("cd-container").style.display = "flex";
     }
-
+  
     // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
-        if (isPlaying) {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            playPauseBtn.title = 'Pause';
-            if(isCdView) {
-                cdImage.style.animationPlayState = 'running';
-            }
-        } else {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            playPauseBtn.title = 'Play';
-            if(isCdView){
-               cdImage.style.animationPlayState = 'paused';
-            }
+      if (isPlaying) {
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        playPauseBtn.title = "Pause";
+        if (isCdView) {
+          cdImage.style.animationPlayState = "running";
         }
+      } else {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.title = "Play";
+        if (isCdView) {
+          cdImage.style.animationPlayState = "paused";
+        }
+      }
     }
-    imageContainer.classList.remove('placeholder-active');
-
+    imageContainer.classList.remove("placeholder-active");
+  
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-}
+  }
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
@@ -121,13 +118,13 @@ function displayPlaceholder() {
     if (!isCdView) {
          // Album cover view
          const albumCover = document.getElementById('album-cover');
-         updateImage(albumCover, placeholderImageUrl, null);
+         updateImage(albumCover, placeholderImageUrl);
          albumCover.style.display = 'block';
          document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
-        updateImage(cdImage, placeholderImageUrl, null);
+        updateImage(cdImage, placeholderImageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
@@ -194,107 +191,106 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-    // Disable toggle button immediately
-    isToggleDisabled = true;
-    document.getElementById('cd-toggle-btn').disabled = true;
-    document.getElementById('cd-toggle-btn').classList.add('disabled');
+  // Disable toggle button immediately
+  isToggleDisabled = true;
+  document.getElementById("cd-toggle-btn").disabled = true;
+  document.getElementById("cd-toggle-btn").classList.add("disabled");
 
-    isCdView = !isCdView;
-    const albumCover = document.getElementById('album-cover');
-    const cdContainer = document.getElementById('cd-container');
-    const cdImage = document.getElementById('cd-image');
-    const placeholderText = document.getElementById('placeholder-text');
+  isCdView = !isCdView;
+  const albumCover = document.getElementById("album-cover");
+  const cdContainer = document.getElementById("cd-container");
+  const cdImage = document.getElementById("cd-image");
+  const placeholderText = document.getElementById("placeholder-text");
 
-    if (isCdView) {
-        // Switch to CD view
-        albumCover.style.display = 'none';
-        cdContainer.style.display = 'flex';
+  if (isCdView) {
+    // Switch to CD view
+    albumCover.style.display = "none";
+    cdContainer.style.display = "flex";
 
-        // Add the wrapper dynamically
-        if (!cdImage.parentNode.classList.contains('cd-image-wrapper')) {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('cd-image-wrapper');
-            cdImage.parentNode.insertBefore(wrapper, cdImage);
-            wrapper.appendChild(cdImage);
-        }
-
-        if(currentSongId){
-            try {
-                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    if (currentSongId !== lastImageUpdateSongId) {
-                        await updateImage(cdImage, imageUrl, currentSongId);
-                    }
-                    cdImage.style.display = 'block';
-                    placeholderText.style.display = 'none';
-                     // Pause or resume CD animation based on playback state
-                    if (data.is_playing) {
-                        cdImage.style.animationPlayState = 'running';
-                    } else {
-                        cdImage.style.animationPlayState = 'paused';
-                    }
-                }else {
-                    handleApiError(response);
-                }
-            }catch (error) {
-                console.error('Error fetching currently playing song for CD image:', error);
-            }
-        }
-
-    } else {
-        // Switch to album cover view
-        cdContainer.style.display = 'none';
-
-        // Make album cover visible immediately
-        albumCover.style.display = 'block';
-
-        // Remove the wrapper when switching back to album view
-        if (cdImage.parentNode.classList.contains('cd-image-wrapper')) {
-            const wrapper = cdImage.parentNode;
-            wrapper.parentNode.insertBefore(cdImage, wrapper);
-            wrapper.parentNode.removeChild(wrapper);
-        }
-
-        if (currentSongId) {
-            try {
-                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-
-                    // Only update the image if the currentSongId is different from the last image update
-                    if (currentSongId !== lastImageUpdateSongId) {
-                        updateImage(albumCover, imageUrl, currentSongId);
-                    }
-                    placeholderText.style.display = 'none';
-                } else {
-                    handleApiError(response);
-                }
-            } catch (error) {
-                console.error('Error fetching currently playing song for album cover:', error);
-            }
-        }
+    // Add the wrapper dynamically
+    if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("cd-image-wrapper");
+      cdImage.parentNode.insertBefore(wrapper, cdImage);
+      wrapper.appendChild(cdImage);
     }
 
-    // Re-enable toggle button after 1 second
-    setTimeout(() => {
-        isToggleDisabled = false;
-        document.getElementById('cd-toggle-btn').disabled = false;
-        document.getElementById('cd-toggle-btn').classList.remove('disabled');
-    }, 1000);
+    if (currentSongId) {
+      try {
+        const response = await fetch(
+          "https://api.spotify.com/v1/me/player/currently-playing",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+          updateImage(cdImage, imageUrl);
+          cdImage.style.display = "block";
+          placeholderText.style.display = "none";
+          // Pause or resume CD animation based on playback state
+          if (data.is_playing) {
+            cdImage.style.animationPlayState = "running";
+          } else {
+            cdImage.style.animationPlayState = "paused";
+          }
+        } else {
+          handleApiError(response);
+        }
+      } catch (error) {
+        console.error("Error fetching currently playing song for CD image:", error);
+      }
+    }
+  } else {
+    // Switch to album cover view
+    cdContainer.style.display = "none";
 
-    // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
+    // Make album cover visible immediately
+    albumCover.style.display = "block";
+
+    // Remove the wrapper when switching back to album view
+    if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+      const wrapper = cdImage.parentNode;
+      wrapper.parentNode.insertBefore(cdImage, wrapper);
+      wrapper.parentNode.removeChild(wrapper);
+    }
+
+    if (currentSongId) {
+      try {
+        const response = await fetch(
+          "https://api.spotify.com/v1/me/player/currently-playing",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+          updateImage(albumCover, imageUrl);
+          placeholderText.style.display = "none";
+        } else {
+          handleApiError(response);
+        }
+      } catch (error) {
+        console.error("Error fetching currently playing song for album cover:", error);
+      }
+    }
+  }
+
+  // Re-enable toggle button after 1 second
+  setTimeout(() => {
+    isToggleDisabled = false;
+    document.getElementById("cd-toggle-btn").disabled = false;
+    document.getElementById("cd-toggle-btn").classList.remove("disabled");
+  }, 1000);
+
+  // Log the size of the image wrapper after updating the UI
+  logImageWrapperSize();
 }
 
 async function togglePlayPause() {
