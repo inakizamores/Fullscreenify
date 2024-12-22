@@ -7,17 +7,20 @@ let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
+let lastImageUpdateSongId = null; // Add a variable to track the song ID associated with the last image update
 
 // Function to update image with debugging
-function updateImage(imgElement, imageUrl) {
+function updateImage(imgElement, imageUrl, songId) {
     return new Promise((resolve) => {
-        console.log("Updating image:", imgElement.id, "to", imageUrl);
+        console.log("Updating image:", imgElement.id, "to", imageUrl, "for song ID:", songId);
         if (imageCache.has(imageUrl)) {
             imgElement.src = imageUrl;
+            lastImageUpdateSongId = songId; // Update the lastImageUpdateSongId when the image is successfully loaded
             resolve();
         } else {
             imgElement.onload = () => {
                 imageCache.add(imageUrl);
+                lastImageUpdateSongId = songId; // Update the lastImageUpdateSongId when the image is successfully loaded
                 resolve();
             };
             imgElement.src = imageUrl;
@@ -57,13 +60,13 @@ function updateUI(data) {
 
     if (!isCdView) {
         // Album cover view
-        updateImage(albumCover, imageUrl);
+        updateImage(albumCover, imageUrl, currentSongId);
         albumCover.style.display = 'block';
         document.getElementById('cd-container').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        updateImage(cdImage, imageUrl);
+        updateImage(cdImage, imageUrl, currentSongId);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
@@ -118,13 +121,13 @@ function displayPlaceholder() {
     if (!isCdView) {
          // Album cover view
          const albumCover = document.getElementById('album-cover');
-         updateImage(albumCover, placeholderImageUrl);
+         updateImage(albumCover, placeholderImageUrl, null);
          albumCover.style.display = 'block';
          document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
-        updateImage(cdImage, placeholderImageUrl);
+        updateImage(cdImage, placeholderImageUrl, null);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('cd-container').style.display = 'flex';
@@ -225,7 +228,9 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(cdImage, imageUrl);
+                    if (currentSongId !== lastImageUpdateSongId) {
+                        await updateImage(cdImage, imageUrl, currentSongId);
+                    }
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
                      // Pause or resume CD animation based on playback state
@@ -266,9 +271,11 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    
-                    // Update the image, but don't await it here
-                    updateImage(albumCover, imageUrl);
+
+                    // Only update the image if the currentSongId is different from the last image update
+                    if (currentSongId !== lastImageUpdateSongId) {
+                        updateImage(albumCover, imageUrl, currentSongId);
+                    }
                     placeholderText.style.display = 'none';
                 } else {
                     handleApiError(response);
