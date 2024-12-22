@@ -39,7 +39,13 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-  
+
+    // Display placeholder if no song is playing
+    if (!data.item) {
+        displayPlaceholder();
+        return;
+    }
+
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
   
     manageImageCache(imageUrl);
@@ -110,24 +116,36 @@ function preloadBackgroundImage(imageUrl, callback) {
 
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
+    const albumCover = document.getElementById('album-cover');
+    const cdContainer = document.getElementById('cd-container');
+    const cdImage = document.getElementById('cd-image');
+    const imageContainer = document.querySelector('.image-container');
+
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
+
+    if (!isCdView) {
+        // Album cover view
+        albumCover.style.display = 'block';
+        cdContainer.style.display = 'none';
+    } else {
+        // CD view
+        cdImage.style.display = 'block';
+        albumCover.style.display = 'none';
+        cdContainer.style.display = 'flex';
+    }
+
+    // Reset CD animation state
+    cdImage.style.animationPlayState = "paused";
+
     const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-    const imageContainer = document.querySelector('.image-container');
 
     if (!isCdView) {
          // Album cover view
-         const albumCover = document.getElementById('album-cover');
          updateImage(albumCover, placeholderImageUrl);
-         albumCover.style.display = 'block';
-         document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
-        const cdImage = document.getElementById('cd-image');
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
     }
     document.body.style.backgroundColor = '#222';
     document.body.style.backgroundImage = 'none';
@@ -191,10 +209,23 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-  // Disable toggle button immediately
-  isToggleDisabled = true;
-  document.getElementById("cd-toggle-btn").disabled = true;
-  document.getElementById("cd-toggle-btn").classList.add("disabled");
+    // Immediately toggle the view if no song is playing
+    if (!currentSongId) {
+        isCdView = !isCdView;
+        displayPlaceholder();
+        // Re-enable toggle button after cooldown
+        setTimeout(() => {
+            isToggleDisabled = false;
+            document.getElementById("cd-toggle-btn").disabled = false;
+            document.getElementById("cd-toggle-btn").classList.remove("disabled");
+        }, 1000);
+        return;
+    }
+
+    // Disable toggle button immediately
+    isToggleDisabled = true;
+    document.getElementById("cd-toggle-btn").disabled = true;
+    document.getElementById("cd-toggle-btn").classList.add("disabled");
 
   const albumCover = document.getElementById("album-cover");
   const cdContainer = document.getElementById("cd-container");

@@ -8,54 +8,22 @@ async function getCurrentlyPlaying() {
 
         if (response.status === 204) {
             // No content - nothing is playing
-            displayPlaceholder();
-            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-        } else if (response.ok) {
-            const data = await response.json();
-
-            // Update UI if the song or playback state has changed
-            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                updateUI(data);
-                currentSongId = data.item.id;
-                currentIsPlaying = data.is_playing;
-            }
-
-            // Adjust update interval based on playing state
-            if (data.is_playing) {
-                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-            } else {
+            if (currentSongId !== null || currentIsPlaying !== null) {
+                // State change from playing to not playing
+                currentSongId = null;
+                currentIsPlaying = null;
+                displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             }
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
-        } else {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error fetching currently playing song:', error);
-    }
-}
-
-// ... (Existing code for variables and functions) ...
-
-async function getCurrentlyPlaying() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.status === 204) {
-            // No content - nothing is playing
-            displayPlaceholder();
-            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
         } else if (response.ok) {
             const data = await response.json();
+
+            // Check for playback resumption (from no content to playing)
+            if (currentSongId === null && data.is_playing) {
+                updateUI(data);
+            }
 
             // Update UI if the song or playback state has changed
             if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
