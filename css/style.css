@@ -292,6 +292,30 @@ body {
     }
 }
 
+/* Keyframes for CD slowdown animation */
+@keyframes slowDownCD {
+    from {
+        animation-timing-function: linear;
+        transform: rotate(360deg);
+    }
+    to {
+        animation-timing-function: ease-out;
+        transform: rotate(460deg);
+    }
+}
+
+/* Keyframes for CD speedup animation */
+@keyframes speedUpCD {
+    from {
+        animation-timing-function: ease-in;
+        transform: rotate(0deg);
+    }
+    to {
+        animation-timing-function: linear;
+        transform: rotate(360deg);
+    }
+}
+
 /* === Placeholder Text Style === */
 
 #placeholder-text {

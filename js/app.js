@@ -77,12 +77,14 @@ function updateUI(data) {
             playPauseBtn.title = 'Pause';
             if(isCdView) {
                 cdImage.style.animationPlayState = 'running';
+                cdImage.style.animation = 'rotateCD 10s linear infinite, speedUpCD 1s forwards';
             }
         } else {
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             playPauseBtn.title = 'Play';
             if(isCdView){
-               cdImage.style.animationPlayState = 'paused';
+                cdImage.style.animation = 'rotateCD 10s linear infinite, slowDownCD 1s forwards';
+                cdImage.style.animationPlayState = 'paused';
             }
         }
     }
@@ -200,6 +202,7 @@ async function toggleCdView() {
     const albumCover = document.getElementById('album-cover');
     const cdContainer = document.getElementById('cd-container');
     const cdImage = document.getElementById('cd-image');
+    const playPauseBtn = document.getElementById('play-pause-btn');
     const placeholderText = document.getElementById('placeholder-text');
 
     if (isCdView) {
@@ -229,9 +232,11 @@ async function toggleCdView() {
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
                      // Pause or resume CD animation based on playback state
-                    if (data.is_playing) {
+                     if (data.is_playing) {
                         cdImage.style.animationPlayState = 'running';
+                        cdImage.style.animation = 'rotateCD 10s linear infinite, speedUpCD 1s forwards';
                     } else {
+                        cdImage.style.animation = 'rotateCD 10s linear infinite, slowDownCD 1s forwards';
                         cdImage.style.animationPlayState = 'paused';
                     }
                 }else {
