@@ -6,11 +6,10 @@ let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
-const croppedImageCache = new Map(); // Cache for cropped images
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 
 // Updated UI
-async function updateUI(data) {
+function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById('album-cover');
     const cdImage = document.getElementById('cd-image');
@@ -33,19 +32,6 @@ async function updateUI(data) {
         });
     }
 
-    // Check if image is already square
-    const isSquare = await isImageSquare(imageUrl);
-
-    // Pre-crop image for CD view if not square
-    if (!isSquare && !croppedImageCache.has(imageUrl)) {
-        cropImageToSquare(imageUrl).then(croppedImageUrl => {
-            croppedImageCache.set(imageUrl, croppedImageUrl);
-            if (isCdView && currentSongId === data.item.id) {
-                updateImage(cdImage, croppedImageUrl);
-            }
-        });
-    }
-
     if (!isCdView) {
         // Album cover view
         updateImage(albumCover, imageUrl);
@@ -54,23 +40,7 @@ async function updateUI(data) {
         document.getElementById('placeholder-text').style.display = 'none';
     } else {
         // CD view
-        if (isSquare) {
-            updateImage(cdImage, imageUrl);
-        } else {
-            const croppedImageUrl = croppedImageCache.get(imageUrl);
-            if (croppedImageUrl) {
-                updateImage(cdImage, croppedImageUrl);
-            } else {
-                // If cropped image is not yet available, use original image temporarily
-                updateImage(cdImage, imageUrl);
-                cropImageToSquare(imageUrl).then(croppedImageUrl => {
-                croppedImageCache.set(imageUrl, croppedImageUrl);
-                if (isCdView && currentSongId === data.item.id){
-                    updateImage(cdImage, croppedImageUrl);
-                }
-            });
-            }
-        }
+        updateImage(cdImage, imageUrl);
         cdImage.style.display = 'block';
         document.getElementById('album-cover').style.display = 'none';
         document.getElementById('placeholder-text').style.display = 'none';
@@ -204,10 +174,10 @@ async function toggleCdView() {
     const placeholderText = document.getElementById('placeholder-text');
 
     if (isCdView) {
-        // Switch to CD view
+         // Switch to CD view
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
-        if (currentSongId) {
+        if(currentSongId){
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                     headers: {
@@ -217,43 +187,27 @@ async function toggleCdView() {
                 if (response.ok) {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-
-                    // Check if image is already square
-                    const isSquare = await isImageSquare(imageUrl);
-
-                    if (!isSquare) {
-                        // Use cropped image for CD view
-                        const croppedImageUrl = croppedImageCache.get(imageUrl);
-                        if (croppedImageUrl) {
-                            updateImage(cdImage, croppedImageUrl);
-                        } else {
-                            // If cropped image is not yet available, use original image temporarily
-                            updateImage(cdImage, imageUrl);
-                        }
-                    } else {
-                        // Use original image if already square
-                        updateImage(cdImage, imageUrl);
-                    }
-
+                    await updateImage(cdImage, imageUrl);
                     cdImage.style.display = 'block';
                     placeholderText.style.display = 'none';
-                    // Pause or resume CD animation based on playback state
+                     // Pause or resume CD animation based on playback state
                     if (data.is_playing) {
                         cdImage.style.animationPlayState = 'running';
                     } else {
                         cdImage.style.animationPlayState = 'paused';
                     }
-                } else {
+                }else {
                     handleApiError(response);
                 }
-            } catch (error) {
+            }catch (error) {
                 console.error('Error fetching currently playing song for CD image:', error);
             }
         }
+
     } else {
-        // Switch to album cover view
+         // Switch to album cover view
         cdContainer.style.display = 'none';
-        if (currentSongId) {
+        if(currentSongId){
             try {
                 const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                     headers: {
@@ -266,13 +220,14 @@ async function toggleCdView() {
                     await updateImage(albumCover, imageUrl);
                     albumCover.style.display = 'block';
                     placeholderText.style.display = 'none';
-                } else {
-                    handleApiError(response);
+                }else {
+                   handleApiError(response);
                 }
-            } catch (error) {
+            }catch(error){
                 console.error('Error fetching currently playing song for album cover:', error);
             }
         }
+
     }
 
     // Re-enable toggle button after 1 second
@@ -319,10 +274,6 @@ async function updateImage(imgElement, imageUrl) {
                 imageCache.add(imageUrl);
                 resolve();
             };
-            imgElement.onerror = () => {
-                console.error(`Error loading image: ${imageUrl}`);
-                resolve();
-            };
             imgElement.src = imageUrl;
         }
     });
@@ -352,47 +303,6 @@ function scheduleTokenRefresh() {
             refreshToken();
         }, refreshTimeout);
     }
-}
-
-async function isImageSquare(imageUrl) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = imageUrl;
-        img.onload = () => {
-            resolve(img.width === img.height);
-        };
-        img.onerror = () => {
-            console.error(`Error loading image: ${imageUrl}`);
-            resolve(false); // Assume not square on error
-        };
-    });
-}
-
-async function cropImageToSquare(imageUrl) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = imageUrl;
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const size = Math.min(img.width, img.height);
-            canvas.width = size;
-            canvas.height = size;
-
-            const xOffset = (img.width - size) / 2;
-            const yOffset = (img.height - size) / 2;
-
-            ctx.drawImage(img, xOffset, yOffset, size, size, 0, 0, size, size);
-
-            resolve(canvas.toDataURL());
-        };
-        img.onerror = () => {
-            console.error(`Error loading image: ${imageUrl}`);
-            resolve(imageUrl); // Resolve with original URL on error
-        };
-    });
 }
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
