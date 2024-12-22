@@ -8,6 +8,29 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 
+// Function to update image with debugging
+function updateImage(imgElement, imageUrl) {
+    return new Promise((resolve) => {
+        console.log("Updating image:", imgElement.id, "to", imageUrl);
+        if (imageCache.has(imageUrl)) {
+            imgElement.src = imageUrl;
+            resolve();
+        } else {
+            imgElement.onload = () => {
+                imageCache.add(imageUrl);
+                resolve();
+            };
+            imgElement.src = imageUrl;
+        }
+    });
+}
+
+// Function to check and log the size of the image wrapper
+function logImageWrapperSize() {
+    const imageWrapper = document.querySelector('.image-wrapper');
+    console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
+}
+
 // Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime();
@@ -64,6 +87,9 @@ function updateUI(data) {
         }
     }
     imageContainer.classList.remove('placeholder-active');
+
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
 }
 
 // Function to preload the background image
@@ -107,6 +133,9 @@ function displayPlaceholder() {
     document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
     imageContainer.classList.add('placeholder-active');
+
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
 }
 
 function showSessionExpiredModal() {
@@ -236,6 +265,9 @@ async function toggleCdView() {
         document.getElementById('cd-toggle-btn').disabled = false;
         document.getElementById('cd-toggle-btn').classList.remove('disabled');
     }, 1000);
+
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
 }
 
 async function togglePlayPause() {
@@ -262,21 +294,6 @@ async function togglePlayPause() {
     } catch (error) {
         console.error('Error toggling play/pause:', error);
     }
-}
-
-async function updateImage(imgElement, imageUrl) {
-    return new Promise((resolve) => {
-        if (imageCache.has(imageUrl)) {
-            imgElement.src = imageUrl;
-            resolve();
-        } else {
-            imgElement.onload = () => {
-                imageCache.add(imageUrl);
-                resolve();
-            };
-            imgElement.src = imageUrl;
-        }
-    });
 }
 
 function manageImageCache(imageUrl) {
