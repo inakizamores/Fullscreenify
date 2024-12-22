@@ -41,19 +41,27 @@ body {
 
 /* === Image Display Styles === */
 
+/* Invisible frame styles */
+.image-wrapper {
+    position: relative;
+    width: 640px; /* Explicit width */
+    height: 640px; /* Explicit height */
+    max-width: 90%; /* Responsive max-width */
+    max-height: 90vw; /* Responsive max-height based on viewport width to maintain aspect ratio */
+}
+
 /* Image container styles */
 .image-container {
-    position: relative;
-    width: 640px; /* Set explicit width */
-    height: 640px; /* Set explicit height */
-    max-width: 90%; /* Maintain responsiveness */
-    max-height: 90vw; /* Use vw to maintain aspect ratio */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: content-box;  /* Ensure padding and border are outside the element's content */
 }
 
 /* Album cover styles */
@@ -257,14 +265,11 @@ body {
 #cd-container {
     display: none;
     position: relative;
-    width: 640px; /* Set explicit width */
-    height: 640px; /* Set explicit height */
-    max-width: 90%; /* Maintain responsiveness */
-    max-height: 90vw; /* Use vw to maintain aspect ratio */
+    width: 100%; /* Occupy the parent */
+    height: 100%; /* Occupy the parent */
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    box-sizing: content-box; /* Ensure padding is outside the content */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 /* Styles for CD image */
@@ -492,7 +497,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 #test-expiry-btn:hover {
