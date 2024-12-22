@@ -44,10 +44,8 @@ body {
 /* Image container styles */
 .image-container {
     position: relative;
-    max-width: 90%; /* Maintain horizontal margin */
-    max-height: 90%; /* Maintain vertical margin */
-    width: auto; /* Allow width to adjust based on height */
-    height: auto; /* Allow height to adjust based on width */
+    max-width: 90%;
+    max-height: 90vh; /* Use vh for vertical responsiveness */
     z-index: 0;
     cursor: pointer;
     display: flex;
@@ -59,7 +57,6 @@ body {
 #album-cover {
     position: relative;
     width: 100%;
-    height: auto; /* Maintain aspect ratio */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
