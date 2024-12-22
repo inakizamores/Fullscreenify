@@ -263,13 +263,8 @@ body {
 
 /* Styles for CD image wrapper */
 .cd-image-wrapper {
-    /* Remove any fixed width or height */
-    width: auto;
-    height: auto;
-    min-width: 0; /* Allow shrinking below any previously set size */
-    min-height: 0; /* Allow shrinking below any previously set size */
-    max-width: none; /* Allow exceeding any previously set size */
-    max-height: none; /* Allow exceeding any previously set size */
+    width: 100%; /* Occupy the full width of the container */
+    height: 100%; /* Occupy the full height of the container */
     overflow: hidden;
     border-radius: 50%; /* Apply circular shape to the wrapper */
     display: flex;
