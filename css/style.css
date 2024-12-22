@@ -96,7 +96,7 @@ body {
     justify-content: space-around;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 10;
+    z-index: 1; /* Ensure controls are above CD and album cover */
 }
 
 .control-btn {
@@ -257,7 +257,8 @@ body {
     border-radius: 50%; /* Make the wrapper circular */
     overflow: hidden;    /* Hide anything outside the circle */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    z-index: 0;
+    box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Initial box shadow */
+    z-index: 0; /* Ensure wrapper is behind controls */
 }
 
 /* Hover effect for zoom (NEW) */
