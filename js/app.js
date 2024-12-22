@@ -33,19 +33,17 @@ function logImageWrapperSize() {
 
 // Updated UI
 function updateUI(data) {
-  const timestamp = new Date().getTime();
-  const albumCover = document.getElementById("album-cover");
-  const cdImage = document.getElementById("cd-image");
-  const playPauseBtn = document.getElementById("play-pause-btn");
-  const isPlaying = data?.is_playing;
-  const imageContainer = document.querySelector(".image-container");
-
-  // Check if data is available and music is playing
-  if (data && data.item) {
+    const timestamp = new Date().getTime();
+    const albumCover = document.getElementById("album-cover");
+    const cdImage = document.getElementById("cd-image");
+    const playPauseBtn = document.getElementById("play-pause-btn");
+    const isPlaying = data.is_playing;
+    const imageContainer = document.querySelector(".image-container");
+  
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-
+  
     manageImageCache(imageUrl);
-
+  
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
       preloadBackgroundImage(imageUrl, () => {
@@ -56,7 +54,7 @@ function updateUI(data) {
         }
       });
     }
-
+  
     if (!isCdView) {
       // Album cover view
       updateImage(albumCover, imageUrl);
@@ -71,7 +69,7 @@ function updateUI(data) {
       document.getElementById("placeholder-text").style.display = "none";
       document.getElementById("cd-container").style.display = "flex";
     }
-
+  
     // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
       if (isPlaying) {
@@ -89,14 +87,10 @@ function updateUI(data) {
       }
     }
     imageContainer.classList.remove("placeholder-active");
-  } else {
-    // Handle the case where no music is playing (data is null or undefined)
-    displayPlaceholder();
+  
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
   }
-
-  // Log the size of the image wrapper after updating the UI
-  logImageWrapperSize();
-}
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
@@ -142,11 +136,6 @@ function displayPlaceholder() {
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-
-    // Enable the toggle button when displaying the placeholder
-    isToggleDisabled = false;
-    document.getElementById("cd-toggle-btn").disabled = false;
-    document.getElementById("cd-toggle-btn").classList.remove("disabled");
 }
 
 function showSessionExpiredModal() {
@@ -211,14 +200,9 @@ async function toggleCdView() {
   const cdContainer = document.getElementById("cd-container");
   const cdImage = document.getElementById("cd-image");
   const placeholderText = document.getElementById("placeholder-text");
-  const isPlaceholderActive = placeholderText.style.display === "block";
 
   if (!isCdView) {
     // Intention to switch to CD view
-    if (isPlaceholderActive) {
-        // If placeholder is active, force an update to get current playing state
-        await getCurrentlyPlaying();
-      }
     if (currentSongId) {
       try {
         const response = await fetch(
@@ -265,20 +249,9 @@ async function toggleCdView() {
           error
         );
       }
-    } else if (isPlaceholderActive) {
-        // Handle case where no song is playing when switching to CD view
-        isCdView = true;
-        albumCover.style.display = "none";
-        cdImage.style.display = "block";
-        cdContainer.style.display = "flex";
-        placeholderText.style.display = "none";
-      }
+    }
   } else {
     // Intention to switch to album cover view
-    if (isPlaceholderActive) {
-        // If placeholder is active, force an update to get current playing state
-        await getCurrentlyPlaying();
-      }
     if (currentSongId) {
       try {
         const response = await fetch(
@@ -316,13 +289,7 @@ async function toggleCdView() {
           error
         );
       }
-    } else if (isPlaceholderActive) {
-        // Handle case where no song is playing when switching to album view
-        isCdView = false;
-        cdContainer.style.display = "none";
-        albumCover.style.display = "block";
-        placeholderText.style.display = "none";
-      }
+    }
   }
 
   // Re-enable toggle button after 1 second
