@@ -64,6 +64,9 @@ function updateUI(data) {
         }
     }
     imageContainer.classList.remove('placeholder-active');
+
+    // Adjust image container size after updating image
+    adjustImageContainerSize();
 }
 
 // Function to preload the background image
@@ -107,6 +110,9 @@ function displayPlaceholder() {
     document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
     imageContainer.classList.add('placeholder-active');
+
+    // Adjust image container size when displaying placeholder
+    adjustImageContainerSize();
 }
 
 function showSessionExpiredModal() {
@@ -305,10 +311,48 @@ function scheduleTokenRefresh() {
     }
 }
 
+function adjustImageContainerSize() {
+    const imageContainer = document.querySelector('.image-container');
+    const albumCover = document.getElementById('album-cover');
+    const cdContainer = document.getElementById('cd-container');
+    const cdImage = document.getElementById('cd-image');
+
+    // Reset inline styles to ensure CSS rules take effect
+    imageContainer.style.width = '';
+    imageContainer.style.height = '';
+
+    if (isCdView) {
+        // CD view: Scale based on the smaller dimension (width or height)
+        if (window.innerWidth / window.innerHeight > cdImage.naturalWidth / cdImage.naturalHeight) {
+            // Height is the limiting factor
+            imageContainer.style.height = '90%';
+            imageContainer.style.width = 'auto';
+        } else {
+            // Width is the limiting factor
+            imageContainer.style.width = '90%';
+            imageContainer.style.height = 'auto';
+        }
+    } else {
+        // Album cover view: Scale based on the smaller dimension (width or height)
+        if (window.innerWidth / window.innerHeight > albumCover.naturalWidth / albumCover.naturalHeight) {
+            // Height is the limiting factor
+            imageContainer.style.height = '90%';
+            imageContainer.style.width = 'auto';
+        } else {
+            // Width is the limiting factor
+            imageContainer.style.width = '90%';
+            imageContainer.style.height = 'auto';
+        }
+    }
+}
+
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+
+// Call adjustImageContainerSize on window resize
+window.addEventListener('resize', adjustImageContainerSize);
 
 function initializeApp() {
     if (window.location.hash) {
