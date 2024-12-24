@@ -8,7 +8,6 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
-let showSongInfo = false; // Track the state of the song info toggle
 
 // Cursor hiding functionality
 let idleTimer;
@@ -111,11 +110,7 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
-    // Update song info if the toggle is active
-    if (showSongInfo) {
-        document.getElementById('artist-name').textContent = data.item.artists[0].name;
-        document.getElementById('song-name').textContent = data.item.name;
-    }
+    // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
   }
 
@@ -164,12 +159,6 @@ function displayPlaceholder() {
     document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
     imageContainer.classList.add('placeholder-active');
-
-    // Clear song info when displaying placeholder
-    if (showSongInfo) {
-        document.getElementById('artist-name').textContent = '';
-        document.getElementById('song-name').textContent = '';
-    }
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
@@ -344,13 +333,6 @@ async function toggleCdView() {
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
 }
-
-function toggleSongInfoDisplay() {
-    showSongInfo = !showSongInfo;
-    const songInfoContainer = document.getElementById('song-info-container');
-    songInfoContainer.style.display = showSongInfo ? 'flex' : 'none';
-}
-
 async function togglePlayPause() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -403,12 +385,10 @@ function scheduleTokenRefresh() {
     }
 }
 
-
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-
 
 async function initializeApp() {
     if (window.location.hash) {
@@ -423,9 +403,6 @@ async function initializeApp() {
 
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.fullscreenify-container').style.display = 'flex';
-
-        // Attach the event listener for song info toggle after initial load
-    document.getElementById('song-info-toggle-btn').addEventListener('click', toggleSongInfoDisplay);
 
     await getCurrentlyPlaying();
 
