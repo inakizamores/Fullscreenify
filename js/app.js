@@ -198,116 +198,128 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-  // Disable toggle button immediately
-  isToggleDisabled = true;
-  document.getElementById("cd-toggle-btn").disabled = true;
-  document.getElementById("cd-toggle-btn").classList.add("disabled");
+    // Disable toggle button immediately
+    isToggleDisabled = true;
+    document.getElementById("cd-toggle-btn").disabled = true;
+    document.getElementById("cd-toggle-btn").classList.add("disabled");
 
-  const albumCover = document.getElementById("album-cover");
-  const cdContainer = document.getElementById("cd-container");
-  const cdImage = document.getElementById("cd-image");
-  const placeholderText = document.getElementById("placeholder-text");
+    const albumCover = document.getElementById("album-cover");
+    const cdContainer = document.getElementById("cd-container");
+    const cdImage = document.getElementById("cd-image");
+    const placeholderText = document.getElementById("placeholder-text");
+    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg'; // Or your placeholder image URL
 
-  if (!isCdView) {
-    // Intention to switch to CD view
-    if (currentSongId) {
-      try {
-        const response = await fetch(
-          "https://api.spotify.com/v1/me/player/currently-playing",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-          // Await the image update before switching the view
-          await updateImage(cdImage, imageUrl);
+    if (!isCdView) {
+        // Intention to switch to CD view
+        if (currentSongId) {
+            // Song is playing, fetch current album art for CD
+            try {
+                const response = await fetch(
+                    "https://api.spotify.com/v1/me/player/currently-playing",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+                if (response.ok) {
+                    const data = await response.json();
+                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                    await updateImage(cdImage, imageUrl);
 
-          // Switch to CD view
-          isCdView = true;
-          albumCover.style.display = "none";
-          cdImage.style.display = "block";
-          cdContainer.style.display = "flex";
-          placeholderText.style.display = "none";
+                    isCdView = true;
+                    albumCover.style.display = "none";
+                    cdImage.style.display = "block";
+                    cdContainer.style.display = "flex";
+                    placeholderText.style.display = "none";
 
-          // Add the wrapper dynamically
-          if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("cd-image-wrapper");
-            cdImage.parentNode.insertBefore(wrapper, cdImage);
-            wrapper.appendChild(cdImage);
-          }
+                    if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add("cd-image-wrapper");
+                        cdImage.parentNode.insertBefore(wrapper, cdImage);
+                        wrapper.appendChild(cdImage);
+                    }
 
-          // Pause or resume CD animation based on playback state
-          if (data.is_playing) {
-            cdImage.style.animationPlayState = "running";
-          } else {
-            cdImage.style.animationPlayState = "paused";
-          }
+                    if (data.is_playing) {
+                        cdImage.style.animationPlayState = "running";
+                    } else {
+                        cdImage.style.animationPlayState = "paused";
+                    }
+                } else {
+                    handleApiError(response);
+                }
+            } catch (error) {
+                console.error(
+                    "Error fetching currently playing song for CD image:",
+                    error
+                );
+            }
         } else {
-          handleApiError(response);
+            // No song playing, switch placeholder to CD view
+            isCdView = true;
+            albumCover.style.display = 'none';
+            cdContainer.style.display = 'flex';
+            updateImage(cdImage, placeholderImageUrl);
+            cdImage.style.display = 'block';
+            placeholderText.style.display = 'none';
         }
-      } catch (error) {
-        console.error(
-          "Error fetching currently playing song for CD image:",
-          error
-        );
-      }
-    }
-  } else {
-    // Intention to switch to album cover view
-    if (currentSongId) {
-      try {
-        const response = await fetch(
-          "https://api.spotify.com/v1/me/player/currently-playing",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-          // Await the image update before switching the view
-          await updateImage(albumCover, imageUrl);
+    } else {
+        // Intention to switch to album cover view
+        if (currentSongId) {
+            // Song is playing, fetch current album art
+            try {
+                const response = await fetch(
+                    "https://api.spotify.com/v1/me/player/currently-playing",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+                if (response.ok) {
+                    const data = await response.json();
+                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                    await updateImage(albumCover, imageUrl);
 
-          // Switch to album cover view
-          isCdView = false;
-          cdContainer.style.display = "none";
-          albumCover.style.display = "block";
-          placeholderText.style.display = "none";
+                    isCdView = false;
+                    cdContainer.style.display = "none";
+                    albumCover.style.display = "block";
+                    placeholderText.style.display = "none";
 
-          // Remove the wrapper when switching back to album view
-          if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = cdImage.parentNode;
-            wrapper.parentNode.insertBefore(cdImage, wrapper);
-            wrapper.parentNode.removeChild(wrapper);
-          }
+                    if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                        const wrapper = cdImage.parentNode;
+                        wrapper.parentNode.insertBefore(cdImage, wrapper);
+                        wrapper.parentNode.removeChild(wrapper);
+                    }
+                } else {
+                    handleApiError(response);
+                }
+            } catch (error) {
+                console.error(
+                    "Error fetching currently playing song for album cover:",
+                    error
+                );
+            }
         } else {
-          handleApiError(response);
+            // No song playing, switch placeholder to album cover view
+            isCdView = false;
+            cdContainer.style.display = 'none';
+            cdImage.style.display = 'none';
+            updateImage(albumCover, placeholderImageUrl);
+            albumCover.style.display = 'block';
+            placeholderText.style.display = 'none';
         }
-      } catch (error) {
-        console.error(
-          "Error fetching currently playing song for album cover:",
-          error
-        );
-      }
     }
-  }
 
-  // Re-enable toggle button after 1 second
-  setTimeout(() => {
-    isToggleDisabled = false;
-    document.getElementById("cd-toggle-btn").disabled = false;
-    document.getElementById("cd-toggle-btn").classList.remove("disabled");
-  }, 1000);
+    // Re-enable toggle button after 1 second
+    setTimeout(() => {
+        isToggleDisabled = false;
+        document.getElementById("cd-toggle-btn").disabled = false;
+        document.getElementById("cd-toggle-btn").classList.remove("disabled");
+    }, 1000);
 
-  // Log the size of the image wrapper after updating the UI
-  logImageWrapperSize();
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
 }
 
 async function togglePlayPause() {
