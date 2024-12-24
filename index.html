@@ -46,10 +46,15 @@
     <div class="fullscreenify-container" style="display: none;">
         <div class="image-wrapper">
             <div class="image-container">
+                <div class="song-info left">
+                    <div id="artist-name"></div>
+                </div>
                 <img id="album-cover" src="" alt="Album Cover">
-    
                 <div id="cd-container">
                     <img id="cd-image" src="" alt="CD Image">
+                </div>
+                <div class="song-info right">
+                    <div id="song-name"></div>
                 </div>
                 <div class="controls">
                     <button id="prev-btn" class="control-btn" title="Previous">
@@ -67,7 +72,10 @@
 
         <div id="placeholder-text"></div>
 
-        
+        <!-- Artist and Song Name Toggle Button -->
+        <button id="text-toggle-btn" class="bottom-left-btn" title="Toggle Artist/Song Name">
+            <i class="fas fa-font"></i>
+        </button>
 
         <!-- CD Toggle Button -->
         <button id="cd-toggle-btn" class="bottom-left-btn" title="Toggle CD View">
