@@ -8,7 +8,6 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
-let isTextInfoVisible = false; // Track the visibility of artist/song name
 
 // Cursor hiding functionality
 let idleTimer;
@@ -60,14 +59,10 @@ function updateUI(data) {
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
     const playPauseBtn = document.getElementById("play-pause-btn");
-    const artistNameElement = document.getElementById("artist-name");
-    const songNameElement = document.getElementById("song-name");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-    const artistName = data.item.artists.map(artist => artist.name).join(', ');
-    const songName = data.item.name;
 
     manageImageCache(imageUrl);
 
@@ -81,12 +76,6 @@ function updateUI(data) {
         }
       });
     }
-
-    // Update artist and song name
-    artistNameElement.textContent = artistName;
-    songNameElement.textContent = songName;
-    artistNameElement.style.display = isTextInfoVisible ? 'block' : 'none';
-    songNameElement.style.display = isTextInfoVisible ? 'block' : 'none';
 
     if (!isCdView) {
       // Album cover view
@@ -147,16 +136,10 @@ function displayPlaceholder() {
     placeholderText.style.display = 'block';
     const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
     const imageContainer = document.querySelector('.image-container');
-    const artistNameElement = document.getElementById("artist-name");
-    const songNameElement = document.getElementById("song-name");
 
     // Reset song and playback state when displaying placeholder
     currentSongId = null;
     currentIsPlaying = null;
-
-    // Hide artist and song name on placeholder
-    artistNameElement.style.display = 'none';
-    songNameElement.style.display = 'none';
 
     if (!isCdView) {
          // Album cover view
@@ -350,23 +333,6 @@ async function toggleCdView() {
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
 }
-
-function toggleTextInfo() {
-    isTextInfoVisible = !isTextInfoVisible;
-    const artistNameElement = document.getElementById("artist-name");
-    const songNameElement = document.getElementById("song-name");
-    const textToggleButton = document.getElementById("text-toggle-btn");
-
-    artistNameElement.style.display = isTextInfoVisible ? 'block' : 'none';
-    songNameElement.style.display = isTextInfoVisible ? 'block' : 'none';
-
-    if (isTextInfoVisible) {
-        textToggleButton.classList.add('active'); // You can define a CSS class for the active state
-    } else {
-        textToggleButton.classList.remove('active');
-    }
-}
-
 async function togglePlayPause() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -423,7 +389,6 @@ document.getElementById('play-pause-btn').addEventListener('click', togglePlayPa
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-document.getElementById('text-toggle-btn').addEventListener('click', toggleTextInfo);
 
 async function initializeApp() {
     if (window.location.hash) {
