@@ -403,11 +403,12 @@ function scheduleTokenRefresh() {
     }
 }
 
+
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-document.getElementById('song-info-toggle-btn').addEventListener('click', toggleSongInfoDisplay);
+
 
 async function initializeApp() {
     if (window.location.hash) {
@@ -422,6 +423,9 @@ async function initializeApp() {
 
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.fullscreenify-container').style.display = 'flex';
+
+        // Attach the event listener for song info toggle after initial load
+    document.getElementById('song-info-toggle-btn').addEventListener('click', toggleSongInfoDisplay);
 
     await getCurrentlyPlaying();
 
