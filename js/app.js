@@ -90,7 +90,7 @@ function updateUI(data) {
   
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-}
+  }
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
@@ -109,7 +109,6 @@ function preloadBackgroundImage(imageUrl, callback) {
 }
 
 function displayPlaceholder() {
-    console.log("Displaying regular placeholder");
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
@@ -122,37 +121,6 @@ function displayPlaceholder() {
          updateImage(albumCover, placeholderImageUrl);
          albumCover.style.display = 'block';
          document.getElementById('cd-container').style.display = 'none';
-    } else {
-        // CD view
-        const cdImage = document.getElementById('cd-image');
-        updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
-    }
-    document.body.style.backgroundColor = '#222';
-    document.body.style.backgroundImage = 'none';
-    currentBackgroundImage = null;
-    imageContainer.classList.add('placeholder-active');
-
-    // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
-}
-
-function displayMediaTypePlaceholder() {
-    console.log("Displaying non-music placeholder");
-    const placeholderText = document.getElementById('placeholder-text');
-    placeholderText.textContent = 'MUSIC IS NOT PLAYING. START STREAMING MUSIC TO RESUME USING FULLSCREENIFY.';
-    placeholderText.style.display = 'block';
-    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-    const imageContainer = document.querySelector('.image-container');
-
-    if (!isCdView) {
-        // Album cover view
-        const albumCover = document.getElementById('album-cover');
-        updateImage(albumCover, placeholderImageUrl);
-        albumCover.style.display = 'block';
-        document.getElementById('cd-container').style.display = 'none';
     } else {
         // CD view
         const cdImage = document.getElementById('cd-image');
@@ -207,7 +175,6 @@ function handleApiError(response) {
 }
 
 function startUpdatingSongInfo(interval) {
-    console.log("Starting update interval with interval:", interval);
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
     }
@@ -217,7 +184,6 @@ function startUpdatingSongInfo(interval) {
 }
 
 function stopUpdatingSongInfo() {
-    console.log("Stopping update interval");
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
         updateIntervalId = null;
@@ -225,115 +191,116 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-    // Disable toggle button immediately
-    isToggleDisabled = true;
-    document.getElementById("cd-toggle-btn").disabled = true;
-    document.getElementById("cd-toggle-btn").classList.add("disabled");
+  // Disable toggle button immediately
+  isToggleDisabled = true;
+  document.getElementById("cd-toggle-btn").disabled = true;
+  document.getElementById("cd-toggle-btn").classList.add("disabled");
 
-    const albumCover = document.getElementById("album-cover");
-    const cdContainer = document.getElementById("cd-container");
-    const cdImage = document.getElementById("cd-image");
-    const placeholderText = document.getElementById("placeholder-text");
+  const albumCover = document.getElementById("album-cover");
+  const cdContainer = document.getElementById("cd-container");
+  const cdImage = document.getElementById("cd-image");
+  const placeholderText = document.getElementById("placeholder-text");
 
-    if (!isCdView) {
-        // Intention to switch to CD view
-        try {
-            let imageUrl;
-            const response = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
+  if (!isCdView) {
+    // Intention to switch to CD view
+    if (currentSongId) {
+      try {
+        const response = await fetch(
+          "https://api.spotify.com/v1/me/player/currently-playing",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+          // Await the image update before switching the view
+          await updateImage(cdImage, imageUrl);
 
-            if (response.ok) {
-                const data = await response.json();
+          // Switch to CD view
+          isCdView = true;
+          albumCover.style.display = "none";
+          cdImage.style.display = "block";
+          cdContainer.style.display = "flex";
+          placeholderText.style.display = "none";
 
-                // Check if data and data.item are not null, and data.item.album is available
-                if (data && data.item && data.item.album) {
-                    imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                } else {
-                    // Use placeholder image URL if no current song or album data is unavailable
-                    imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-                }
-            } else {
-                handleApiError(response);
-                return; // Exit early if API error occurs
-            }
+          // Add the wrapper dynamically
+          if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("cd-image-wrapper");
+            cdImage.parentNode.insertBefore(wrapper, cdImage);
+            wrapper.appendChild(cdImage);
+          }
 
-            // Await the image update before switching the view
-            await updateImage(cdImage, imageUrl);
-
-            // Switch to CD view
-            isCdView = true;
-            albumCover.style.display = "none";
-            cdImage.style.display = "block";
-            cdContainer.style.display = "flex";
-            placeholderText.style.display = "none";
-
-            // Add the wrapper dynamically
-            if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-                const wrapper = document.createElement("div");
-                wrapper.classList.add("cd-image-wrapper");
-                cdImage.parentNode.insertBefore(wrapper, cdImage);
-                wrapper.appendChild(cdImage);
-            }
-        } catch (error) {
-            console.error("Error fetching currently playing song for CD image:", error);
+          // Pause or resume CD animation based on playback state
+          if (data.is_playing) {
+            cdImage.style.animationPlayState = "running";
+          } else {
+            cdImage.style.animationPlayState = "paused";
+          }
+        } else {
+          handleApiError(response);
         }
-    } else {
-        // Intention to switch to album cover view
-        try {
-            let imageUrl;
-            const response = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-
-                // Check if data and data.item are not null, and data.item.album is available
-                if (data && data.item && data.item.album) {
-                    imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                } else {
-                    // Use placeholder image URL if no current song or album data is unavailable
-                    imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-                }
-            } else {
-                handleApiError(response);
-                return; // Exit early if API error occurs
-            }
-
-            // Await the image update before switching the view
-            await updateImage(albumCover, imageUrl);
-
-            // Switch to album cover view
-            isCdView = false;
-            cdContainer.style.display = "none";
-            albumCover.style.display = "block";
-            placeholderText.style.display = "none";
-
-            // Remove the wrapper when switching back to album view
-            if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-                const wrapper = cdImage.parentNode;
-                wrapper.parentNode.insertBefore(cdImage, wrapper);
-                wrapper.parentNode.removeChild(wrapper);
-            }
-        } catch (error) {
-            console.error("Error fetching currently playing song for album cover:", error);
-        }
+      } catch (error) {
+        console.error(
+          "Error fetching currently playing song for CD image:",
+          error
+        );
+      }
     }
+  } else {
+    // Intention to switch to album cover view
+    if (currentSongId) {
+      try {
+        const response = await fetch(
+          "https://api.spotify.com/v1/me/player/currently-playing",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+          // Await the image update before switching the view
+          await updateImage(albumCover, imageUrl);
 
-    // Re-enable toggle button after 1 second
-    setTimeout(() => {
-        isToggleDisabled = false;
-        document.getElementById("cd-toggle-btn").disabled = false;
-        document.getElementById("cd-toggle-btn").classList.remove("disabled");
-    }, 1000);
+          // Switch to album cover view
+          isCdView = false;
+          cdContainer.style.display = "none";
+          albumCover.style.display = "block";
+          placeholderText.style.display = "none";
 
-    // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
+          // Remove the wrapper when switching back to album view
+          if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+            const wrapper = cdImage.parentNode;
+            wrapper.parentNode.insertBefore(cdImage, wrapper);
+            wrapper.parentNode.removeChild(wrapper);
+          }
+        } else {
+          handleApiError(response);
+        }
+      } catch (error) {
+        console.error(
+          "Error fetching currently playing song for album cover:",
+          error
+        );
+      }
+    }
+  }
+
+  // Re-enable toggle button after 1 second
+  setTimeout(() => {
+    isToggleDisabled = false;
+    document.getElementById("cd-toggle-btn").disabled = false;
+    document.getElementById("cd-toggle-btn").classList.remove("disabled");
+  }, 1000);
+
+  // Log the size of the image wrapper after updating the UI
+  logImageWrapperSize();
 }
 
 async function togglePlayPause() {

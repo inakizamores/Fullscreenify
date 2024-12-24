@@ -1,10 +1,44 @@
-// api.js
+async function getCurrentlyPlaying() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
 
-const ACTIVE_UPDATE_INTERVAL = 250;
-const INACTIVE_UPDATE_INTERVAL = 2000;
-let updateIntervalId = null;
-let currentSongId = null;
-let currentIsPlaying = null;
+        if (response.status === 204) {
+            // No content - nothing is playing
+            displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+        } else if (response.ok) {
+            const data = await response.json();
+
+            // Update UI if the song or playback state has changed
+            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                updateUI(data);
+                currentSongId = data.item.id;
+                currentIsPlaying = data.is_playing;
+            }
+
+            // Adjust update interval based on playing state
+            if (data.is_playing) {
+                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+            } else {
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            }
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error fetching currently playing song:', error);
+    }
+}
+
+// ... (Existing code for variables and functions) ...
 
 async function getCurrentlyPlaying() {
     try {
@@ -16,46 +50,32 @@ async function getCurrentlyPlaying() {
 
         if (response.status === 204) {
             // No content - nothing is playing
-            console.log("No content - nothing is playing");
             displayPlaceholder();
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
         } else if (response.ok) {
             const data = await response.json();
 
-            if (data && data.currently_playing_type && (data.currently_playing_type === 'episode' || data.currently_playing_type === 'unknown' || data.currently_playing_type === 'ad')) {
-                console.log("Non-music content is playing");
-                displayMediaTypePlaceholder();
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            } else if (data && data.item) {
-                console.log("Music is playing");
-                // Check if data.item is not null before updating UI
-                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                    updateUI(data);
-                    currentSongId = data.item.id;
-                    currentIsPlaying = data.is_playing;
-                }
+            // Update UI if the song or playback state has changed
+            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                updateUI(data);
+                currentSongId = data.item.id;
+                currentIsPlaying = data.is_playing;
+            }
 
-                // Adjust update interval based on playing state
-                if (data.is_playing) {
-                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-                } else {
-                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-                }
+            // Adjust update interval based on playing state
+            if (data.is_playing) {
+                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
             } else {
-                console.log("No track playing or data.item is null");
-                // Handle cases where data.item is null (e.g., user might not be playing a track)
-                displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             }
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+            hideSessionExpiredModal()
         } else {
-            console.log("API Error");
             handleApiError(response);
         }
-
-        // Ensure login screen is hidden and main container is shown regardless of the API response
-        document.getElementById('login-screen').style.display = 'none';
-        document.querySelector('.fullscreenify-container').style.display = 'flex';
-        hideSessionExpiredModal();
     } catch (error) {
         console.error('Error fetching currently playing song:', error);
     }
@@ -70,6 +90,8 @@ function handleApiError(response) {
         console.error('API Error:', response.status, response.statusText);
     }
 }
+
+// ... (Existing code for playSong, pauseSong, nextSong, prevSong) ...
 
 async function playSong() {
     try {
