@@ -21,18 +21,14 @@ async function getCurrentlyPlaying() {
             // Check for non-track item types
             if (data.item && data.item.type !== 'track') {
                 displayModifiedPlaceholder("MUSIC IS NOT PLAYING. START STREAMING MUSIC-TYPE CONTENT TO RESUME USING FULLSCREENIFY.");
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-                document.getElementById('login-screen').style.display = 'none';
-                document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal()
-                return; // Exit early after displaying the modified placeholder
-            }
-
-            // Update UI if the song or playback state has changed
-            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                updateUI(data);
-                currentSongId = data.item.id;
-                currentIsPlaying = data.is_playing;
+                // Don't exit early here
+            } else { // Handle track items
+                // Update UI if the song or playback state has changed
+                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                    updateUI(data);
+                    currentSongId = data.item.id;
+                    currentIsPlaying = data.is_playing;
+                }
             }
 
             // Adjust update interval based on playing state
