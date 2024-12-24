@@ -369,15 +369,10 @@ document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
-async function initializeApp() {
-    if (window.location.hash) {
-        handleRedirect();
-    } else {
-        checkAuthentication();
-    }
+// Modified initializeApp - only runs the app logic if already logged in
 
-    // Only proceed if the user is authenticated
-    if (isLoggedIn) {
+async function initializeApp() {
+    if (isLoggedIn) { // Check isLoggedIn here
         // Force initial display of placeholder
         displayPlaceholder();
         document.querySelector('.fullscreenify-container').style.display = 'flex';
@@ -392,4 +387,5 @@ async function initializeApp() {
     }
 }
 
-initializeApp();
+// Note: We no longer call initializeApp() directly here
+// It will be called by auth.js after authentication is checked.

@@ -81,6 +81,21 @@ function handleLogout() {
     document.querySelector('.fullscreenify-container').style.display = 'none';
 }
 
+// Function to initialize authentication and then the app
+function initialize() {
+    if (window.location.hash) {
+        handleRedirect();
+    } else {
+        checkAuthentication();
+    }
+
+    // Now that authentication is checked, initialize the app
+    initializeApp();
+}
+
+// Call initialize to start the process
+initialize();
+
 // Function to refresh the access token
 function refreshToken() {
     console.log('Refreshing access token...');
