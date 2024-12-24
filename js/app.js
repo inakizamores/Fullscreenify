@@ -395,8 +395,10 @@ function setImageWrapperMaxHeight() {
   }
 }
 
-// Call the function initially and on window resize
-setImageWrapperMaxHeight();
+// Call the function to set initial max-height and on window resize
+function initializeImageWrapperHeight() {
+    setImageWrapperMaxHeight();
+}
 window.addEventListener('resize', setImageWrapperMaxHeight);
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
@@ -418,6 +420,9 @@ async function initializeApp() {
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.fullscreenify-container').style.display = 'flex';
 
+    // Initialize image wrapper height after making the container visible
+    initializeImageWrapperHeight();
+
     await getCurrentlyPlaying();
 
     if (!currentSongId) {
@@ -427,4 +432,6 @@ async function initializeApp() {
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
-initializeApp();
+
+// Call initializeApp when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
