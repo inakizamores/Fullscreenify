@@ -557,13 +557,13 @@ body {
 
 /* Specific adjustments for each icon */
 #play-pause-btn.play-icon i { /* Target the play icon specifically */
-  margin-left: 2px; /* Move slightly to the right */
+  margin-left: 3px; /* Move slightly to the right */
 }
 
 #prev-btn i {
-  margin-right: 2px; /* Move slightly to the left */
+  margin-right: 3px; /* Move slightly to the left */
 }
 
 #next-btn i {
-  margin-left: 2px; /* Move slightly to the right */
+  margin-left: 3px; /* Move slightly to the right */
 }
