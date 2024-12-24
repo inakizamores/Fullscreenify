@@ -7,6 +7,7 @@ let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
+let initialLoadComplete = false; // Flag to track if initial load is done
 
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
@@ -183,7 +184,9 @@ function startUpdatingSongInfo(interval) {
         clearInterval(updateIntervalId);
     }
     updateIntervalId = setInterval(async () => {
-        await getCurrentlyPlaying();
+        if (initialLoadComplete) { // Only fetch if initial load is done
+            await getCurrentlyPlaying();
+        }
     }, interval);
 }
 
@@ -364,12 +367,23 @@ document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
-function initializeApp() {
+async function initializeApp() {
     if (window.location.hash) {
         handleRedirect();
     } else {
         checkAuthentication();
     }
+    // Force initial display of placeholder
+    displayPlaceholder();
+    document.getElementById('login-screen').style.display = 'none';
+    document.querySelector('.fullscreenify-container').style.display = 'flex';
+
+    // Then, fetch currently playing after a small delay
+    setTimeout(async () => {
+        await getCurrentlyPlaying();
+        initialLoadComplete = true; // Mark initial load as complete
+    }, 500); // Adjust delay as needed
+
     scheduleTokenRefresh();
 }
 
