@@ -9,6 +9,27 @@ const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
 
+// Cursor hiding functionality
+let idleTimer;
+const idleDelay = 10000; // Adjust the delay (in milliseconds) as needed
+
+function hideCursor() {
+    document.body.style.cursor = 'none';
+}
+
+function resetIdleTimer() {
+    clearTimeout(idleTimer);
+    document.body.style.cursor = 'default'; // Show the cursor
+    idleTimer = setTimeout(hideCursor, idleDelay);
+}
+
+// Attach event listeners to reset the timer on mouse movement and key presses
+window.addEventListener('mousemove', resetIdleTimer);
+window.addEventListener('keypress', resetIdleTimer); // Optional: Reset on key press as well
+
+// Initialize the timer on page load
+resetIdleTimer();
+
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
   return new Promise((resolve) => {
