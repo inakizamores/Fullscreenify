@@ -205,58 +205,60 @@ async function toggleCdView() {
 
     const albumCover = document.getElementById("album-cover");
     const cdContainer = document.getElementById("cd-container");
+    const cdImage = document.getElementById("cd-image");
     const placeholderText = document.getElementById("placeholder-text");
-    const cdImage = document.getElementById("cd-image"); // Get the CD image element
 
-    isCdView = !isCdView; // Simply toggle the state
+    if (currentSongId) { // Only toggle if a song is currently playing
+        isCdView = !isCdView;
 
-    if (isCdView) {
-        // Switch to CD view
-        albumCover.style.display = "none";
-        cdContainer.style.display = "flex";
-        placeholderText.style.display = "none";
-
-        // Ensure CD image is visible (important when toggling from placeholder)
-        cdImage.style.display = "block";
-
-        // Add the wrapper dynamically if it doesn't exist
-        if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("cd-image-wrapper");
-            cdImage.parentNode.insertBefore(wrapper, cdImage);
-            wrapper.appendChild(cdImage);
-        }
-
-        // If a song is playing, ensure the CD is rotating
-        if (currentIsPlaying) {
-            cdImage.style.animationPlayState = "running";
-        } else {
-            cdImage.style.animationPlayState = "paused";
-        }
-
-    } else {
-        // Switch to album cover view
-        cdContainer.style.display = "none";
-        albumCover.style.display = "block";
-        placeholderText.style.display = "none";
-
-        // Remove the wrapper when switching back to album view
-        if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = cdImage.parentNode;
-            wrapper.parentNode.insertBefore(cdImage, wrapper);
-            wrapper.parentNode.removeChild(wrapper);
-        }
-    }
-
-    // If placeholder is active, ensure the correct image is shown
-    if (!currentSongId) {
-        const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
         if (isCdView) {
-            updateImage(cdImage, placeholderImageUrl);
+            // Switch to CD view
+            albumCover.style.display = "none";
+            cdContainer.style.display = "flex";
+            placeholderText.style.display = "none";
+            cdImage.style.display = "block"; // Ensure CD image is visible
+
+            // Add the wrapper dynamically
+            if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("cd-image-wrapper");
+                cdImage.parentNode.insertBefore(wrapper, cdImage);
+                wrapper.appendChild(cdImage);
+            }
+
+            // Pause or resume CD animation based on playback state
+            if (currentIsPlaying) {
+                cdImage.style.animationPlayState = "running";
+            } else {
+                cdImage.style.animationPlayState = "paused";
+            }
         } else {
-            updateImage(albumCover, placeholderImageUrl);
+            // Switch to album cover view
+            cdContainer.style.display = "none";
+            albumCover.style.display = "block";
+            placeholderText.style.display = "none";
+
+            // Remove the wrapper when switching back to album view
+            if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                const wrapper = cdImage.parentNode;
+                wrapper.parentNode.insertBefore(cdImage, wrapper);
+                wrapper.parentNode.removeChild(wrapper);
+            }
         }
-        placeholderText.style.display = 'block'; // Keep placeholder text visible in both modes
+    } else {
+        // When no song is playing, simply toggle the isCdView state
+        isCdView = !isCdView;
+        if (isCdView) {
+            // Ensure CD image is shown in placeholder mode
+            albumCover.style.display = "none";
+            cdContainer.style.display = "flex";
+            cdImage.style.display = "block";
+        } else {
+            // Ensure album cover is shown in placeholder mode
+            cdContainer.style.display = "none";
+            albumCover.style.display = "block";
+        }
+        placeholderText.style.display = 'block'; // Make sure placeholder text is visible
     }
 
     // Re-enable toggle button after 1 second
