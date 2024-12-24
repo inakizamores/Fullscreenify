@@ -43,8 +43,7 @@ body {
     position: relative;
     width: 640px; /* Explicit width - consider using max-width instead if you want more flexibility */
     max-width: 90%; /* Responsive max-width */
-    max-height: 90vh; /* Responsive max-height based on viewport height */
-    max-height: 90vw; /* Keep this for maintaining aspect ratio on wide screens */
+    max-height: 90%; 
 }
 
 .image-container {
