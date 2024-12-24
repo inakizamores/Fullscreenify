@@ -16,21 +16,18 @@ async function getCurrentlyPlaying() {
 
         if (response.status === 204) {
             // No content - nothing is playing
+            console.log("No content - nothing is playing");
             displayPlaceholder();
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-            hideSessionExpiredModal();
         } else if (response.ok) {
             const data = await response.json();
 
             if (data && data.currently_playing_type && (data.currently_playing_type === 'episode' || data.currently_playing_type === 'unknown' || data.currently_playing_type === 'ad')) {
+                console.log("Non-music content is playing");
                 displayMediaTypePlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-                document.getElementById('login-screen').style.display = 'none';
-                document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal();
             } else if (data && data.item) {
+                console.log("Music is playing");
                 // Check if data.item is not null before updating UI
                 if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
                     updateUI(data);
@@ -44,21 +41,21 @@ async function getCurrentlyPlaying() {
                 } else {
                     startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
                 }
-
-                document.getElementById('login-screen').style.display = 'none';
-                document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal();
             } else {
+                console.log("No track playing or data.item is null");
                 // Handle cases where data.item is null (e.g., user might not be playing a track)
                 displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-                document.getElementById('login-screen').style.display = 'none';
-                document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal();
             }
         } else {
+            console.log("API Error");
             handleApiError(response);
         }
+
+        // Ensure login screen is hidden and main container is shown regardless of the API response
+        document.getElementById('login-screen').style.display = 'none';
+        document.querySelector('.fullscreenify-container').style.display = 'flex';
+        hideSessionExpiredModal();
     } catch (error) {
         console.error('Error fetching currently playing song:', error);
     }

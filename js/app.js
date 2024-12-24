@@ -1,5 +1,3 @@
-// app.js
-
 const ACTIVE_UPDATE_INTERVAL = 250;
 const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
@@ -92,7 +90,7 @@ function updateUI(data) {
   
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-  }
+}
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
@@ -111,6 +109,7 @@ function preloadBackgroundImage(imageUrl, callback) {
 }
 
 function displayPlaceholder() {
+    console.log("Displaying regular placeholder");
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
@@ -141,6 +140,7 @@ function displayPlaceholder() {
 }
 
 function displayMediaTypePlaceholder() {
+    console.log("Displaying non-music placeholder");
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'MUSIC IS NOT PLAYING. START STREAMING MUSIC TO RESUME USING FULLSCREENIFY.';
     placeholderText.style.display = 'block';
@@ -207,6 +207,7 @@ function handleApiError(response) {
 }
 
 function startUpdatingSongInfo(interval) {
+    console.log("Starting update interval with interval:", interval);
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
     }
@@ -216,6 +217,7 @@ function startUpdatingSongInfo(interval) {
 }
 
 function stopUpdatingSongInfo() {
+    console.log("Stopping update interval");
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
         updateIntervalId = null;
@@ -227,12 +229,12 @@ async function toggleCdView() {
     isToggleDisabled = true;
     document.getElementById("cd-toggle-btn").disabled = true;
     document.getElementById("cd-toggle-btn").classList.add("disabled");
-  
+
     const albumCover = document.getElementById("album-cover");
     const cdContainer = document.getElementById("cd-container");
     const cdImage = document.getElementById("cd-image");
     const placeholderText = document.getElementById("placeholder-text");
-  
+
     if (!isCdView) {
         // Intention to switch to CD view
         try {
@@ -242,10 +244,10 @@ async function toggleCdView() {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
-    
+
                 // Check if data and data.item are not null, and data.item.album is available
                 if (data && data.item && data.item.album) {
                     imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
@@ -257,17 +259,17 @@ async function toggleCdView() {
                 handleApiError(response);
                 return; // Exit early if API error occurs
             }
-    
+
             // Await the image update before switching the view
             await updateImage(cdImage, imageUrl);
-    
+
             // Switch to CD view
             isCdView = true;
             albumCover.style.display = "none";
             cdImage.style.display = "block";
             cdContainer.style.display = "flex";
             placeholderText.style.display = "none";
-    
+
             // Add the wrapper dynamically
             if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
                 const wrapper = document.createElement("div");
@@ -287,10 +289,10 @@ async function toggleCdView() {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
-    
+
                 // Check if data and data.item are not null, and data.item.album is available
                 if (data && data.item && data.item.album) {
                     imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
@@ -302,16 +304,16 @@ async function toggleCdView() {
                 handleApiError(response);
                 return; // Exit early if API error occurs
             }
-    
+
             // Await the image update before switching the view
             await updateImage(albumCover, imageUrl);
-    
+
             // Switch to album cover view
             isCdView = false;
             cdContainer.style.display = "none";
             albumCover.style.display = "block";
             placeholderText.style.display = "none";
-    
+
             // Remove the wrapper when switching back to album view
             if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
                 const wrapper = cdImage.parentNode;
@@ -322,17 +324,17 @@ async function toggleCdView() {
             console.error("Error fetching currently playing song for album cover:", error);
         }
     }
-  
+
     // Re-enable toggle button after 1 second
     setTimeout(() => {
-      isToggleDisabled = false;
-      document.getElementById("cd-toggle-btn").disabled = false;
-      document.getElementById("cd-toggle-btn").classList.remove("disabled");
+        isToggleDisabled = false;
+        document.getElementById("cd-toggle-btn").disabled = false;
+        document.getElementById("cd-toggle-btn").classList.remove("disabled");
     }, 1000);
-  
+
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-  }
+}
 
 async function togglePlayPause() {
     try {
