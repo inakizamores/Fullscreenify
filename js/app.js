@@ -211,6 +211,19 @@ async function toggleCdView() {
 
     if (!isCdView) {
         // Intention to switch to CD view
+        isCdView = true;
+        albumCover.style.display = 'none';
+        cdContainer.style.display = 'flex';
+        placeholderText.style.display = 'none';
+
+        // Ensure the wrapper exists for CD view
+        if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("cd-image-wrapper");
+            cdImage.parentNode.insertBefore(wrapper, cdImage);
+            wrapper.appendChild(cdImage);
+        }
+
         if (currentSongId) {
             // Song is playing, fetch current album art for CD
             try {
@@ -226,20 +239,6 @@ async function toggleCdView() {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
                     await updateImage(cdImage, imageUrl);
-
-                    isCdView = true;
-                    albumCover.style.display = "none";
-                    cdImage.style.display = "block";
-                    cdContainer.style.display = "flex";
-                    placeholderText.style.display = "none";
-
-                    if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-                        const wrapper = document.createElement("div");
-                        wrapper.classList.add("cd-image-wrapper");
-                        cdImage.parentNode.insertBefore(wrapper, cdImage);
-                        wrapper.appendChild(cdImage);
-                    }
-
                     if (data.is_playing) {
                         cdImage.style.animationPlayState = "running";
                     } else {
@@ -256,15 +255,15 @@ async function toggleCdView() {
             }
         } else {
             // No song playing, switch placeholder to CD view
-            isCdView = true;
-            albumCover.style.display = 'none';
-            cdContainer.style.display = 'flex';
             updateImage(cdImage, placeholderImageUrl);
-            cdImage.style.display = 'block';
-            placeholderText.style.display = 'none';
         }
     } else {
         // Intention to switch to album cover view
+        isCdView = false;
+        cdContainer.style.display = 'none';
+        albumCover.style.display = 'block';
+        placeholderText.style.display = 'none';
+
         if (currentSongId) {
             // Song is playing, fetch current album art
             try {
@@ -280,17 +279,6 @@ async function toggleCdView() {
                     const data = await response.json();
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
                     await updateImage(albumCover, imageUrl);
-
-                    isCdView = false;
-                    cdContainer.style.display = "none";
-                    albumCover.style.display = "block";
-                    placeholderText.style.display = "none";
-
-                    if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-                        const wrapper = cdImage.parentNode;
-                        wrapper.parentNode.insertBefore(cdImage, wrapper);
-                        wrapper.parentNode.removeChild(wrapper);
-                    }
                 } else {
                     handleApiError(response);
                 }
@@ -302,12 +290,14 @@ async function toggleCdView() {
             }
         } else {
             // No song playing, switch placeholder to album cover view
-            isCdView = false;
-            cdContainer.style.display = 'none';
-            cdImage.style.display = 'none';
             updateImage(albumCover, placeholderImageUrl);
-            albumCover.style.display = 'block';
-            placeholderText.style.display = 'none';
+        }
+
+        // Remove the wrapper when switching back to album view
+        if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+            const wrapper = cdImage.parentNode;
+            wrapper.parentNode.insertBefore(cdImage, wrapper);
+            wrapper.parentNode.removeChild(wrapper);
         }
     }
 
