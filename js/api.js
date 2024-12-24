@@ -20,19 +20,18 @@ async function getCurrentlyPlaying() {
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
-            hideSessionExpiredModal(); // Moved after startUpdatingSongInfo()
+            hideSessionExpiredModal();
         } else if (response.ok) {
             const data = await response.json();
 
-            // Check for media type (ad, episode, or unknown)
-            if (data.currently_playing_type === 'episode' || data.currently_playing_type === 'unknown' || data.currently_playing_type === 'ad') {
+            if (data && data.currently_playing_type && (data.currently_playing_type === 'episode' || data.currently_playing_type === 'unknown' || data.currently_playing_type === 'ad')) {
                 displayMediaTypePlaceholder();
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL); 
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
                 document.getElementById('login-screen').style.display = 'none';
                 document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal(); // Moved after startUpdatingSongInfo()
-            } else {
-                // Update UI if the song or playback state has changed
+                hideSessionExpiredModal();
+            } else if (data && data.item) {
+                // Check if data.item is not null before updating UI
                 if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
                     updateUI(data);
                     currentSongId = data.item.id;
@@ -45,9 +44,17 @@ async function getCurrentlyPlaying() {
                 } else {
                     startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
                 }
+
                 document.getElementById('login-screen').style.display = 'none';
                 document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal(); // Moved after startUpdatingSongInfo()
+                hideSessionExpiredModal();
+            } else {
+                // Handle cases where data.item is null (e.g., user might not be playing a track)
+                displayPlaceholder();
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                document.getElementById('login-screen').style.display = 'none';
+                document.querySelector('.fullscreenify-container').style.display = 'flex';
+                hideSessionExpiredModal();
             }
         } else {
             handleApiError(response);

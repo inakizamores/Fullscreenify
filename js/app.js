@@ -234,99 +234,92 @@ async function toggleCdView() {
     const placeholderText = document.getElementById("placeholder-text");
   
     if (!isCdView) {
-      // Intention to switch to CD view
+        // Intention to switch to CD view
         try {
-          let imageUrl;
-          if (currentSongId) {
-              const response = await fetch(
-                "https://api.spotify.com/v1/me/player/currently-playing",
-                {
-                  headers: {
+            let imageUrl;
+            const response = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+                headers: {
                     Authorization: `Bearer ${accessToken}`,
-                  },
-                }
-              );
-              if (response.ok) {
+                },
+            });
+    
+            if (response.ok) {
                 const data = await response.json();
-                imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-              } else {
+    
+                // Check if data and data.item are not null, and data.item.album is available
+                if (data && data.item && data.item.album) {
+                    imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                } else {
+                    // Use placeholder image URL if no current song or album data is unavailable
+                    imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+                }
+            } else {
                 handleApiError(response);
                 return; // Exit early if API error occurs
-              }
-          } else {
-              // Use placeholder image URL if no current song
-              imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-          }
-  
-          // Await the image update before switching the view
-          await updateImage(cdImage, imageUrl);
-  
-          // Switch to CD view
-          isCdView = true;
-          albumCover.style.display = "none";
-          cdImage.style.display = "block";
-          cdContainer.style.display = "flex";
-          placeholderText.style.display = "none";
-  
-          // Add the wrapper dynamically
-          if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("cd-image-wrapper");
-            cdImage.parentNode.insertBefore(wrapper, cdImage);
-            wrapper.appendChild(cdImage);
-          }
-          
+            }
+    
+            // Await the image update before switching the view
+            await updateImage(cdImage, imageUrl);
+    
+            // Switch to CD view
+            isCdView = true;
+            albumCover.style.display = "none";
+            cdImage.style.display = "block";
+            cdContainer.style.display = "flex";
+            placeholderText.style.display = "none";
+    
+            // Add the wrapper dynamically
+            if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("cd-image-wrapper");
+                cdImage.parentNode.insertBefore(wrapper, cdImage);
+                wrapper.appendChild(cdImage);
+            }
         } catch (error) {
-          console.error(
-            "Error fetching currently playing song for CD image:",
-            error
-          );
+            console.error("Error fetching currently playing song for CD image:", error);
         }
     } else {
-      // Intention to switch to album cover view
+        // Intention to switch to album cover view
         try {
-          let imageUrl;
-          if (currentSongId) {
-              const response = await fetch(
-                "https://api.spotify.com/v1/me/player/currently-playing",
-                {
-                  headers: {
+            let imageUrl;
+            const response = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+                headers: {
                     Authorization: `Bearer ${accessToken}`,
-                  },
-                }
-              );
-              if (response.ok) {
+                },
+            });
+    
+            if (response.ok) {
                 const data = await response.json();
-                imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-              } else {
+    
+                // Check if data and data.item are not null, and data.item.album is available
+                if (data && data.item && data.item.album) {
+                    imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
+                } else {
+                    // Use placeholder image URL if no current song or album data is unavailable
+                    imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
+                }
+            } else {
                 handleApiError(response);
                 return; // Exit early if API error occurs
-              }
-          } else {
-              // Use placeholder image URL if no current song
-              imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
-          }
-  
-          // Await the image update before switching the view
-          await updateImage(albumCover, imageUrl);
-  
-          // Switch to album cover view
-          isCdView = false;
-          cdContainer.style.display = "none";
-          albumCover.style.display = "block";
-          placeholderText.style.display = "none";
-  
-          // Remove the wrapper when switching back to album view
-          if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = cdImage.parentNode;
-            wrapper.parentNode.insertBefore(cdImage, wrapper);
-            wrapper.parentNode.removeChild(wrapper);
-          }
+            }
+    
+            // Await the image update before switching the view
+            await updateImage(albumCover, imageUrl);
+    
+            // Switch to album cover view
+            isCdView = false;
+            cdContainer.style.display = "none";
+            albumCover.style.display = "block";
+            placeholderText.style.display = "none";
+    
+            // Remove the wrapper when switching back to album view
+            if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                const wrapper = cdImage.parentNode;
+                wrapper.parentNode.insertBefore(cdImage, wrapper);
+                wrapper.parentNode.removeChild(wrapper);
+            }
         } catch (error) {
-          console.error(
-            "Error fetching currently playing song for album cover:",
-            error
-          );
+            console.error("Error fetching currently playing song for album cover:", error);
         }
     }
   
