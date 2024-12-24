@@ -385,6 +385,20 @@ function scheduleTokenRefresh() {
     }
 }
 
+function setImageWrapperMaxHeight() {
+  const fullscreenContainer = document.querySelector('.fullscreenify-container');
+  const imageWrapper = document.querySelector('.image-wrapper');
+
+  if (fullscreenContainer && imageWrapper) {
+    const containerHeight = fullscreenContainer.offsetHeight;
+    imageWrapper.style.maxHeight = `${containerHeight * 0.9}px`;
+  }
+}
+
+// Call the function initially and on window resize
+setImageWrapperMaxHeight();
+window.addEventListener('resize', setImageWrapperMaxHeight);
+
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
