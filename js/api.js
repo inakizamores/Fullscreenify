@@ -20,17 +20,17 @@ async function getCurrentlyPlaying() {
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
-            hideSessionExpiredModal(); // Add this line to hide modal on 204
+            hideSessionExpiredModal(); // Moved after startUpdatingSongInfo()
         } else if (response.ok) {
             const data = await response.json();
 
             // Check for media type (ad, episode, or unknown)
             if (data.currently_playing_type === 'episode' || data.currently_playing_type === 'unknown' || data.currently_playing_type === 'ad') {
                 displayMediaTypePlaceholder();
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL); // Start updating for media type placeholder
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL); 
                 document.getElementById('login-screen').style.display = 'none';
                 document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal();
+                hideSessionExpiredModal(); // Moved after startUpdatingSongInfo()
             } else {
                 // Update UI if the song or playback state has changed
                 if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
@@ -47,7 +47,7 @@ async function getCurrentlyPlaying() {
                 }
                 document.getElementById('login-screen').style.display = 'none';
                 document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal();
+                hideSessionExpiredModal(); // Moved after startUpdatingSongInfo()
             }
         } else {
             handleApiError(response);
@@ -56,7 +56,6 @@ async function getCurrentlyPlaying() {
         console.error('Error fetching currently playing song:', error);
     }
 }
-
 
 function handleApiError(response) {
     if (response.status === 401) {
