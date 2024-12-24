@@ -544,3 +544,26 @@ body {
         max-width: 70px;
     }
 }
+
+.control-btn i {
+    margin: 0;
+    font-size: 24px;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* Specific adjustments for each icon */
+#play-pause-btn.play-icon i { /* Target the play icon specifically */
+  margin-left: 2px; /* Move slightly to the right */
+}
+
+#prev-btn i {
+  margin-right: 2px; /* Move slightly to the left */
+}
+
+#next-btn i {
+  margin-left: 2px; /* Move slightly to the right */
+}

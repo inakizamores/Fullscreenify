@@ -97,12 +97,14 @@ function updateUI(data) {
       if (isPlaying) {
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         playPauseBtn.title = "Pause";
+        playPauseBtn.classList.remove("play-icon");
         if (isCdView) {
           cdImage.style.animationPlayState = "running";
         }
       } else {
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         playPauseBtn.title = "Play";
+        playPauseBtn.classList.add("play-icon");
         if (isCdView) {
           cdImage.style.animationPlayState = "paused";
         }
