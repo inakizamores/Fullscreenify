@@ -375,18 +375,21 @@ async function initializeApp() {
     } else {
         checkAuthentication();
     }
-    // Force initial display of placeholder
-    displayPlaceholder();
-    document.getElementById('login-screen').style.display = 'none';
-    document.querySelector('.fullscreenify-container').style.display = 'flex';
 
-    // Then, fetch currently playing after a small delay
-    setTimeout(async () => {
-        await getCurrentlyPlaying();
-        initialLoadComplete = true; // Mark initial load as complete
-    }, 500); // Adjust delay as needed
+    // Only proceed if the user is authenticated
+    if (isLoggedIn) {
+        // Force initial display of placeholder
+        displayPlaceholder();
+        document.querySelector('.fullscreenify-container').style.display = 'flex';
 
-    scheduleTokenRefresh();
+        // Then, fetch currently playing after a small delay
+        setTimeout(async () => {
+            await getCurrentlyPlaying();
+            initialLoadComplete = true; // Mark initial load as complete
+        }, 500); // Adjust delay as needed
+
+        scheduleTokenRefresh();
+    }
 }
 
 initializeApp();

@@ -52,14 +52,16 @@ function handleRedirect() {
 }
 
 // Function to check the user's authentication status
-function checkAuthentication() {
+ffunction checkAuthentication() {
     if (!isLoggedIn) {
         // Show the login screen if not authenticated
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.fullscreenify-container').style.display = 'none';
     } else {
-        // Fetch the currently playing song if authenticated
-        getCurrentlyPlaying(); 
+        // If already authenticated, hide login screen and show main content (optional, as initializeApp now handles this conditionally)
+        document.getElementById('login-screen').style.display = 'none';
+        document.querySelector('.fullscreenify-container').style.display = 'flex';
+        // No need to fetch here, initializeApp will handle it if isLoggedIn is true
     }
 }
 
