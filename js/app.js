@@ -138,6 +138,37 @@ function displayPlaceholder() {
     logImageWrapperSize();
 }
 
+function displayModifiedPlaceholder(message) {
+    const placeholderText = document.getElementById('placeholder-text');
+    placeholderText.textContent = message; // Set the custom message
+    placeholderText.style.display = 'block';
+    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg'; // Same placeholder image
+    const imageContainer = document.querySelector('.image-container');
+
+    if (!isCdView) {
+        // Album cover view
+        const albumCover = document.getElementById('album-cover');
+        updateImage(albumCover, placeholderImageUrl);
+        albumCover.style.display = 'block';
+        document.getElementById('cd-container').style.display = 'none';
+    } else {
+        // CD view
+        const cdImage = document.getElementById('cd-image');
+        updateImage(cdImage, placeholderImageUrl);
+        cdImage.style.display = 'block';
+        document.getElementById('album-cover').style.display = 'none';
+        document.getElementById('cd-container').style.display = 'flex';
+    }
+
+    document.body.style.backgroundColor = '#222';
+    document.body.style.backgroundImage = 'none';
+    currentBackgroundImage = null;
+    imageContainer.classList.add('placeholder-active');
+
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
+}
+
 function showSessionExpiredModal() {
     const modal = document.getElementById('session-expired-modal');
     modal.style.display = 'block';
