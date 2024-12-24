@@ -1,13 +1,14 @@
-const ACTIVE_UPDATE_INTERVAL = 250;
-const INACTIVE_UPDATE_INTERVAL = 2000;
-let updateIntervalId = null;
-let currentSongId = null;
-let currentIsPlaying = null;
-let currentBackgroundImage = null;
-let isCdView = false;
-const imageCache = new Set();
+const ACTIVE_UPDATE_INTERVAL = 250; // Interval for updating song info when playing
+const INACTIVE_UPDATE_INTERVAL = 2000; // Interval for updating song info when paused or not playing
+let updateIntervalId = null; // ID of the interval for updating song info
+let currentSongId = null; // ID of the currently playing song
+let currentIsPlaying = null; // Playback state of the currently playing song
+let currentBackgroundImage = null; // URL of the current background image
+let isCdView = false; // Flag to determine if CD view is active
+const imageCache = new Set(); // Set to store cached image URLs
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
+let isSongInfoVisible = false; // Flag to determine if song info is visible
 
 // Cursor hiding functionality
 let idleTimer;
@@ -53,7 +54,14 @@ function logImageWrapperSize() {
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
-// Updated UI
+
+// Function to update song name and artist text
+function updateSongInfoText(songName, artistName) {
+    document.getElementById('song-name').textContent = songName;
+    document.getElementById('artist-name').textContent = artistName;
+}
+
+// Updated UI function
 function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
@@ -110,9 +118,15 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
+
+    // Update song name and artist if the toggle is active
+    if (isSongInfoVisible) {
+        updateSongInfoText(data.item.name, data.item.artists.map(artist => artist.name).join(', '));
+    }
+
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-  }
+}
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
@@ -129,6 +143,7 @@ function preloadBackgroundImage(imageUrl, callback) {
         };
     }
 }
+
 
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
@@ -160,6 +175,13 @@ function displayPlaceholder() {
     currentBackgroundImage = null;
     imageContainer.classList.add('placeholder-active');
 
+    // Hide the song info when displaying the placeholder
+    const songInfoLeft = document.querySelector('.song-info-container.left');
+    const songInfoRight = document.querySelector('.song-info-container.right');
+    songInfoLeft.classList.remove('show');
+    songInfoRight.classList.remove('show');
+    isSongInfoVisible = false;
+    document.getElementById('song-info-toggle-btn').classList.remove('active');
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
 }
@@ -329,10 +351,45 @@ async function toggleCdView() {
         document.getElementById("cd-toggle-btn").disabled = false;
         document.getElementById("cd-toggle-btn").classList.remove("disabled");
     }, 1000);
-
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
 }
+
+async function toggleSongInfo() {
+    isSongInfoVisible = !isSongInfoVisible;
+    const songInfoLeft = document.querySelector('.song-info-container.left');
+    const songInfoRight = document.querySelector('.song-info-container.right');
+    const toggleButton = document.getElementById('song-info-toggle-btn');
+
+    if (isSongInfoVisible) {
+        songInfoLeft.classList.add('show');
+        songInfoRight.classList.add('show');
+        toggleButton.classList.add('active');
+        // Update the text immediately if a song is playing
+        if (currentSongId) {
+            try {
+                const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    updateSongInfoText(data.item.name, data.item.artists.map(artist => artist.name).join(', '));
+                } else {
+                    handleApiError(response);
+                }
+            } catch (error) {
+                console.error('Error fetching currently playing song for song info:', error);
+            }
+        }
+    } else {
+        songInfoLeft.classList.remove('show');
+        songInfoRight.classList.remove('show');
+        toggleButton.classList.remove('active');
+    }
+}
+
 async function togglePlayPause() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -371,6 +428,7 @@ function manageImageCache(imageUrl) {
     }
 }
 
+
 function scheduleTokenRefresh() {
     const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
     if (expirationTime) {
@@ -389,6 +447,7 @@ document.getElementById('play-pause-btn').addEventListener('click', togglePlayPa
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+document.getElementById('song-info-toggle-btn').addEventListener('click', toggleSongInfo);
 
 async function initializeApp() {
     if (window.location.hash) {
@@ -409,6 +468,13 @@ async function initializeApp() {
     if (!currentSongId) {
         displayPlaceholder();
     }
+
+      // Set initial visibility of song info based on local storage or default
+    // Example:
+    // const savedSongInfoState = localStorage.getItem('fullscreenify_song_info_visible');
+    // if (savedSongInfoState === 'true') {
+    //     toggleSongInfo(); // Call toggle to set the initial state
+    // }
 
     initialLoadComplete = true;
     scheduleTokenRefresh();

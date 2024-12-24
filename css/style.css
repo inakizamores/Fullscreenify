@@ -96,7 +96,7 @@ body {
     justify-content: space-around;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1; 
+    z-index: 1;
 }
 
 .control-btn {
@@ -355,8 +355,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 70%; 
-    max-width: 500px; 
+    width: 70%;
+    max-width: 500px;
     margin: auto;
     padding: 0 20px;
 }
@@ -377,17 +377,17 @@ body {
 }
 
 .login-content h1 {
-    font-size: 3em; 
+    font-size: 3em;
     font-weight: bold;
-    margin-bottom: 0.3em; 
+    margin-bottom: 0.3em;
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
 }
 
 .login-content p {
-    font-size: 1.2em; 
+    font-size: 1.2em;
     margin-top: 0em;
-    margin-bottom: 2.5em; 
+    margin-bottom: 2.5em;
     font-family: 'Roboto', sans-serif;
     line-height: 1.4;
 }
@@ -494,11 +494,56 @@ body {
     color: #000;
 }
 
+
+/* === Song Info Container Styles === */
+.song-info-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(50% - 30px); /* Adjust as needed for spacing */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* To not interfere with clicks on the image */
+}
+
+.song-info-container.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.song-info-container.left {
+    left: 20px;
+    text-align: left;
+}
+
+.song-info-container.right {
+    right: 20px;
+    text-align: right;
+}
+
+.song-info-text {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Adjust the positioning of the song info toggle button */
+#song-info-toggle-btn {
+    left: 80px; /* Adjust based on the width of the CD toggle button */
+}
+
+#song-info-toggle-btn.active {
+    background-color: rgba(30, 185, 84, 0.8); /* Highlight when active */
+}
 /* === Responsive Design === */
 
 @media (max-width: 768px) {
     .login-content h1 {
-        font-size: 2.5em; 
+        font-size: 2.5em;
         margin-bottom: 0.4em;
     }
 
@@ -508,16 +553,16 @@ body {
     }
 
     #login-btn {
-        font-size: 18px; 
+        font-size: 18px;
         padding: 12px 25px;
     }
 
     .login-container {
-        width: 80%; 
+        width: 80%;
     }
 
     .logo {
-        max-width: 80px; 
+        max-width: 80px;
         margin-bottom: 0.8em;
     }
 }
