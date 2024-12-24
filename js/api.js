@@ -1,44 +1,10 @@
-async function getCurrentlyPlaying() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
+// api.js
 
-        if (response.status === 204) {
-            // No content - nothing is playing
-            displayPlaceholder();
-            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-        } else if (response.ok) {
-            const data = await response.json();
-
-            // Update UI if the song or playback state has changed
-            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                updateUI(data);
-                currentSongId = data.item.id;
-                currentIsPlaying = data.is_playing;
-            }
-
-            // Adjust update interval based on playing state
-            if (data.is_playing) {
-                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-            } else {
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            }
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-        } else {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error fetching currently playing song:', error);
-    }
-}
-
-// ... (Existing code for variables and functions) ...
+const ACTIVE_UPDATE_INTERVAL = 250;
+const INACTIVE_UPDATE_INTERVAL = 2000;
+let updateIntervalId = null;
+let currentSongId = null;
+let currentIsPlaying = null;
 
 async function getCurrentlyPlaying() {
     try {
@@ -57,22 +23,28 @@ async function getCurrentlyPlaying() {
         } else if (response.ok) {
             const data = await response.json();
 
-            // Update UI if the song or playback state has changed
-            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                updateUI(data);
-                currentSongId = data.item.id;
-                currentIsPlaying = data.is_playing;
+            // Check for media type (ad, episode, or unknown)
+            if (data.currently_playing_type === 'episode' || data.currently_playing_type === 'unknown' || data.currently_playing_type === 'ad') {
+                displayMediaTypePlaceholder();
+            } else {
+                // Update UI if the song or playback state has changed
+                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                    updateUI(data);
+                    currentSongId = data.item.id;
+                    currentIsPlaying = data.is_playing;
+                }
+
+                // Adjust update interval based on playing state
+                if (data.is_playing) {
+                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+                } else {
+                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                }
+                document.getElementById('login-screen').style.display = 'none';
+                document.querySelector('.fullscreenify-container').style.display = 'flex';
             }
 
-            // Adjust update interval based on playing state
-            if (data.is_playing) {
-                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-            } else {
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            }
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-            hideSessionExpiredModal()
+            hideSessionExpiredModal();
         } else {
             handleApiError(response);
         }
@@ -90,8 +62,6 @@ function handleApiError(response) {
         console.error('API Error:', response.status, response.statusText);
     }
 }
-
-// ... (Existing code for playSong, pauseSong, nextSong, prevSong) ...
 
 async function playSong() {
     try {
