@@ -369,32 +369,27 @@ document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
-aasync function initializeApp() {
-    // Check authentication FIRST
+async function initializeApp() {
     if (window.location.hash) {
-        await handleRedirect(); // Wait for redirect processing
+        await handleRedirect();
     } else {
         checkAuthentication();
     }
 
-    // Now, check if logged in before proceeding
     if (!isLoggedIn) {
-        // Login screen should already be visible from checkAuthentication()
-        return; // Stop further initialization
-    }
-
-    // If logged in, THEN proceed with fetching and placeholder logic
-    // Force initial display of placeholder (if no song is playing)
-    await getCurrentlyPlaying(); // Fetch immediately to determine state
-    if (!currentSongId) { // Check if a song was found
-        displayPlaceholder();
+        return; // Don't proceed if not logged in
     }
 
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.fullscreenify-container').style.display = 'flex';
 
+    await getCurrentlyPlaying();
+
+    if (!currentSongId) {
+        displayPlaceholder();
+    }
+
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
-
 initializeApp();
