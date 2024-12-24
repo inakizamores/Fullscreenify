@@ -15,22 +15,30 @@ async function getCurrentlyPlaying() {
         } else if (response.ok) {
             const data = await response.json();
 
-            // Update UI if the song or playback state has changed
-            if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                updateUI(data);
-                currentSongId = data.item.id;
-                currentIsPlaying = data.is_playing;
-            }
+            // Check if the currently playing item is a track
+            if (data.currently_playing_type === 'track') {
+                // Update UI if the song or playback state has changed
+                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                    updateUI(data);
+                    currentSongId = data.item.id;
+                    currentIsPlaying = data.is_playing;
+                }
 
-            // Adjust update interval based on playing state
-            if (data.is_playing) {
-                startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+                // Adjust update interval based on playing state
+                if (data.is_playing) {
+                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+                } else {
+                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                }
+                document.getElementById('login-screen').style.display = 'none';
+                document.querySelector('.fullscreenify-container').style.display = 'flex';
+                hideSessionExpiredModal();
             } else {
+                // If it's not a track (e.g., podcast, ad), display placeholder
+                displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             }
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-            hideSessionExpiredModal()
+
         } else {
             handleApiError(response);
         }

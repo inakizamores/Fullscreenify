@@ -39,11 +39,11 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-  
+
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-  
+
     manageImageCache(imageUrl);
-  
+
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
       preloadBackgroundImage(imageUrl, () => {
@@ -54,7 +54,7 @@ function updateUI(data) {
         }
       });
     }
-  
+
     if (!isCdView) {
       // Album cover view
       updateImage(albumCover, imageUrl);
@@ -69,7 +69,7 @@ function updateUI(data) {
       document.getElementById("placeholder-text").style.display = "none";
       document.getElementById("cd-container").style.display = "flex";
     }
-  
+
     // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
       if (isPlaying) {
@@ -87,7 +87,7 @@ function updateUI(data) {
       }
     }
     imageContainer.classList.remove("placeholder-active");
-  
+
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
   }
@@ -114,6 +114,10 @@ function displayPlaceholder() {
     placeholderText.style.display = 'block';
     const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
     const imageContainer = document.querySelector('.image-container');
+
+    // Reset song and playback state when displaying placeholder
+    currentSongId = null;
+    currentIsPlaying = null;
 
     if (!isCdView) {
          // Album cover view
