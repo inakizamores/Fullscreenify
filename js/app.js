@@ -211,12 +211,8 @@ async function toggleCdView() {
 
     if (!isCdView) {
         // Intention to switch to CD view
-        isCdView = true;
-        albumCover.style.display = 'none';
-        cdContainer.style.display = 'flex';
-        placeholderText.style.display = 'none';
 
-        // Ensure the wrapper exists for CD view
+        // 1. Ensure the CD wrapper exists *before* updating the image
         if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
             const wrapper = document.createElement("div");
             wrapper.classList.add("cd-image-wrapper");
@@ -225,7 +221,6 @@ async function toggleCdView() {
         }
 
         if (currentSongId) {
-            // Song is playing, fetch current album art for CD
             try {
                 const response = await fetch(
                     "https://api.spotify.com/v1/me/player/currently-playing",
@@ -254,18 +249,19 @@ async function toggleCdView() {
                 );
             }
         } else {
-            // No song playing, switch placeholder to CD view
-            updateImage(cdImage, placeholderImageUrl);
+            await updateImage(cdImage, placeholderImageUrl);
         }
-    } else {
-        // Intention to switch to album cover view
-        isCdView = false;
-        cdContainer.style.display = 'none';
-        albumCover.style.display = 'block';
+
+        // 2. *After* the image is ready (or placeholder is set), switch visibility
+        isCdView = true;
+        albumCover.style.display = 'none';
+        cdContainer.style.display = 'flex';
         placeholderText.style.display = 'none';
 
+    } else {
+        // Intention to switch to album cover view
+
         if (currentSongId) {
-            // Song is playing, fetch current album art
             try {
                 const response = await fetch(
                     "https://api.spotify.com/v1/me/player/currently-playing",
@@ -289,11 +285,16 @@ async function toggleCdView() {
                 );
             }
         } else {
-            // No song playing, switch placeholder to album cover view
-            updateImage(albumCover, placeholderImageUrl);
+            await updateImage(albumCover, placeholderImageUrl);
         }
 
-        // Remove the wrapper when switching back to album view
+        // 1. Switch visibility *before* potentially removing the wrapper
+        isCdView = false;
+        cdContainer.style.display = 'none';
+        albumCover.style.display = 'block';
+        placeholderText.style.display = 'none';
+
+        // 2. Remove the wrapper when switching back to album view
         if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
             const wrapper = cdImage.parentNode;
             wrapper.parentNode.insertBefore(cdImage, wrapper);
@@ -311,7 +312,6 @@ async function toggleCdView() {
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
 }
-
 async function togglePlayPause() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
