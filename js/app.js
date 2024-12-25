@@ -71,14 +71,8 @@ function updateUI(data) {
       preloadBackgroundImage(imageUrl, () => {
         // Once the new image is loaded, update the background if it's still the correct image
         if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-          // Apply transition effect
-          // Remove 'loading' class and add 'loaded' class after a short delay
-          setTimeout(() => {
-            document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), var(--new-background-image)`;
-            currentBackgroundImage = imageUrl;
-            document.body.classList.remove('loading');
-            document.body.classList.add('loaded');
-          }, 50); // Adjust delay if needed (this is for synchronization)
+          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          currentBackgroundImage = imageUrl;
         }
       });
     }
@@ -126,13 +120,6 @@ function updateUI(data) {
 function preloadBackgroundImage(imageUrl, callback) {
     const img = new Image();
     img.src = imageUrl;
-
-    // Add 'loading' class to body
-    document.body.classList.add('loading');
-    document.body.classList.remove('loaded');
-
-    // Set the new image as the background of body::after
-    document.body.style.setProperty('--new-background-image', `url(${imageUrl})`);
 
     if (img.complete) {
         // Image already loaded (cached)
