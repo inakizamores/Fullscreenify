@@ -48,7 +48,7 @@ body {
 }
 
 .image-container {
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
@@ -186,7 +186,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-left-btn:hover {
@@ -225,7 +225,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-right-btn:hover {
