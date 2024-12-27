@@ -18,7 +18,7 @@ body::before {
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue', sans-serif; /* Main font for the application */
+    font-family: 'Helvetica Neue', sans-serif;
     background-color: #222;
     color: #fff;
     overflow: hidden;
@@ -70,14 +70,12 @@ body {
     display: block;
 }
 
-/* Hover effect for album cover */
-.image-container:hover #album-cover {
+.image-container:hover #album-cover{
     transform: scale(1.05);
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
 }
 
-/* Hover effect for controls */
-.image-container:hover .controls {
+.image-container:hover .controls{
     opacity: 1;
 }
 
@@ -98,7 +96,7 @@ body {
     justify-content: space-around;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1;
+    z-index: 1; 
 }
 
 .control-btn {
@@ -114,7 +112,7 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 .control-btn:hover {
@@ -172,10 +170,10 @@ body {
 
 /* === Bottom UI Buttons Styles === */
 
-/* General styles for all bottom buttons */
-.bottom-left-btn,
-.bottom-right-btn {
+.bottom-left-btn {
     position: absolute;
+    bottom: 20px;
+    left: 20px;
     background-color: rgba(179, 179, 179, 0.7);
     border: none;
     color: white;
@@ -188,30 +186,12 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
-.bottom-left-btn:hover,
-.bottom-right-btn:hover {
+.bottom-left-btn:hover {
     background-color: rgba(179, 179, 179, 1);
     transform: scale(1.1);
-}
-
-/* Specific position for bottom-left buttons */
-.bottom-left-btn {
-    bottom: 20px;
-    left: 20px;
-}
-
-/* Specific position for bottom-right buttons */
-.bottom-right-btn {
-    bottom: 20px;
-    right: 20px;
-}
-
-/* Placement for the new toggle button */
-#text-toggle-btn {
-    left: 70px; /* Adjust as needed for spacing */
 }
 
 .bottom-left-btn.disabled {
@@ -224,10 +204,43 @@ body {
     transform: scale(1); /* Remove scaling on hover */
 }
 
-.bottom-left-btn i,
+.bottom-left-btn i {
+    font-size: 20px;
+    color: #000;
+}
+
+.bottom-right-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
+}
+
+.bottom-right-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
 .bottom-right-btn i {
     font-size: 20px;
     color: #000;
+}
+
+/* Placement for the new toggle button */
+#text-toggle-btn {
+    left: 70px; /* Adjust as needed for spacing */
 }
 
 /* === CD Display Styles === */
@@ -242,7 +255,7 @@ body {
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-/* Styles for CD image wrapper */
+/* Styles for CD image wrapper (NEW) */
 #cd-container .cd-image-wrapper {
     width: 100%;
     height: 100%;
@@ -253,8 +266,8 @@ body {
     pointer-events: none; /* Disable pointer events on the wrapper initially */
 }
 
-/* Hover effect for zoom (restored) */
-.image-container:hover #cd-container .cd-image-wrapper {
+/* Hover effect for zoom (NEW) */
+.image-container:hover #cd-container .cd-image-wrapper{
     transform: scale(1.05);
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
     pointer-events: auto; /* Enable pointer events on hover */
@@ -268,6 +281,7 @@ body {
     position: relative;
     animation: rotateCD 10s linear infinite;
     animation-play-state: paused;
+    /* Removed transition from here */
     cursor: pointer;
     display: block;
     object-fit: cover;
