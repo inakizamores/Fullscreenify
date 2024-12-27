@@ -48,7 +48,7 @@ body {
 }
 
 .image-container {
-    position: relative;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -186,7 +186,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 .bottom-left-btn:hover {
@@ -225,7 +225,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
+    transition: background-color: 0.3s ease, transform 0.3s ease;
 }
 
 .bottom-right-btn:hover {
@@ -236,11 +236,6 @@ body {
 .bottom-right-btn i {
     font-size: 20px;
     color: #000;
-}
-
-/* Placement for the new toggle button */
-#text-toggle-btn {
-    left: 70px; /* Adjust as needed for spacing */
 }
 
 /* === CD Display Styles === */
@@ -571,68 +566,4 @@ body {
 
 #next-btn i {
   margin-left: 3px; /* Move slightly to the right */
-}
-
-/* === Track Info Styles === */
-
-.track-info-container {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    z-index: 2;
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.5s ease; /* Add a smooth transition */
-}
-
-.track-info-container.show {
-    opacity: 1; /* Visible when the 'show' class is added */
-}
-
-#artist-name,
-#song-name {
-    font-family: 'Helvetica Neue', sans-serif; /* Use the same font as the rest of the page */
-    font-size: 2.5em; /* Increased font size */
-    color: white;
-    text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.7); /* Add text shadow */
-    font-weight: bold;
-    /* Remove background-color and padding */
-}
-
-/* --- Responsive Styling for Track Info --- */
-
-/* Small screens (e.g., tablets) */
-@media (max-width: 768px) {
-    .track-info-container {
-        flex-direction: column;
-        top: auto;
-        bottom: 100px; /* Position below the album art */
-        transform: none;
-        justify-content: center;
-    }
-
-    #artist-name,
-    #song-name {
-        font-size: 1.8em; /* Adjust font size for smaller screens */
-        margin-bottom: 5px; /* Add spacing between artist and song */
-    }
-}
-
-/* Very small screens (e.g., phones) */
-@media (max-width: 480px) {
-    .track-info-container {
-        padding: 0 10px; /* Reduce padding */
-        bottom: 150px;
-    }
-
-    #artist-name,
-    #song-name {
-        font-size: 1.4em; /* Further adjust font size for very small screens */
-        margin-bottom: 2px;
-    }
 }
