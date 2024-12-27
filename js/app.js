@@ -53,7 +53,7 @@ function logImageWrapperSize() {
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
-// Updated UI
+// Updated UI function to include artist and song name
 function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
@@ -61,6 +61,15 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
+
+    // Update track information only if it's a track
+    if (data.currently_playing_type === 'track') {
+        const artistName = document.getElementById('artist-name');
+        const songName = document.getElementById('song-name');
+
+        artistName.textContent = data.item.artists[0].name;
+        songName.textContent = data.item.name;
+    }
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
@@ -386,6 +395,16 @@ function scheduleTokenRefresh() {
         }, refreshTimeout);
     }
 }
+
+// Toggle track info visibility
+let isTrackInfoVisible = false; // Keep track of the state
+const trackInfoToggleBtn = document.getElementById('text-toggle-btn');
+const trackInfoContainer = document.querySelector('.track-info-container');
+
+trackInfoToggleBtn.addEventListener('click', () => {
+    isTrackInfoVisible = !isTrackInfoVisible;
+    trackInfoContainer.classList.toggle('show', isTrackInfoVisible);
+});
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
