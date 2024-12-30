@@ -1,5 +1,20 @@
 /* === General Styles === */
 
+/* Import Helvetica Neue Medium and Helvetica Neue Heavy fonts */
+@font-face {
+    font-family: 'Helvetica Neue Medium';
+    src: url('../fonts/HelveticaNeueMedium.otf') format('opentype'); /* Path relative to CSS file */
+    font-weight: normal; /* Or 500 if that's the intended weight for Medium */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue Heavy';
+    src: url('../fonts/HelveticaNeueHeavy.otf') format('opentype'); /* Path relative to CSS file */
+    font-weight: 900; /* Heavy is typically 900 */
+    font-style: normal;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -18,7 +33,7 @@ body::before {
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Helvetica Neue Medium', sans-serif; /* Apply Helvetica Neue Medium to body */
     background-color: #222;
     color: #fff;
     overflow: hidden;
@@ -186,7 +201,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-left-btn:hover {
@@ -225,7 +240,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color: 0.3s ease, transform 0.3s ease;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-right-btn:hover {
@@ -256,7 +271,7 @@ body {
     height: 100%;
     border-radius: 50%; /* Make the wrapper circular */
     overflow: hidden;    /* Hide anything outside the circle */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow: 0.3s ease;
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Initial box shadow */
     pointer-events: none; /* Disable pointer events on the wrapper initially */
 }
@@ -304,7 +319,7 @@ body {
     text-align: center;
     color: white;
     z-index: 10;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Helvetica Neue Medium', sans-serif;
     text-transform: uppercase;
     display: none;
 }
@@ -380,7 +395,7 @@ body {
     font-size: 3em; 
     font-weight: bold;
     margin-bottom: 0.3em; 
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Helvetica Neue Heavy', sans-serif;
     text-transform: uppercase;
 }
 
@@ -388,7 +403,7 @@ body {
     font-size: 1.2em; 
     margin-top: 0em;
     margin-bottom: 2.5em; 
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Helvetica Neue Medium', sans-serif;
     line-height: 1.4;
 }
 
@@ -428,7 +443,7 @@ body {
     font-weight: bold;
     margin-top: 0;
     margin-bottom: 20px;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Helvetica Neue Heavy', sans-serif;
     text-transform: uppercase;
 }
 
@@ -436,7 +451,7 @@ body {
     font-size: 16px;
     margin-top: 0;
     margin-bottom: 20px;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Helvetica Neue Medium', sans-serif;
 }
 
 #re-authenticate-btn {
