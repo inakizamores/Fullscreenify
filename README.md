@@ -8,7 +8,7 @@
 
 </div>
 
-> Immerse yourself in your music with Fullscreenify, a web application that displays the album cover of your currently playing Spotify song in full-screen mode.
+Immerse yourself in your music with Fullscreenify, a web application that displays the album cover of your currently playing Spotify song in full-screen mode.
 
 ---
 
