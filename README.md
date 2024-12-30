@@ -1,5 +1,7 @@
 # Fullscreenify
 
+[![Fullscreenify Logo](favicon/favicon.svg)](https://fullscreenify.netlify.app/)
+
 Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls, a toggleable CD display, and dynamically updates the UI as the music changes. The app features a visually engaging design with a dedicated login screen, smooth animations, and subtle background effects.
 
 ## Features
@@ -21,6 +23,7 @@ Fullscreenify is a web application that displays the album cover of your current
     -   **Subtle Animated Gradient:** A very faint, slowly moving green gradient overlay on a dark background for a modern aesthetic.
     -   **Padding and Centering:** Content is centered and has padding to avoid visual issues on different screen sizes.
 -   **Placeholder Content:** Displays a message when no music is playing, prompting the user to start streaming.
+-   **Cursor Hiding:** Automatically hides the mouse cursor after a period of inactivity (10 seconds) to enhance the full-screen experience. The cursor reappears when the user moves the mouse or presses a key.
 
 ## How it Works
 
@@ -59,6 +62,7 @@ The application consists of the following core components:
     -   Provides a toggle to switch between album art and CD display.
     -   Displays placeholder content when no music is playing.
     -   Schedules the token refresh mechanism.
+    -   Implements cursor hiding after a period of inactivity to improve the full-screen viewing experience.
 
 -   **Styling (`style.css`):**
     -   Defines the visual appearance of the application, including layout, colors, typography, and animations.
@@ -79,35 +83,28 @@ The application consists of the following core components:
 -   **Spotify Developer Account:** You'll need a Spotify Developer account.
 -   **Spotify Application:** Create a new application in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/).
 -   **Client ID:** Obtain your application's Client ID from the Spotify Developer Dashboard.
--   **Web Server (for local testing):** A simple web server like Live Server for VS Code is recommended for local development.
--   **Netlify Account (optional):** For deploying the application online.
+-   **Netlify Account:** For deploying the application online.
 
 ## Setup
 
 1. **Spotify Developer Dashboard:**
     -   Create a new application.
     -   Get your Client ID.
-    -   Add `http://localhost:5500` (or your local development URL) and your Netlify URL (e.g., `https://fullscreenify.netlify.app`) as Redirect URIs.
+    -   Add `https://fullscreenify.netlify.app/` as a Redirect URI.
 2. **Clone the Repository:**
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/inakizamores/Fullscreenify
     cd Fullscreenify
     ```
 3. **Update `auth.js`:**
     -   Replace `YOUR_SPOTIFY_CLIENT_ID` with your actual Client ID.
-    -   Replace the placeholder `redirectUri` with your local development Redirect URI and your Netlify URL.
-4. **Local Development:**
-    -   Use a live server (e.g., Live Server in VS Code) to open `index.html`.
-    -   Click "Login with Spotify" to authenticate.
-
-## Deployment (Netlify)
-
-1. Push your code to a GitHub repository.
-2. Create a new site on Netlify and connect it to your GitHub repository.
-3. In your Netlify site settings:
-    -   Set the production branch (usually `main` or `master`).
-4. Update the Redirect URI in your Spotify Developer Dashboard to include your Netlify site's URL.
+    -   Replace the placeholder `redirectUri` with `https://fullscreenify.netlify.app/`.
+4. **Deployment (Netlify):**
+    -   Push your code to your GitHub repository.
+    -   Create a new site on Netlify and connect it to your GitHub repository.
+    -   In your Netlify site settings:
+        -   Set the production branch (usually `main` or `master`).
 
 ## Limitations
 
@@ -115,4 +112,4 @@ The application consists of the following core components:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. (You can add a LICENSE file if you want to specify licensing terms)
+This project does not have a license yet. It is currently pending. Future licensing may fall under the MIT License, but this is subject to change.
