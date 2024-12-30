@@ -1,33 +1,75 @@
-# Fullscreenify
+<div align="center">
 
 <a href="https://fullscreenify.netlify.app/">
     <img src="favicon/favicon.svg" alt="Fullscreenify Logo" width="100">
 </a>
 
-Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls, a toggleable CD display, and dynamically updates the UI as the music changes. The app features a visually engaging design with a dedicated login screen, smooth animations, and subtle background effects.
+# Fullscreenify
+
+</div>
+
+> Immerse yourself in your music with Fullscreenify, a web application that displays the album cover of your currently playing Spotify song in full-screen mode.
+
+---
 
 ## Features
 
--   **Fetches Currently Playing Song:** Retrieves the currently playing song information from the Spotify API.
--   **Full-Screen Album Art:** Displays the album artwork in full-screen mode for an immersive visual experience.
--   **CD Display Mode:** Allows users to toggle between the album art and a spinning CD display.
--   **Blurred Background:** Applies a blurred background effect based on the album art, creating a visually appealing backdrop.
--   **Interactive Playback Controls:** Provides buttons to play, pause, skip to the next track, and go to the previous track. The play/pause button dynamically changes icons to reflect the current playback state.
--   **Dynamic Updates:** Updates the displayed album art in real-time when the song changes. The update frequency is adjusted based on whether music is actively playing or paused.
--   **Responsive Design:** Adapts to different screen sizes (desktop and mobile) for optimal viewing.
--   **Hover Effects:** Control buttons, album art, and CD image have hover effects for visual feedback.
--   **Automatic Login Persistence:** Stores the Spotify access token in local storage to automatically log the user in on subsequent visits.
--   **Automatic Token Refresh:** Silently refreshes the Spotify access token in the background using a hidden iframe to ensure uninterrupted playback.
--   **Session Expiration Handling:** Gracefully handles token expiration by displaying a modal that prompts the user to re-authenticate.
--   **Dedicated Login Screen:** Presents a separate login screen with:
-    -   **App Name and Description:** Clearly presents the app name "FULLSCREENIFY" and a brief description of its features.
-    -   **Pulsating Spotify Button:** A visually engaging login button with the Spotify logo that pulsates subtly.
-    -   **Subtle Animated Gradient:** A very faint, slowly moving green gradient overlay on a dark background for a modern aesthetic.
-    -   **Padding and Centering:** Content is centered and has padding to avoid visual issues on different screen sizes.
--   **Placeholder Content:** Displays a message when no music is playing, prompting the user to start streaming.
--   **Cursor Hiding:** Automatically hides the mouse cursor after a period of inactivity (10 seconds) to enhance the full-screen experience. The cursor reappears when the user moves the mouse or presses a key.
+<dl>
+  <dt><b><span style="font-size: 1.2em;">🎶</span> Fetches Currently Playing Song:</b></dt>
+  <dd>Retrieves the currently playing song information from the Spotify API.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🖼️</span> Full-Screen Album Art:</b></dt>
+  <dd>Displays the album artwork in full-screen mode for an immersive visual experience.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">💿</span> CD Display Mode:</b></dt>
+  <dd>Allows users to toggle between the album art and a spinning CD display.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🌫️</span> Blurred Background:</b></dt>
+  <dd>Applies a blurred background effect based on the album art, creating a visually appealing backdrop.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🎮</span> Interactive Playback Controls:</b></dt>
+  <dd>Provides buttons to play, pause, skip to the next track, and go to the previous track. The play/pause button dynamically changes icons to reflect the current playback state.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🔄</span> Dynamic Updates:</b></dt>
+  <dd>Updates the displayed album art in real-time when the song changes. The update frequency is adjusted based on whether music is actively playing or paused.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">📱</span> Responsive Design:</b></dt>
+  <dd>Adapts to different screen sizes (desktop and mobile) for optimal viewing.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">✨</span> Hover Effects:</b></dt>
+  <dd>Control buttons, album art, and CD image have hover effects for visual feedback.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🔐</span> Automatic Login Persistence:</b></dt>
+  <dd>Stores the Spotify access token in local storage to automatically log the user in on subsequent visits.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🔄</span> Automatic Token Refresh:</b></dt>
+  <dd>Silently refreshes the Spotify access token in the background using a hidden iframe to ensure uninterrupted playback.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🚨</span> Session Expiration Handling:</b></dt>
+  <dd>Gracefully handles token expiration by displaying a modal that prompts the user to re-authenticate.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">💻</span> Dedicated Login Screen:</b></dt>
+  <dd>Presents a separate login screen with:</dd>
+    <ul>
+        <li><b>App Name and Description:</b> Clearly presents the app name "FULLSCREENIFY" and a brief description of its features.</li>
+        <li><b>Pulsating Spotify Button:</b> A visually engaging login button with the Spotify logo that pulsates subtly.</li>
+        <li><b>Subtle Animated Gradient:</b> A very faint, slowly moving green gradient overlay on a dark background for a modern aesthetic.</li>
+        <li><b>Padding and Centering:</b> Content is centered and has padding to avoid visual issues on different screen sizes.</li>
+    </ul>
+
+  <dt><b><span style="font-size: 1.2em;">❓</span> Placeholder Content:</b></dt>
+  <dd>Displays a message when no music is playing, prompting the user to start streaming.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🖱️</span> Cursor Hiding:</b></dt>
+  <dd>Automatically hides the mouse cursor after a period of inactivity (10 seconds) to enhance the full-screen experience. The cursor reappears when the user moves the mouse or presses a key.</dd>
+</dl>
+
+---
 
 ## How it Works
+
+<details>
+<summary><b>Click to expand</b></summary>
 
 The application consists of the following core components:
 
@@ -80,12 +122,27 @@ The application consists of the following core components:
     -   Styles the session expiration modal.
     -   Ensures responsiveness across different screen sizes.
 
+</details>
+
+---
+
 ## Prerequisites
 
--   **Spotify Developer Account:** You'll need a Spotify Developer account.
--   **Spotify Application:** Create a new application in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/).
--   **Client ID:** Obtain your application's Client ID from the Spotify Developer Dashboard.
--   **Netlify Account:** For deploying the application online.
+<dl>
+  <dt><b><span style="font-size: 1.2em;">🔐</span> Spotify Developer Account:</b></dt>
+  <dd>You'll need a <a href="https://developer.spotify.com/dashboard/">Spotify Developer account</a>.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">📱</span> Spotify Application:</b></dt>
+  <dd>Create a new application in the <a href="https://developer.spotify.com/dashboard/">Spotify Developer Dashboard</a>.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🔑</span> Client ID:</b></dt>
+  <dd>Obtain your application's Client ID from the Spotify Developer Dashboard.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">☁️</span> Netlify Account:</b></dt>
+  <dd>For deploying the application online.</dd>
+</dl>
+
+---
 
 ## Setup
 
@@ -108,9 +165,13 @@ The application consists of the following core components:
     -   In your Netlify site settings:
         -   Set the production branch (usually `main` or `master`).
 
+---
+
 ## Limitations
 
 -   The automatic token refresh mechanism relies on a hidden iframe and may be affected by browser restrictions or if the user is not logged into Spotify. In such cases, manual re-authentication through the session expiration modal will be required.
+
+---
 
 ## License
 
