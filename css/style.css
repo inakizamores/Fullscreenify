@@ -56,16 +56,23 @@ body {
 
 .image-wrapper {
     position: relative;
-    width: 640px; /* Explicit width */
+    width: 100%; /* Occupy full width */
+    max-width: 100%; /* Prevent overflow */
     height: 640px; /* Explicit height */
-    max-width: 90%; /* Responsive max-width */
     max-height: 90vw; /* Responsive max-height based on viewport width to maintain aspect ratio */
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* Adjust column ratios as needed */
+    grid-template-areas:
+      "artist image song"
+      ". controls ."; /* Place controls below the image spanning the middle column */
+    gap: 20px; /* Add some gap between columns */
+    align-items: center;
+    justify-content: center;
 }
 
 .image-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
+    grid-area: image;
     width: 100%;
     height: 100%;
     z-index: 0;
@@ -73,6 +80,29 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.artist-column {
+    grid-area: artist;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Align text to the right */
+}
+  
+.song-column {
+    grid-area: song;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align text to the left */
+}
+
+#artist-name,
+#song-name {
+  color: white;
+  font-family: "Helvetica Neue Heavy", sans-serif;
+  font-size: 1.5em;
+  text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+  display: none; /* Initially hidden */
 }
 
 #album-cover {
@@ -101,17 +131,15 @@ body {
 /* === Control Buttons Styles === */
 
 .controls {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 400px;
-    display: flex;
+    grid-area: controls;
+    /* ... existing styles ... */
+    z-index: 3; /* Ensure controls are above text and image */
+    position: relative; /* Allow for absolute positioning of controls */
+    max-width: none;
+    width: 100%;
     justify-content: space-around;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1; 
 }
 
 .control-btn {
@@ -511,6 +539,23 @@ body {
 /* === Responsive Design === */
 
 @media (max-width: 768px) {
+    .image-wrapper {
+        grid-template-columns: 1fr; /* Stack elements vertically */
+        grid-template-areas:
+            "image"
+            "artist"
+            "song"
+            "controls";
+        gap: 10px;
+    }
+
+    .artist-column,
+    .song-column {
+        justify-content: center; /* Center text horizontally */
+        width: 80%;
+        margin: auto;
+    }
+
     .login-content h1 {
         font-size: 2.5em; 
         margin-bottom: 0.4em;
@@ -537,6 +582,23 @@ body {
 }
 
 @media (max-width: 480px) {
+    .image-wrapper {
+        grid-template-columns: 1fr; /* Stack elements vertically */
+        grid-template-areas:
+            "image"
+            "artist"
+            "song"
+            "controls";
+        gap: 10px;
+    }
+
+    .artist-column,
+    .song-column {
+        justify-content: center; /* Center text horizontally */
+        width: 90%;
+        margin: auto;
+    }
+
     .login-content h1 {
         font-size: 2em;
     }
