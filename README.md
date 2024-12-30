@@ -1,6 +1,8 @@
 # Fullscreenify
 
-[![Fullscreenify Logo](favicon/favicon.svg)](https://fullscreenify.netlify.app/)
+<a href="https://fullscreenify.netlify.app/">
+    <img src="favicon/favicon.svg" alt="Fullscreenify Logo" width="100">
+</a>
 
 Fullscreenify is a web application that displays the album cover of your currently playing Spotify song in full-screen mode. It provides interactive playback controls, a toggleable CD display, and dynamically updates the UI as the music changes. The app features a visually engaging design with a dedicated login screen, smooth animations, and subtle background effects.
 
