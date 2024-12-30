@@ -3,15 +3,15 @@
 /* Import Helvetica Neue Medium and Helvetica Neue Heavy fonts */
 @font-face {
     font-family: 'Helvetica Neue Medium';
-    src: url('../fonts/HelveticaNeueMedium.otf') format('opentype');
-    font-weight: normal;
+    src: url('../fonts/HelveticaNeueMedium.otf') format('opentype'); /* Path relative to CSS file */
+    font-weight: normal; /* Or 500 if that's the intended weight for Medium */
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Helvetica Neue Heavy';
-    src: url('../fonts/HelveticaNeueHeavy.otf') format('opentype');
-    font-weight: 900;
+    src: url('../fonts/HelveticaNeueHeavy.otf') format('opentype'); /* Path relative to CSS file */
+    font-weight: 900; /* Heavy is typically 900 */
     font-style: normal;
 }
 
@@ -33,7 +33,7 @@ body::before {
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue Medium', sans-serif;
+    font-family: 'Helvetica Neue Medium', sans-serif; /* Apply Helvetica Neue Medium to body */
     background-color: #222;
     color: #fff;
     overflow: hidden;
@@ -56,90 +56,42 @@ body {
 
 .image-wrapper {
     position: relative;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-areas:
-        "artist image song"
-        ". controls .";
-    gap: 40px;
-    align-items: center;
-    justify-content: center;
-    max-width: 90%;
-    max-height: 90vw;
-    z-index: 1; /* Ensure content is above the blurred background */
-}
-
-.image-container {
-    position: relative;
-    grid-area: image;
     width: 640px; /* Explicit width */
     height: 640px; /* Explicit height */
     max-width: 90%; /* Responsive max-width */
-    max-height: 90vw; /* Responsive max-height */
-    z-index: 1; /* Ensure the image is above other elements */
+    max-height: 90vw; /* Responsive max-height based on viewport width to maintain aspect ratio */
+}
+
+.image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.artist-column {
-    grid-area: artist;
-    display: flex;
-    align-items: center;
-    justify-self: flex-end; /* Align to the right edge of the grid column */
-}
-
-.song-column {
-    grid-area: song;
-    display: flex;
-    align-items: center;
-    justify-self: flex-start; /* Align to the left edge of the grid column */
-}
-
-#artist-name,
-#song-name {
-    color: white;
-    font-family: "Helvetica Neue Heavy", sans-serif;
-    font-size: 2em;
-    text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
-    visibility: hidden; /* Initially hidden, but takes up space */
-    text-align: right; /* Align text to the right within the container */
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#song-name {
-    text-align: left; /* Align text to the left within the container */
-    display: inline-block; /* Makes the element only as wide as its content */
-}
-
-/* Styles for when text is visible */
-.show-text #artist-name,
-.show-text #song-name {
-    visibility: visible;
-}
-
 #album-cover {
     position: relative;
-    width: 100%;
+    width: 100%; /* Occupy the container */
     height: 100%;
-    object-fit: contain; /* Image will fit inside the container maintaining aspect ratio */
+    object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
-    z-index: 1; /* Ensure the image is above other elements */
 }
 
-.image-container:hover #album-cover {
+.image-container:hover #album-cover{
     transform: scale(1.05);
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
 }
 
-.image-container:hover .controls {
-    opacity: 1; /* Show controls on hover */
+.image-container:hover .controls{
+    opacity: 1;
 }
 
 .image-container.placeholder-active .controls {
@@ -153,13 +105,13 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 400px;
     display: flex;
     justify-content: space-around;
-    width: 640px; /* Same as image-container */
-    max-width: 90%;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 3; /* Ensure controls are above the image and text */
+    z-index: 1; 
 }
 
 .control-btn {
@@ -341,7 +293,7 @@ body {
     animation-play-state: paused;
     cursor: pointer;
     display: block;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 /* Keyframes for CD rotation animation */
@@ -559,56 +511,6 @@ body {
 /* === Responsive Design === */
 
 @media (max-width: 768px) {
-    .image-wrapper {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "artist"
-            "image"
-            "song"
-            "controls";
-        gap: 20px;
-    }
-
-    .artist-column {
-        margin-top: 20px;
-        justify-content: center; /* Center horizontally */
-        justify-self: center;
-    }
-    
-    .song-column {
-        margin-bottom: 20px;
-        justify-content: center; /* Center horizontally */
-        justify-self: center;
-    }
-
-    .controls {
-        width: 90%; /* Adjust width for smaller screens */
-        position: relative; /* Allow controls to be positioned relative to the wrapper */
-        top: auto;
-        left: auto;
-        transform: none;
-        margin-top: 20px;
-    }
-
-    .image-container {
-        justify-self: center;
-    }
-
-    .artist-column #artist-name,
-    .song-column #song-name {
-        text-align: center;
-    }
-
-    .image-container {
-        width: 100%;
-        max-width: 90%;
-        height: auto;
-    }
-
-    .image-container:hover .controls {
-        opacity: 1; /* Ensure controls are visible on hover */
-    }
-
     .login-content h1 {
         font-size: 2.5em; 
         margin-bottom: 0.4em;
@@ -635,15 +537,6 @@ body {
 }
 
 @media (max-width: 480px) {
-    .image-wrapper {
-        gap: 10px;
-    }
-
-    .artist-column,
-    .song-column {
-        width: 90%;
-    }
-
     .login-content h1 {
         font-size: 2em;
     }

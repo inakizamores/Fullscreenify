@@ -8,7 +8,6 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
-let showText = false; // Initially hidden
 
 // Cursor hiding functionality
 let idleTimer;
@@ -112,13 +111,6 @@ function updateUI(data) {
       }
     }
     imageContainer.classList.remove("placeholder-active");
-
-    // Update artist and song name
-    document.getElementById('artist-name').textContent = data.item.artists[0].name;
-    document.getElementById('song-name').textContent = data.item.name;
-
-    // Apply text visibility based on showText variable
-    updateTextVisibility();
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
@@ -392,24 +384,6 @@ function scheduleTokenRefresh() {
         setTimeout(() => {
             refreshToken();
         }, refreshTimeout);
-    }
-}
-
-document.getElementById('text-toggle-btn').addEventListener('click', () => {
-    showText = !showText;
-    updateTextVisibility();
-});
-
-function updateTextVisibility() {
-    const artistName = document.getElementById('artist-name');
-    const songName = document.getElementById('song-name');
-
-    if (showText) {
-        artistName.style.display = 'block';
-        songName.style.display = 'block';
-    } else {
-        artistName.style.display = 'none';
-        songName.style.display = 'none';
     }
 }
 
