@@ -61,67 +61,60 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-    const beforeElement = document.querySelector('body::before'); // Get the ::before element
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
 
-    // Preload the new background image
-    preloadBackgroundImage(imageUrl, () => {
-        // Once the new image is loaded, update the background
+    // Preload the new background image only if it's different from the current one
+    if (imageUrl !== currentBackgroundImage) {
+      preloadBackgroundImage(imageUrl, () => {
+        // Once the new image is loaded, update the background if it's still the correct image
         if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-            // Fade out the old background
-            beforeElement.style.opacity = 0;
-
-            // After a short delay, set the new background and fade it in
-            setTimeout(() => {
-                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-                beforeElement.style.backgroundImage = 'inherit'; // Ensure ::before uses the new body background
-                beforeElement.style.opacity = 1;
-                currentBackgroundImage = imageUrl;
-            }, 50); // Adjust the delay if needed
+          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          currentBackgroundImage = imageUrl;
         }
-    });
+      });
+    }
 
     if (!isCdView) {
-        // Album cover view
-        updateImage(albumCover, imageUrl);
-        albumCover.style.display = "block";
-        document.getElementById("cd-container").style.display = "none";
-        document.getElementById("placeholder-text").style.display = "none";
+      // Album cover view
+      updateImage(albumCover, imageUrl);
+      albumCover.style.display = "block";
+      document.getElementById("cd-container").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
     } else {
-        // CD view
-        updateImage(cdImage, imageUrl);
-        cdImage.style.display = "block";
-        document.getElementById("album-cover").style.display = "none";
-        document.getElementById("placeholder-text").style.display = "none";
-        document.getElementById("cd-container").style.display = "flex";
+      // CD view
+      updateImage(cdImage, imageUrl);
+      cdImage.style.display = "block";
+      document.getElementById("album-cover").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
+      document.getElementById("cd-container").style.display = "flex";
     }
 
     // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
-        if (isPlaying) {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            playPauseBtn.title = "Pause";
-            playPauseBtn.classList.remove("play-icon");
-            if (isCdView) {
-                cdImage.style.animationPlayState = "running";
-            }
-        } else {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            playPauseBtn.title = "Play";
-            playPauseBtn.classList.add("play-icon");
-            if (isCdView) {
-                cdImage.style.animationPlayState = "paused";
-            }
+      if (isPlaying) {
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        playPauseBtn.title = "Pause";
+        playPauseBtn.classList.remove("play-icon");
+        if (isCdView) {
+          cdImage.style.animationPlayState = "running";
         }
+      } else {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.title = "Play";
+        playPauseBtn.classList.add("play-icon");
+        if (isCdView) {
+          cdImage.style.animationPlayState = "paused";
+        }
+      }
     }
     imageContainer.classList.remove("placeholder-active");
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-}
+  }
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
