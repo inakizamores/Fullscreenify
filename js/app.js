@@ -53,8 +53,37 @@ function logImageWrapperSize() {
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
+// Function to get the average color of an image
+function getAverageColor(imageUrl) {
+    const fac = new FastAverageColor();
+    return new Promise((resolve) => {
+        fac.getColorAsync(imageUrl, { algorithm: 'dominant' })
+            .then(color => {
+                resolve(color.hex);
+            })
+            .catch(e => {
+                console.error('Error getting average color:', e);
+                resolve('#000000'); // Default to black on error
+            });
+    });
+}
+
+// Function to change dynamically the meta tag content
+function setStatusBarColor(color) {
+    let metaTag = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (metaTag) {
+        metaTag.setAttribute('content', color);
+    } else {
+        // Create the meta tag if it doesn't exist
+        metaTag = document.createElement('meta');
+        metaTag.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
+        metaTag.setAttribute('content', color);
+        document.head.appendChild(metaTag);
+    }
+}
+
 // Updated UI
-function updateUI(data) {
+async function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
@@ -76,6 +105,10 @@ function updateUI(data) {
         }
       });
     }
+
+    // Get the dominant color and set the status bar color
+    const dominantColor = await getAverageColor(imageUrl);
+    setStatusBarColor(dominantColor);
 
     if (!isCdView) {
       // Album cover view
@@ -142,6 +175,8 @@ function displayPlaceholder() {
     // Reset song and playback state when displaying placeholder
     currentSongId = null;
     currentIsPlaying = null;
+
+    setStatusBarColor('black'); // Set status bar to black for placeholder
 
     if (!isCdView) {
          // Album cover view
