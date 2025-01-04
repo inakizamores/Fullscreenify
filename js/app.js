@@ -3,7 +3,7 @@ const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
 let currentSongId = null;
 let currentIsPlaying = null;
-let currentBackgroundImage = null; // Track the current background image URL
+let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
@@ -66,11 +66,16 @@ function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Preload and transition to the new background image only if it's different from the current one
+    // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
-        preloadBackgroundImage(imageUrl);
-        currentBackgroundImage = imageUrl; // Update the tracked background image URL
-      }
+      preloadBackgroundImage(imageUrl, () => {
+        // Once the new image is loaded, update the background if it's still the correct image
+        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          currentBackgroundImage = imageUrl;
+        }
+      });
+    }
 
     if (!isCdView) {
       // Album cover view
@@ -111,27 +116,19 @@ function updateUI(data) {
     logImageWrapperSize();
   }
 
-  function preloadBackgroundImage(imageUrl) {
+// Function to preload the background image
+function preloadBackgroundImage(imageUrl, callback) {
     const img = new Image();
     img.src = imageUrl;
 
-    const applyBackgroundImage = () => {
-        // Apply the new background image and start the transition
-        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-        document.body.classList.add('image-transitioning');
-
-        // Remove the transition class after the transition duration
-        setTimeout(() => {
-            document.body.classList.remove('image-transitioning');
-        }, 500); // 500ms to match CSS transition duration
-    };
-
-    img.onload = () => {
-        applyBackgroundImage();
-    };
-
     if (img.complete) {
-        applyBackgroundImage();
+        // Image already loaded (cached)
+        callback();
+    } else {
+        // Image not yet loaded, set onload to trigger the callback
+        img.onload = () => {
+            callback();
+        };
     }
 }
 
