@@ -581,30 +581,3 @@ body {
 #next-btn i {
   margin-left: 3px; /* Move slightly to the right */
 }
-
-#background-image-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    filter: blur(20px);
-    transform: scale(1.1);
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.5s ease;
-    z-index: -2; /* Place it behind the pseudo-element */
-}
-
-body::before {
-    /* ... other styles ... */
-    z-index: -1; /* Ensure this stays above the background image */
-    background: none; /* Remove the default background color/image from the body::before pseudo-element */
-    transition: 0s; /* Remove transition from pseudo element */
-}
-
-body {
-    /* ... other styles ... */
-    background-color: #222; /* Set a default background color for the body */
-}
