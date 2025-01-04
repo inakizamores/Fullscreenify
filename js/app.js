@@ -6,12 +6,12 @@ let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
-let isToggleDisabled = false; // Flag to disable toggle during cooldown
-let initialLoadComplete = false; // Flag to track if initial load is done
+let isToggleDisabled = false; 
+let initialLoadComplete = false;
 
 // Cursor hiding functionality
 let idleTimer;
-const idleDelay = 10000; // Adjust the delay (in milliseconds) as needed
+const idleDelay = 10000;
 
 function hideCursor() {
     document.body.style.cursor = 'none';
@@ -19,21 +19,17 @@ function hideCursor() {
 
 function resetIdleTimer() {
     clearTimeout(idleTimer);
-    document.body.style.cursor = 'default'; // Show the cursor
+    document.body.style.cursor = 'default';
     idleTimer = setTimeout(hideCursor, idleDelay);
 }
 
-// Attach event listeners to reset the timer on mouse movement and key presses
 window.addEventListener('mousemove', resetIdleTimer);
-window.addEventListener('keypress', resetIdleTimer); // Optional: Reset on key press as well
-
-// Initialize the timer on page load
+window.addEventListener('keypress', resetIdleTimer);
 resetIdleTimer();
 
-// Function to update image with debugging
+
 function updateImage(imgElement, imageUrl) {
   return new Promise((resolve) => {
-    console.log("Updating image:", imgElement.id, "to", imageUrl);
     if (imageCache.has(imageUrl)) {
       imgElement.src = imageUrl;
       resolve();
@@ -47,13 +43,13 @@ function updateImage(imgElement, imageUrl) {
   });
 }
 
-// Function to check and log the size of the image wrapper
+
 function logImageWrapperSize() {
     const imageWrapper = document.querySelector('.image-wrapper');
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
-// Updated UI
+
 function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
@@ -61,30 +57,25 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
 
-    // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
-      preloadBackgroundImage(imageUrl, () => {
-        // Once the new image is loaded, update the background if it's still the correct image
-        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-          currentBackgroundImage = imageUrl;
-        }
-      });
+      const newBackgroundImage = new Image();
+      newBackgroundImage.src = imageUrl;
+      newBackgroundImage.onload = () => {
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+        currentBackgroundImage = imageUrl; 
+      };
     }
 
     if (!isCdView) {
-      // Album cover view
       updateImage(albumCover, imageUrl);
       albumCover.style.display = "block";
       document.getElementById("cd-container").style.display = "none";
       document.getElementById("placeholder-text").style.display = "none";
     } else {
-      // CD view
       updateImage(cdImage, imageUrl);
       cdImage.style.display = "block";
       document.getElementById("album-cover").style.display = "none";
@@ -92,7 +83,6 @@ function updateUI(data) {
       document.getElementById("cd-container").style.display = "flex";
     }
 
-    // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
       if (isPlaying) {
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
@@ -112,26 +102,8 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
-    // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
   }
-
-// Function to preload the background image
-function preloadBackgroundImage(imageUrl, callback) {
-    const img = new Image();
-    img.src = imageUrl;
-
-    if (img.complete) {
-        // Image already loaded (cached)
-        callback();
-    } else {
-        // Image not yet loaded, set onload to trigger the callback
-        img.onload = () => {
-            callback();
-        };
-    }
-}
-
 function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
