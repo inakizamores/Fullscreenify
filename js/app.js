@@ -63,25 +63,25 @@ function updateUI(data) {
 
 
     if (imageUrl !== currentBackgroundImage) {
-        const newBackgroundImage = new Image();
-        newBackgroundImage.src = imageUrl;
-        newBackgroundImage.onload = () => {
-            if (!backgroundImageContainer) {
-                backgroundImageContainer = document.createElement('div');
-                backgroundImageContainer.id = 'background-image-container';
-                document.body.insertBefore(backgroundImageContainer, document.body.firstChild);
-            }
+      const newBackgroundImage = new Image();
+      newBackgroundImage.src = imageUrl;
+      newBackgroundImage.onload = () => {
+          if (!backgroundImageContainer) {
+              backgroundImageContainer = document.createElement('div');
+              backgroundImageContainer.id = 'background-image-container';
+              document.body.insertBefore(backgroundImageContainer, document.body.firstChild);
+          }
 
-            backgroundImageContainer.style.backgroundImage = `url(${imageUrl})`;
-            backgroundImageContainer.style.opacity = 1;
-            currentBackgroundImage = imageUrl;
-        };
+          backgroundImageContainer.style.backgroundImage = `url(${imageUrl})`;
+          backgroundImageContainer.style.opacity = 1;  // Fade the new background in
+          currentBackgroundImage = imageUrl; // Update the current image URL *after* the image has loaded
+      };
 
-
-        if (backgroundImageContainer) {
-            backgroundImageContainer.style.opacity = 0;
-        }
-    }
+      // Fade out the old background if it exists
+      if (backgroundImageContainer) {
+          backgroundImageContainer.style.opacity = 0;
+      }
+  }
 
     if (!isCdView) {
         updateImage(albumCover, imageUrl)
@@ -151,7 +151,7 @@ function displayPlaceholder() {
     }
 
     if (backgroundImageContainer) {
-        backgroundImageContainer.style.opacity = 0; // Hide any existing background
+        backgroundImageContainer.style.opacity = 0;
         currentBackgroundImage = null;
     }
 
