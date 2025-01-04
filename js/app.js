@@ -3,7 +3,7 @@ const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
 let currentSongId = null;
 let currentIsPlaying = null;
-let currentBackgroundImage = null;
+let currentBackgroundImage = null; // Track the current background image URL
 let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
@@ -66,9 +66,10 @@ function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Preload the new background image only if it's different from the current one
+    // Preload and transition to the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
-        preloadBackgroundImage(imageUrl, timestamp, data); // Pass timestamp and data to preload function
+        preloadBackgroundImage(imageUrl);
+        currentBackgroundImage = imageUrl; // Update the tracked background image URL
       }
 
     if (!isCdView) {
@@ -110,47 +111,27 @@ function updateUI(data) {
     logImageWrapperSize();
   }
 
-// Function to preload the background image and add crossfade
-function preloadBackgroundImage(imageUrl, timestamp, data) {
+  function preloadBackgroundImage(imageUrl) {
     const img = new Image();
     img.src = imageUrl;
 
     const applyBackgroundImage = () => {
-        // Check if the imageUrl is still the correct one for the current song
-        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-            document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-            currentBackgroundImage = imageUrl;
-        }
+        // Apply the new background image and start the transition
+        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+        document.body.classList.add('image-transitioning');
+
+        // Remove the transition class after the transition duration
+        setTimeout(() => {
+            document.body.classList.remove('image-transitioning');
+        }, 500); // 500ms to match CSS transition duration
     };
 
     img.onload = () => {
-        // Add class to start the transition
-        document.body.classList.add('image-transitioning');
-
-        // Apply the new background image after a delay
-        setTimeout(() => {
-            applyBackgroundImage();
-
-            // Remove the transition class after the transition duration
-            setTimeout(() => {
-                document.body.classList.remove('image-transitioning');
-            }, 500); // 500ms to match CSS transition duration
-        }, 100); // 100ms delay
+        applyBackgroundImage();
     };
 
     if (img.complete) {
-        // Add class to start the transition
-        document.body.classList.add('image-transitioning');
-
-        // Apply the new background image after a delay
-        setTimeout(() => {
-            applyBackgroundImage();
-
-            // Remove the transition class after the transition duration
-            setTimeout(() => {
-                document.body.classList.remove('image-transitioning');
-            }, 500); // 500ms to match CSS transition duration
-        }, 100); // 100ms delay
+        applyBackgroundImage();
     }
 }
 
