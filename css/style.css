@@ -28,7 +28,12 @@ body::before {
     filter: blur(20px);
     z-index: -1;
     transform: scale(1.1);
-    transition: background-image 0.5s ease;
+    opacity: 1; /* Initially opaque for crossfade */
+    transition: opacity 0.5s ease; /* Opacity transition for crossfade */
+}
+
+body.image-transitioning::before {
+    opacity: 0; /* Fade out on transition start */
 }
 
 body {
@@ -36,7 +41,7 @@ body {
     font-family: 'Helvetica Neue Medium', sans-serif; /* Apply Helvetica Neue Medium to body */
     background-color: #222;
     color: #fff;
-    overflow: hidden;
+    overflow: hidden; /* Prevent scroll bars during transition */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,7 +116,7 @@ body {
     justify-content: space-around;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1; 
+    z-index: 1;
 }
 
 .control-btn {
@@ -369,8 +374,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 70%; 
-    max-width: 500px; 
+    width: 70%;
+    max-width: 500px;
     margin: auto;
     padding: 0 20px;
 }
@@ -391,17 +396,17 @@ body {
 }
 
 .login-content h1 {
-    font-size: 3em; 
+    font-size: 3em;
     font-weight: bold;
-    margin-bottom: 0.3em; 
+    margin-bottom: 0.3em;
     font-family: 'Helvetica Neue Heavy', sans-serif;
     text-transform: uppercase;
 }
 
 .login-content p {
-    font-size: 1.2em; 
+    font-size: 1.2em;
     margin-top: 0em;
-    margin-bottom: 2.5em; 
+    margin-bottom: 2.5em;
     font-family: 'Helvetica Neue Medium', sans-serif;
     line-height: 1.4;
 }
@@ -512,7 +517,7 @@ body {
 
 @media (max-width: 768px) {
     .login-content h1 {
-        font-size: 2.5em; 
+        font-size: 2.5em;
         margin-bottom: 0.4em;
     }
 
@@ -522,16 +527,16 @@ body {
     }
 
     #login-btn {
-        font-size: 18px; 
+        font-size: 18px;
         padding: 12px 25px;
     }
 
     .login-container {
-        width: 80%; 
+        width: 80%;
     }
 
     .logo {
-        max-width: 80px; 
+        max-width: 80px;
         margin-bottom: 0.8em;
     }
 }

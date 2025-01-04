@@ -116,19 +116,31 @@ function updateUI(data) {
     logImageWrapperSize();
   }
 
-// Function to preload the background image
+// Function to preload the background image and add crossfade
 function preloadBackgroundImage(imageUrl, callback) {
     const img = new Image();
     img.src = imageUrl;
 
-    if (img.complete) {
-        // Image already loaded (cached)
+    img.onload = () => {
         callback();
-    } else {
-        // Image not yet loaded, set onload to trigger the callback
-        img.onload = () => {
-            callback();
-        };
+        // Add class to start transition
+        document.body.classList.add('image-transitioning');
+
+        // Remove the class after the transition duration
+        setTimeout(() => {
+            document.body.classList.remove('image-transitioning');
+        }, 500); // 500ms matches the transition duration in the CSS
+    };
+
+    if (img.complete) {
+        callback();
+        // Add class to start transition
+        document.body.classList.add('image-transitioning');
+
+        // Remove the class after the transition duration
+        setTimeout(() => {
+            document.body.classList.remove('image-transitioning');
+        }, 500); // 500ms matches the transition duration in the CSS
     }
 }
 
