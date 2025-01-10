@@ -581,21 +581,3 @@ body {
 #next-btn i {
   margin-left: 3px; /* Move slightly to the right */
 }
-
-/* === Transition Overlay Styles === */
-#transition-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    z-index: 999; /* Ensure it's above other elements */
-    opacity: 0;
-    pointer-events: none; /* Prevent interaction during transition */
-    transition: opacity 500ms ease-in-out; /* 500ms transition for opacity */
-}
-
-#transition-overlay.active {
-    opacity: 1;
-}
