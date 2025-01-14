@@ -9,6 +9,9 @@ const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
 
+// Wake Lock Variables
+let wakeLock = null;
+
 // Cursor hiding functionality
 let idleTimer;
 const idleDelay = 10000; // Adjust the delay (in milliseconds) as needed
@@ -387,6 +390,42 @@ function scheduleTokenRefresh() {
     }
 }
 
+// Function to request the wake lock
+async function requestWakeLock() {
+    try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Wake Lock is active!');
+
+        // Optional: Listen for visibility changes to re-request Wake Lock if needed
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    } catch (err) {
+        console.error(`Wake Lock Error: ${err.name}, ${err.message}`);
+    }
+}
+
+// Function to release the wake lock
+function releaseWakeLock() {
+    if (wakeLock) {
+        wakeLock.release()
+        .then(() => {
+            wakeLock = null;
+            console.log('Wake Lock released!');
+        });
+    }
+
+    // Optional: Remove visibility change listener
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+}
+
+// Function to handle visibility change
+async function handleVisibilityChange() {
+    if (wakeLock !== null && document.visibilityState === 'visible') {
+        console.log('Visibility changed to visible, re-requesting wake lock.');
+        await requestWakeLock();
+    }
+}
+
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
@@ -408,11 +447,32 @@ async function initializeApp() {
 
     await getCurrentlyPlaying();
 
-    if (!currentSongId) {
+    if (currentSongId) {
+        // Request wake lock only if a song is playing
+        await requestWakeLock();
+    } else {
         displayPlaceholder();
     }
 
     initialLoadComplete = true;
     scheduleTokenRefresh();
+}
+
+// Release the wake lock when the user logs out
+function handleLogout() {
+    // Remove the access token from local storage
+    localStorage.removeItem('fullscreenify_access_token');
+    localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
+    isLoggedIn = false;
+
+    // Force a page refresh to clear the URL and state
+    window.location.href = window.location.origin + window.location.pathname;
+
+    // Update the UI (hide main content, show login screen)
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
+    document.querySelector('.fullscreenify-container').style.display = 'none';
+
+    releaseWakeLock();
 }
 initializeApp();
