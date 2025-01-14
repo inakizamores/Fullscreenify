@@ -11,10 +11,11 @@ let initialLoadComplete = false; // Flag to track if initial load is done
 
 // Wake Lock Variables
 let wakeLock = null;
+let isWakeLockActive = false; // Flag to track Wake Lock state
 
 // Cursor hiding functionality
 let idleTimer;
-const idleDelay = 10000; // Adjust the delay (in milliseconds) as needed
+const idleDelay = 10000; // 10 seconds (adjust as needed)
 
 function hideCursor() {
     document.body.style.cursor = 'none';
@@ -23,15 +24,23 @@ function hideCursor() {
 function resetIdleTimer() {
     clearTimeout(idleTimer);
     document.body.style.cursor = 'default'; // Show the cursor
-    idleTimer = setTimeout(hideCursor, idleDelay);
+    if (!isWakeLockActive) {
+        // Only set the timer if Wake Lock is NOT active
+        idleTimer = setTimeout(hideCursor, idleDelay);
+    }
 }
 
 // Attach event listeners to reset the timer on mouse movement and key presses
-window.addEventListener('mousemove', resetIdleTimer);
-window.addEventListener('keypress', resetIdleTimer); // Optional: Reset on key press as well
+// ONLY when Wake Lock is NOT active
+function attachCursorEventListeners() {
+    window.addEventListener('mousemove', resetIdleTimer);
+    window.addEventListener('keypress', resetIdleTimer);
+}
 
-// Initialize the timer on page load
-resetIdleTimer();
+function removeCursorEventListeners() {
+    window.removeEventListener('mousemove', resetIdleTimer);
+    window.removeEventListener('keypress', resetIdleTimer);
+}
 
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
@@ -394,13 +403,20 @@ function scheduleTokenRefresh() {
 async function requestWakeLock() {
     try {
         wakeLock = await navigator.wakeLock.request('screen');
+        isWakeLockActive = true;
         console.log('Wake Lock is active!');
+
+        // Remove cursor event listeners when Wake Lock is active
+        removeCursorEventListeners();
 
         // Optional: Listen for visibility changes to re-request Wake Lock if needed
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
     } catch (err) {
         console.error(`Wake Lock Error: ${err.name}, ${err.message}`);
+        isWakeLockActive = false;
+        // Attach cursor event listeners if Wake Lock request fails
+        attachCursorEventListeners();
     }
 }
 
@@ -410,7 +426,12 @@ function releaseWakeLock() {
         wakeLock.release()
         .then(() => {
             wakeLock = null;
+            isWakeLockActive = false;
             console.log('Wake Lock released!');
+
+            // Re-attach cursor event listeners when Wake Lock is released
+            attachCursorEventListeners();
+            resetIdleTimer();
         });
     }
 
@@ -452,6 +473,9 @@ async function initializeApp() {
         await requestWakeLock();
     } else {
         displayPlaceholder();
+        // Attach cursor event listeners if no song is playing
+        attachCursorEventListeners();
+        resetIdleTimer();
     }
 
     initialLoadComplete = true;
