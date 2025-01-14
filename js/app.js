@@ -12,9 +12,9 @@ let initialLoadComplete = false; // Flag to track if initial load is done
 // Wake Lock Variables
 let wakeLock = null;
 
-// --- Cursor Hiding Functionality (Rewritten) ---
+// --- Cursor Hiding Functionality ---
 let cursorIdleTimer;
-const cursorIdleDelay = 3000; // 3 seconds (adjust as needed)
+const cursorIdleDelay = 5000; // 5 seconds (adjust as needed)
 
 function hideCursor() {
     document.body.style.cursor = 'none';
@@ -36,7 +36,6 @@ function attachCursorActivityListeners() {
     document.addEventListener('mousemove', handleUserActivity);
     document.addEventListener('keypress', handleUserActivity);
     document.addEventListener('touchstart', handleUserActivity); // For touch devices
-    // Add other events if needed (e.g., 'click', 'scroll')
 }
 
 // Remove event listeners
@@ -44,7 +43,6 @@ function removeCursorActivityListeners() {
     document.removeEventListener('mousemove', handleUserActivity);
     document.removeEventListener('keypress', handleUserActivity);
     document.removeEventListener('touchstart', handleUserActivity);
-    // Remove other events if you added them above
 }
 
 // --- End of Cursor Hiding Functionality ---
@@ -412,8 +410,9 @@ async function requestWakeLock() {
         wakeLock = await navigator.wakeLock.request('screen');
         console.log('Wake Lock is active!');
 
-        // Remove cursor activity listeners when Wake Lock is active
-        removeCursorActivityListeners();
+        // Handle cursor hiding when Wake Lock is active
+        attachCursorActivityListeners();
+        resetCursorIdleTimer();
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -434,9 +433,10 @@ function releaseWakeLock() {
             wakeLock = null;
             console.log('Wake Lock released!');
 
-            // Re-attach cursor activity listeners when Wake Lock is released
-            attachCursorActivityListeners();
-            resetCursorIdleTimer();
+            // Make sure cursor is visible when wake lock is released
+            document.body.style.cursor = 'default'; 
+            // Remove listeners when the Wake Lock is released
+            removeCursorActivityListeners();
         });
     }
     document.removeEventListener('visibilitychange', handleVisibilityChange);
