@@ -51,16 +51,29 @@ function removeCursorActivityListeners() {
 let crossfadeInProgress = false;
 
 async function performCrossfade() {
-    if (crossfadeInProgress) return;
-    crossfadeInProgress = true;
+    return new Promise((resolve) => {
+        if (crossfadeInProgress) {
+            resolve(false); // Crossfade already in progress
+            return;
+        }
+        crossfadeInProgress = true;
 
-    const overlay = document.getElementById('crossfade-overlay');
-    overlay.classList.add('active'); // Fade to black
+        const overlay = document.getElementById('crossfade-overlay');
+        overlay.classList.add('active'); // Fade to black
 
-    await new Promise(resolve => setTimeout(resolve, 500)); // Adjust this delay to match half of your CSS transition time
+        // Wait for fade-in to complete
+        setTimeout(() => {
+            // Set up a listener for the end of the fade-out transition
+            overlay.addEventListener('transitionend', function fadeOutEndHandler() {
+                overlay.removeEventListener('transitionend', fadeOutEndHandler); // Remove listener
+                crossfadeInProgress = false;
+                resolve(true); // Signal that crossfade is complete (including fade-out)
+            });
 
-    // Signal that it's safe to update the image now:
-    return true;
+            // Start fade-out
+            overlay.classList.remove('active');
+        }, 500); // Adjust to match half of your CSS transition time
+    });
 }
 
 // Function to update image with debugging
@@ -99,9 +112,9 @@ async function updateUI(data) {
 
     // Trigger crossfade only if the song ID has changed
     if (data.item.id !== currentSongId) {
-        const readyToUpdateImage = await performCrossfade();
+        const crossfadeComplete = await performCrossfade();
 
-        if (readyToUpdateImage) {
+        if (crossfadeComplete) {
             // Update images and other UI elements here
             manageImageCache(imageUrl);
 
@@ -130,11 +143,6 @@ async function updateUI(data) {
             document.getElementById("placeholder-text").style.display = "none";
             document.getElementById("cd-container").style.display = "flex";
             }
-
-            // ADDED: Reset the overlay after image update
-            const overlay = document.getElementById('crossfade-overlay');
-            overlay.classList.remove('active');
-            crossfadeInProgress = false;
         }
     }
 
