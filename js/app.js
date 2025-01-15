@@ -51,36 +51,32 @@ function removeCursorActivityListeners() {
 let crossfadeTimeout = null;
 
 async function performCrossfade() {
-  return new Promise((resolve) => {
-    const overlay = document.getElementById('crossfade-overlay');
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('crossfade-overlay');
 
-    // Clear any existing timeout to prevent conflicts
-    if (crossfadeTimeout) {
-      clearTimeout(crossfadeTimeout);
-      overlay.classList.remove('active'); // Ensure overlay is not active
-    }
-
-    // Set a new timeout for the crossfade
-    crossfadeTimeout = setTimeout(() => {
-      overlay.classList.add('active'); // Fade to black
-
-      const onTransitionEnd = () => {
-        overlay.removeEventListener('transitionend', onTransitionEnd);
-        resolve(true); // Signal that the crossfade is complete
-      };
-
-      overlay.addEventListener('transitionend', onTransitionEnd);
-    }, 50); // A small delay to ensure any previous transitions are cleared
-
-    // Start the fade-out immediately after the fade-in
-    setTimeout(() => {
-        if (!overlay.classList.contains('active')) {
-            resolve(false); // If overlay didn't become active, resolve as false
-            return;
+        // Clear any existing timeout
+        if (crossfadeTimeout) {
+            clearTimeout(crossfadeTimeout);
+            overlay.classList.remove('active');
         }
-      overlay.classList.remove('active');
-    }, 500); // This should match half of your CSS transition time
-  });
+
+        // Use requestAnimationFrame for smoother transition
+        requestAnimationFrame(() => {
+            overlay.classList.add('active'); // Fade to black
+
+            const onTransitionEnd = () => {
+                overlay.removeEventListener('transitionend', onTransitionEnd);
+                resolve(true); // Crossfade complete
+            };
+
+            overlay.addEventListener('transitionend', onTransitionEnd);
+
+            // Start fade-out immediately after the fade-in is fully visible
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 250); // Adjust this delay to fine-tune the black screen duration
+        });
+    });
 }
 
 // Function to update image with debugging
