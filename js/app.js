@@ -59,12 +59,8 @@ async function performCrossfade() {
 
     await new Promise(resolve => setTimeout(resolve, 500)); // Adjust this delay to match half of your CSS transition time
 
-    // The actual image update will happen here (in getCurrentlyPlaying -> updateUI)
-
-    overlay.classList.remove('active'); // Fade out from black
-
-    await new Promise(resolve => setTimeout(resolve, 500)); // Adjust this delay to match half of your CSS transition time
-    crossfadeInProgress = false;
+    // Signal that it's safe to update the image now:
+    return true;
 }
 
 // Function to update image with debugging
@@ -103,35 +99,38 @@ async function updateUI(data) {
 
     // Trigger crossfade only if the song ID has changed
     if (data.item.id !== currentSongId) {
-        await performCrossfade();
-    }
+        const readyToUpdateImage = await performCrossfade();
 
-    manageImageCache(imageUrl);
+        if (readyToUpdateImage) {
+            // Update images and other UI elements here
+            manageImageCache(imageUrl);
 
-    // Preload the new background image only if it's different from the current one
-    if (imageUrl !== currentBackgroundImage) {
-      preloadBackgroundImage(imageUrl, () => {
-        // Once the new image is loaded, update the background if it's still the correct image
-        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-          currentBackgroundImage = imageUrl;
+            // Preload the new background image only if it's different from the current one
+            if (imageUrl !== currentBackgroundImage) {
+            preloadBackgroundImage(imageUrl, () => {
+                // Once the new image is loaded, update the background if it's still the correct image
+                if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+                currentBackgroundImage = imageUrl;
+                }
+            });
+            }
+
+            if (!isCdView) {
+            // Album cover view
+            updateImage(albumCover, imageUrl);
+            albumCover.style.display = "block";
+            document.getElementById("cd-container").style.display = "none";
+            document.getElementById("placeholder-text").style.display = "none";
+            } else {
+            // CD view
+            updateImage(cdImage, imageUrl);
+            cdImage.style.display = "block";
+            document.getElementById("album-cover").style.display = "none";
+            document.getElementById("placeholder-text").style.display = "none";
+            document.getElementById("cd-container").style.display = "flex";
+            }
         }
-      });
-    }
-
-    if (!isCdView) {
-      // Album cover view
-      updateImage(albumCover, imageUrl);
-      albumCover.style.display = "block";
-      document.getElementById("cd-container").style.display = "none";
-      document.getElementById("placeholder-text").style.display = "none";
-    } else {
-      // CD view
-      updateImage(cdImage, imageUrl);
-      cdImage.style.display = "block";
-      document.getElementById("album-cover").style.display = "none";
-      document.getElementById("placeholder-text").style.display = "none";
-      document.getElementById("cd-container").style.display = "flex";
     }
 
     // Update play/pause button icon based on the current state
@@ -156,7 +155,7 @@ async function updateUI(data) {
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-  }
+}
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
