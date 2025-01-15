@@ -81,19 +81,19 @@ async function performCrossfade() {
 
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
-  return new Promise((resolve) => {
-    console.log("Updating image:", imgElement.id, "to", imageUrl);
-    if (imageCache.has(imageUrl)) {
-      imgElement.src = imageUrl;
-      resolve();
-    } else {
-      imgElement.onload = () => {
-        imageCache.add(imageUrl);
-        resolve();
-      };
-      imgElement.src = imageUrl;
-    }
-  });
+    return new Promise((resolve) => {
+        console.log("Updating image:", imgElement.id, "to", imageUrl);
+        if (imageCache.has(imageUrl)) {
+            imgElement.src = imageUrl;
+            resolve();
+        } else {
+            imgElement.onload = () => {
+                imageCache.add(imageUrl);
+                resolve();
+            };
+            imgElement.src = imageUrl;
+        }
+    });
 }
 
 // Function to check and log the size of the image wrapper
@@ -117,6 +117,8 @@ async function updateUI(data) {
     if (data.item.id !== currentSongId) {
         shouldUpdateImage = true;
         currentSongId = data.item.id; // Update the currentSongId immediately
+    } else if (currentBackgroundImage === null) {
+        shouldUpdateImage = true;
     }
 
     // Update play/pause button icon based on the current state
