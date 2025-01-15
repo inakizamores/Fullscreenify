@@ -60,8 +60,11 @@ Immerse yourself in your music with Fullscreenify, a web application that displa
   <dt><b><span style="font-size: 1.2em;">❓</span> Placeholder Content:</b></dt>
   <dd>Displays a message when no music is playing, prompting the user to start streaming.</dd>
 
-  <dt><b><span style="font-size: 1.2em;">🖱️</span> Cursor Hiding:</b></dt>
-  <dd>Automatically hides the mouse cursor after a period of inactivity (10 seconds) to enhance the full-screen experience. The cursor reappears when the user moves the mouse or presses a key.</dd>
+  <dt><b><span style="font-size: 1.2em;">🖱️</span> Smart Cursor Hiding:</b></dt>
+  <dd>Automatically hides the mouse cursor after 5 seconds of inactivity to enhance the full-screen experience. The cursor reappears when the user moves the mouse, presses a key, or touches the screen. Cursor hiding is automatically managed based on the Wake Lock state, ensuring it functions correctly whether or not a song is playing and the screen is kept on.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">⚡</span> Wake Lock API Integration:</b></dt>
+  <dd>Utilizes the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API">Wake Lock API</a> to prevent the screen from turning off or the device from going to sleep while music is playing, providing a continuous and immersive experience.</dd>
 </dl>
 
 ---
@@ -106,7 +109,19 @@ The application consists of the following core components:
     -   Provides a toggle to switch between album art and CD display.
     -   Displays placeholder content when no music is playing.
     -   Schedules the token refresh mechanism.
-    -   Implements cursor hiding after a period of inactivity to improve the full-screen viewing experience.
+    -   **Wake Lock API:**
+        -   When a song starts playing, it attempts to acquire a screen wake lock using `navigator.wakeLock.request('screen')`.
+        -   If successful, this prevents the screen from turning off or the device from sleeping.
+        -   If the request fails, the app continues to function normally but without the wake lock.
+        -   The wake lock is released when the user logs out or pauses the music.
+    -   **Smart Cursor Hiding:**
+        -   Implements an inactivity timer that hides the cursor after 5 seconds of no mouse movement, key presses, or touch events.
+        -   The cursor is immediately shown again when any of these events occur.
+        -   **Wake Lock Integration:** The cursor hiding functionality is automatically managed based on the Wake Lock state.
+            -   When the Wake Lock is active (song playing), the inactivity timer is enabled, hiding the cursor after 5 seconds of inactivity.
+            -   When the Wake Lock is not active (no song playing, or Wake Lock request failed), the cursor hiding functionality is still active.
+            -   When the wake lock is released the cursor is made visible.
+        -   This ensures that the cursor is hidden during playback for a better full-screen experience, but it also works correctly when no song is playing or the Wake Lock is unavailable.
 
 -   **Styling (`style.css`):**
     -   Defines the visual appearance of the application, including layout, colors, typography, and animations.
@@ -170,6 +185,10 @@ The application consists of the following core components:
 ## Limitations
 
 -   The automatic token refresh mechanism relies on a hidden iframe and may be affected by browser restrictions or if the user is not logged into Spotify. In such cases, manual re-authentication through the session expiration modal will be required.
+-   **Wake Lock API:**
+    -   The Wake Lock API is relatively new and might not be supported in all browsers. Check the compatibility table for updates: [https://developer.mozilla.org/en-US/docs/Web/API/Screen\_Wake\_Lock\_API#browser\_compatibility](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API#browser_compatibility)
+    -   Browsers might provide users with a way to override or disable wake locks.
+    -   The API's behavior might vary slightly across different browsers and devices.
 
 ---
 
