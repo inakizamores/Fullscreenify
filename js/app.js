@@ -47,6 +47,26 @@ function removeCursorActivityListeners() {
 
 // --- End of Cursor Hiding Functionality ---
 
+// --- Crossfade Variables ---
+let crossfadeInProgress = false;
+
+async function performCrossfade() {
+    if (crossfadeInProgress) return;
+    crossfadeInProgress = true;
+
+    const overlay = document.getElementById('crossfade-overlay');
+    overlay.classList.add('active'); // Fade to black
+
+    await new Promise(resolve => setTimeout(resolve, 500)); // Adjust this delay to match half of your CSS transition time
+
+    // The actual image update will happen here (in getCurrentlyPlaying -> updateUI)
+
+    overlay.classList.remove('active'); // Fade out from black
+
+    await new Promise(resolve => setTimeout(resolve, 500)); // Adjust this delay to match half of your CSS transition time
+    crossfadeInProgress = false;
+}
+
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
   return new Promise((resolve) => {
@@ -71,7 +91,7 @@ function logImageWrapperSize() {
 }
 
 // Updated UI
-function updateUI(data) {
+async function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
@@ -80,6 +100,11 @@ function updateUI(data) {
     const imageContainer = document.querySelector(".image-container");
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
+
+    // Trigger crossfade only if the song ID has changed
+    if (data.item.id !== currentSongId) {
+        await performCrossfade();
+    }
 
     manageImageCache(imageUrl);
 
@@ -454,6 +479,57 @@ document.getElementById('play-pause-btn').addEventListener('click', togglePlayPa
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+
+async function getCurrentlyPlaying() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No content - nothing is playing
+            displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+        } else if (response.ok) {
+            const data = await response.json();
+
+            // Check if the currently playing item is a track
+            if (data.currently_playing_type === 'track') {
+                // Update UI if the song or playback state has changed
+                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                   
+                    await updateUI(data); // Update UI with crossfade
+                    
+                    currentSongId = data.item.id;
+                    currentIsPlaying = data.is_playing;
+                }
+
+                // Adjust update interval based on playing state
+                if (data.is_playing) {
+                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+                } else {
+                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                }
+                document.getElementById('login-screen').style.display = 'none';
+                document.querySelector('.fullscreenify-container').style.display = 'flex';
+                hideSessionExpiredModal();
+            } else {
+                // If it's not a track (e.g., podcast, ad), display placeholder
+                displayPlaceholder();
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            }
+
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error fetching currently playing song:', error);
+    }
+}
 
 async function initializeApp() {
     if (window.location.hash) {
