@@ -28,7 +28,11 @@ body::before {
     filter: blur(20px);
     z-index: -1;
     transform: scale(1.1);
+    /* Add -webkit-transition for Chrome and try forcing hardware acceleration */
+    -webkit-transition: background-image 0.5s ease;
     transition: background-image 0.5s ease;
+    -webkit-transform: translateZ(0); /* Force hardware acceleration (may or may not be necessary) */
+    transform: translateZ(0);        /* Force hardware acceleration (may or may not be necessary) */
 }
 
 body {
