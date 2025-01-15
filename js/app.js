@@ -51,29 +51,17 @@ function removeCursorActivityListeners() {
 let crossfadeInProgress = false;
 
 async function performCrossfade() {
-    return new Promise((resolve) => {
-        if (crossfadeInProgress) {
-            resolve(false); // Crossfade already in progress
-            return;
-        }
-        crossfadeInProgress = true;
+    if (crossfadeInProgress) return;
+    crossfadeInProgress = true;
 
-        const overlay = document.getElementById('crossfade-overlay');
-        overlay.classList.add('active'); // Fade to black
+    const overlay = document.getElementById('crossfade-overlay');
+    overlay.classList.add('active'); // Fade to black
 
-        // Wait for fade-in to complete
-        setTimeout(() => {
-            // Set up a listener for the end of the fade-out transition
-            overlay.addEventListener('transitionend', function fadeOutEndHandler() {
-                overlay.removeEventListener('transitionend', fadeOutEndHandler); // Remove listener
-                crossfadeInProgress = false;
-                resolve(true); // Signal that crossfade is complete (including fade-out)
-            });
+    // Wait for half the duration of the transition (fade-in)
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Start fade-out
-            overlay.classList.remove('active');
-        }, 500); // Adjust to match half of your CSS transition time
-    });
+    // Signal that the new image can be shown
+    return true;
 }
 
 // Function to update image with debugging
@@ -107,67 +95,85 @@ async function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
+    const overlay = document.getElementById('crossfade-overlay'); // Get the overlay element
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     // Trigger crossfade only if the song ID has changed
     if (data.item.id !== currentSongId) {
-        const crossfadeComplete = await performCrossfade();
+        const readyToUpdateImage = await performCrossfade();
 
-        if (crossfadeComplete) {
+        if (readyToUpdateImage) {
             // Update images and other UI elements here
             manageImageCache(imageUrl);
 
             // Preload the new background image only if it's different from the current one
             if (imageUrl !== currentBackgroundImage) {
-            preloadBackgroundImage(imageUrl, () => {
-                // Once the new image is loaded, update the background if it's still the correct image
-                if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-                document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-                currentBackgroundImage = imageUrl;
-                }
-            });
+                preloadBackgroundImage(imageUrl, () => {
+                    // Once the new image is loaded, update the background if it's still the correct image
+                    if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+                        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+                        currentBackgroundImage = imageUrl;
+                    }
+                });
             }
 
             if (!isCdView) {
-            // Album cover view
-            updateImage(albumCover, imageUrl);
-            albumCover.style.display = "block";
-            document.getElementById("cd-container").style.display = "none";
-            document.getElementById("placeholder-text").style.display = "none";
+                // Album cover view
+                updateImage(albumCover, imageUrl);
+                albumCover.style.display = "block";
+                document.getElementById("cd-container").style.display = "none";
+                document.getElementById("placeholder-text").style.display = "none";
             } else {
-            // CD view
-            updateImage(cdImage, imageUrl);
-            cdImage.style.display = "block";
-            document.getElementById("album-cover").style.display = "none";
-            document.getElementById("placeholder-text").style.display = "none";
-            document.getElementById("cd-container").style.display = "flex";
+                // CD view
+                updateImage(cdImage, imageUrl);
+                cdImage.style.display = "block";
+                document.getElementById("album-cover").style.display = "none";
+                document.getElementById("placeholder-text").style.display = "none";
+                document.getElementById("cd-container").style.display = "flex";
             }
+
+            // Ensure the overlay's transitionend event is only handled once
+            overlay.removeEventListener('transitionend', onTransitionEnd); // Remove any existing listener
+            overlay.addEventListener('transitionend', onTransitionEnd); // Add new listener
+
+            // Start fade-out
+            overlay.classList.remove('active');
         }
     }
 
     // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
-      if (isPlaying) {
-        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        playPauseBtn.title = "Pause";
-        playPauseBtn.classList.remove("play-icon");
-        if (isCdView) {
-          cdImage.style.animationPlayState = "running";
+        if (isPlaying) {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            playPauseBtn.title = "Pause";
+            playPauseBtn.classList.remove("play-icon");
+            if (isCdView) {
+                cdImage.style.animationPlayState = "running";
+            }
+        } else {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playPauseBtn.title = "Play";
+            playPauseBtn.classList.add("play-icon");
+            if (isCdView) {
+                cdImage.style.animationPlayState = "paused";
+            }
         }
-      } else {
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        playPauseBtn.title = "Play";
-        playPauseBtn.classList.add("play-icon");
-        if (isCdView) {
-          cdImage.style.animationPlayState = "paused";
-        }
-      }
     }
+
     imageContainer.classList.remove("placeholder-active");
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
+}
+
+// Function to handle the end of the overlay transition
+function onTransitionEnd() {
+    const overlay = document.getElementById('crossfade-overlay');
+    overlay.removeEventListener('transitionend', onTransitionEnd);
+
+    // Reset the crossfade progress flag
+    crossfadeInProgress = false;
 }
 
 // Function to preload the background image
