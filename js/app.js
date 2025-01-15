@@ -47,53 +47,21 @@ function removeCursorActivityListeners() {
 
 // --- End of Cursor Hiding Functionality ---
 
-// --- Crossfade Variables ---
-let crossfadeTimeout = null;
-
-async function performCrossfade() {
-    return new Promise((resolve) => {
-        const overlay = document.getElementById('crossfade-overlay');
-
-        // Clear any existing timeout
-        if (crossfadeTimeout) {
-            clearTimeout(crossfadeTimeout);
-            overlay.classList.remove('active');
-        }
-
-        // Use requestAnimationFrame for smoother transition
-        requestAnimationFrame(() => {
-            overlay.classList.add('active'); // Fade to black
-
-            const onTransitionEnd = () => {
-                overlay.removeEventListener('transitionend', onTransitionEnd);
-                resolve(true); // Crossfade complete
-            };
-
-            overlay.addEventListener('transitionend', onTransitionEnd);
-
-            // Start fade-out immediately after the fade-in is fully visible
-            setTimeout(() => {
-                overlay.classList.remove('active');
-            }, 250); // Adjust this delay to fine-tune the black screen duration
-        });
-    });
-}
-
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
-    return new Promise((resolve) => {
-        console.log("Updating image:", imgElement.id, "to", imageUrl);
-        if (imageCache.has(imageUrl)) {
-            imgElement.src = imageUrl;
-            resolve();
-        } else {
-            imgElement.onload = () => {
-                imageCache.add(imageUrl);
-                resolve();
-            };
-            imgElement.src = imageUrl;
-        }
-    });
+  return new Promise((resolve) => {
+    console.log("Updating image:", imgElement.id, "to", imageUrl);
+    if (imageCache.has(imageUrl)) {
+      imgElement.src = imageUrl;
+      resolve();
+    } else {
+      imgElement.onload = () => {
+        imageCache.add(imageUrl);
+        resolve();
+      };
+      imgElement.src = imageUrl;
+    }
+  });
 }
 
 // Function to check and log the size of the image wrapper
@@ -103,85 +71,67 @@ function logImageWrapperSize() {
 }
 
 // Updated UI
-async function updateUI(data) {
-    console.log("Update UI Called");
+function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-    let shouldUpdateImage = false;
 
-    // Check if the song ID has changed
-    if (data.item.id !== currentSongId) {
-        shouldUpdateImage = true;
-        currentSongId = data.item.id; // Update the currentSongId immediately
-    } else if (currentBackgroundImage === null) {
-        shouldUpdateImage = true;
+    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
+
+    manageImageCache(imageUrl);
+
+    // Preload the new background image only if it's different from the current one
+    if (imageUrl !== currentBackgroundImage) {
+      preloadBackgroundImage(imageUrl, () => {
+        // Once the new image is loaded, update the background if it's still the correct image
+        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          currentBackgroundImage = imageUrl;
+        }
+      });
+    }
+
+    if (!isCdView) {
+      // Album cover view
+      updateImage(albumCover, imageUrl);
+      albumCover.style.display = "block";
+      document.getElementById("cd-container").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
+    } else {
+      // CD view
+      updateImage(cdImage, imageUrl);
+      cdImage.style.display = "block";
+      document.getElementById("album-cover").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
+      document.getElementById("cd-container").style.display = "flex";
     }
 
     // Update play/pause button icon based on the current state
     if (isPlaying !== currentIsPlaying) {
-        if (isPlaying) {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            playPauseBtn.title = "Pause";
-            playPauseBtn.classList.remove("play-icon");
-            if (isCdView) {
-                cdImage.style.animationPlayState = "running";
-            }
-        } else {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            playPauseBtn.title = "Play";
-            playPauseBtn.classList.add("play-icon");
-            if (isCdView) {
-                cdImage.style.animationPlayState = "paused";
-            }
+      if (isPlaying) {
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        playPauseBtn.title = "Pause";
+        playPauseBtn.classList.remove("play-icon");
+        if (isCdView) {
+          cdImage.style.animationPlayState = "running";
         }
-        currentIsPlaying = isPlaying; // Update the current playback state
+      } else {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.title = "Play";
+        playPauseBtn.classList.add("play-icon");
+        if (isCdView) {
+          cdImage.style.animationPlayState = "paused";
+        }
+      }
     }
-
     imageContainer.classList.remove("placeholder-active");
-
-    // Perform crossfade and update image if the song has changed
-    if (shouldUpdateImage) {
-        const crossfadeComplete = await performCrossfade();
-
-        if (crossfadeComplete) {
-            const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-            manageImageCache(imageUrl);
-
-            // Preload the new background image only if it's different from the current one
-            if (imageUrl !== currentBackgroundImage) {
-                preloadBackgroundImage(imageUrl, () => {
-                    // Once the new image is loaded, update the background if it's still the correct image
-                    if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-                        document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
-                        currentBackgroundImage = imageUrl;
-                    }
-                });
-            }
-
-            if (!isCdView) {
-                // Album cover view
-                updateImage(albumCover, imageUrl);
-                albumCover.style.display = "block";
-                document.getElementById("cd-container").style.display = "none";
-                document.getElementById("placeholder-text").style.display = "none";
-            } else {
-                // CD view
-                updateImage(cdImage, imageUrl);
-                cdImage.style.display = "block";
-                document.getElementById("album-cover").style.display = "none";
-                document.getElementById("placeholder-text").style.display = "none";
-                document.getElementById("cd-container").style.display = "flex";
-            }
-        }
-    }
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-}
+  }
 
 // Function to preload the background image
 function preloadBackgroundImage(imageUrl, callback) {
@@ -504,55 +454,6 @@ document.getElementById('play-pause-btn').addEventListener('click', togglePlayPa
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-
-async function getCurrentlyPlaying() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.status === 204) {
-            // No content - nothing is playing
-            displayPlaceholder();
-            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            document.getElementById('login-screen').style.display = 'none';
-            document.querySelector('.fullscreenify-container').style.display = 'flex';
-        } else if (response.ok) {
-            const data = await response.json();
-
-            // Check if the currently playing item is a track
-            if (data.currently_playing_type === 'track') {
-                // Update UI if the song or playback state has changed
-                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
-                   
-                    await updateUI(data); // Update UI with crossfade
-                    
-                }
-
-                // Adjust update interval based on playing state
-                if (data.is_playing) {
-                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
-                } else {
-                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-                }
-                document.getElementById('login-screen').style.display = 'none';
-                document.querySelector('.fullscreenify-container').style.display = 'flex';
-                hideSessionExpiredModal();
-            } else {
-                // If it's not a track (e.g., podcast, ad), display placeholder
-                displayPlaceholder();
-                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-            }
-
-        } else {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error fetching currently playing song:', error);
-    }
-}
 
 async function initializeApp() {
     if (window.location.hash) {
