@@ -48,20 +48,39 @@ function removeCursorActivityListeners() {
 // --- End of Cursor Hiding Functionality ---
 
 // --- Crossfade Variables ---
-let crossfadeInProgress = false;
+let crossfadeTimeout = null;
 
 async function performCrossfade() {
-    if (crossfadeInProgress) return;
-    crossfadeInProgress = true;
-
+  return new Promise((resolve) => {
     const overlay = document.getElementById('crossfade-overlay');
-    overlay.classList.add('active'); // Fade to black
 
-    // Wait for half the duration of the transition (fade-in)
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Clear any existing timeout to prevent conflicts
+    if (crossfadeTimeout) {
+      clearTimeout(crossfadeTimeout);
+      overlay.classList.remove('active'); // Ensure overlay is not active
+    }
 
-    // Signal that the new image can be shown
-    return true;
+    // Set a new timeout for the crossfade
+    crossfadeTimeout = setTimeout(() => {
+      overlay.classList.add('active'); // Fade to black
+
+      const onTransitionEnd = () => {
+        overlay.removeEventListener('transitionend', onTransitionEnd);
+        resolve(true); // Signal that the crossfade is complete
+      };
+
+      overlay.addEventListener('transitionend', onTransitionEnd);
+    }, 50); // A small delay to ensure any previous transitions are cleared
+
+    // Start the fade-out immediately after the fade-in
+    setTimeout(() => {
+        if (!overlay.classList.contains('active')) {
+            resolve(false); // If overlay didn't become active, resolve as false
+            return;
+        }
+      overlay.classList.remove('active');
+    }, 500); // This should match half of your CSS transition time
+  });
 }
 
 // Function to update image with debugging
@@ -89,22 +108,49 @@ function logImageWrapperSize() {
 
 // Updated UI
 async function updateUI(data) {
+    console.log("Update UI Called");
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-    const overlay = document.getElementById('crossfade-overlay'); // Get the overlay element
+    let shouldUpdateImage = false;
 
-    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-
-    // Trigger crossfade only if the song ID has changed
+    // Check if the song ID has changed
     if (data.item.id !== currentSongId) {
-        const readyToUpdateImage = await performCrossfade();
+        shouldUpdateImage = true;
+        currentSongId = data.item.id; // Update the currentSongId immediately
+    }
 
-        if (readyToUpdateImage) {
-            // Update images and other UI elements here
+    // Update play/pause button icon based on the current state
+    if (isPlaying !== currentIsPlaying) {
+        if (isPlaying) {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            playPauseBtn.title = "Pause";
+            playPauseBtn.classList.remove("play-icon");
+            if (isCdView) {
+                cdImage.style.animationPlayState = "running";
+            }
+        } else {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playPauseBtn.title = "Play";
+            playPauseBtn.classList.add("play-icon");
+            if (isCdView) {
+                cdImage.style.animationPlayState = "paused";
+            }
+        }
+        currentIsPlaying = isPlaying; // Update the current playback state
+    }
+
+    imageContainer.classList.remove("placeholder-active");
+
+    // Perform crossfade and update image if the song has changed
+    if (shouldUpdateImage) {
+        const crossfadeComplete = await performCrossfade();
+
+        if (crossfadeComplete) {
+            const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
             manageImageCache(imageUrl);
 
             // Preload the new background image only if it's different from the current one
@@ -132,48 +178,11 @@ async function updateUI(data) {
                 document.getElementById("placeholder-text").style.display = "none";
                 document.getElementById("cd-container").style.display = "flex";
             }
-
-            // Ensure the overlay's transitionend event is only handled once
-            overlay.removeEventListener('transitionend', onTransitionEnd); // Remove any existing listener
-            overlay.addEventListener('transitionend', onTransitionEnd); // Add new listener
-
-            // Start fade-out
-            overlay.classList.remove('active');
         }
     }
-
-    // Update play/pause button icon based on the current state
-    if (isPlaying !== currentIsPlaying) {
-        if (isPlaying) {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            playPauseBtn.title = "Pause";
-            playPauseBtn.classList.remove("play-icon");
-            if (isCdView) {
-                cdImage.style.animationPlayState = "running";
-            }
-        } else {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            playPauseBtn.title = "Play";
-            playPauseBtn.classList.add("play-icon");
-            if (isCdView) {
-                cdImage.style.animationPlayState = "paused";
-            }
-        }
-    }
-
-    imageContainer.classList.remove("placeholder-active");
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
-}
-
-// Function to handle the end of the overlay transition
-function onTransitionEnd() {
-    const overlay = document.getElementById('crossfade-overlay');
-    overlay.removeEventListener('transitionend', onTransitionEnd);
-
-    // Reset the crossfade progress flag
-    crossfadeInProgress = false;
 }
 
 // Function to preload the background image
@@ -522,8 +531,6 @@ async function getCurrentlyPlaying() {
                    
                     await updateUI(data); // Update UI with crossfade
                     
-                    currentSongId = data.item.id;
-                    currentIsPlaying = data.is_playing;
                 }
 
                 // Adjust update interval based on playing state
