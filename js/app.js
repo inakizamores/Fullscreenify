@@ -130,6 +130,11 @@ async function updateUI(data) {
             document.getElementById("placeholder-text").style.display = "none";
             document.getElementById("cd-container").style.display = "flex";
             }
+
+            // ADDED: Reset the overlay after image update
+            const overlay = document.getElementById('crossfade-overlay');
+            overlay.classList.remove('active');
+            crossfadeInProgress = false;
         }
     }
 
