@@ -67,22 +67,30 @@
 
         <div id="placeholder-text"></div>
 
-        
+        <!-- UI Buttons Container (for grouping) -->
+        <div id="ui-buttons-container">
+            <!-- CD Toggle Button -->
+            <button id="cd-toggle-btn" class="bottom-left-btn" title="Toggle CD View">
+                <i class="fas fa-compact-disc"></i>
+            </button>
 
-        <!-- CD Toggle Button -->
-        <button id="cd-toggle-btn" class="bottom-left-btn" title="Toggle CD View">
-            <i class="fas fa-compact-disc"></i>
-        </button>
+            <!-- Test Expiry Button -->
+            <button id="test-expiry-btn" title="Test Session Expiry">
+                <i class="fas fa-exclamation-triangle"></i>
+            </button>
 
-        <!-- Logout Button -->
-        <button id="logout-btn" class="bottom-right-btn" title="Logout">
-            <i class="fas fa-sign-out-alt"></i>
-        </button>
+            <!-- Logout Button -->
+            <button id="logout-btn" class="bottom-right-btn" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
 
-        <!-- Test Expiry Button -->
-        <button id="test-expiry-btn" title="Test Session Expiry">
-            <i class="fas fa-exclamation-triangle"></i>
-        </button>
+        <!-- Hide UI Toggle Button -->
+        <div id="hide-ui-container">
+            <button id="hide-ui-btn" title="Hide UI">
+                <i class="fas fa-eye-slash"></i>
+            </button>
+        </div>
     </div>
 
     <script src="js/auth.js"></script>

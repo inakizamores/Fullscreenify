@@ -183,12 +183,75 @@ body {
     }
 }
 
+/* === UI Buttons Container Styles === */
+#ui-buttons-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: calc(100% - 40px); /* Adjust width to span from left to right edge */
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+/* Style the "Hide UI Toggle" button container */
+#hide-ui-container {
+    position: absolute;
+    bottom: 0px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px; /* Adjust for hover area (3x button width) */
+    height: 160px; /* Adjust for hover area (3x button height) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+    z-index: 10; /* Ensure it's above other elements */
+}
+
+/* Style for making the button visible on hover */
+#hide-ui-container:hover {
+    opacity: 1;
+}
+
+/* Style the "Hide UI Toggle" button */
+#hide-ui-btn {
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
+}
+
+#hide-ui-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+#hide-ui-btn i {
+    font-size: 20px;
+    color: #000;
+}
+
+/* Style for the hidden state of the button group */
+.hidden {
+    display: none;
+}
+
 /* === Bottom UI Buttons Styles === */
 
 .bottom-left-btn {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
+    /* bottom: 20px;
+    left: 20px; */
     background-color: rgba(179, 179, 179, 0.7);
     border: none;
     color: white;
@@ -226,8 +289,8 @@ body {
 
 .bottom-right-btn {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    /* bottom: 20px;
+    right: 20px; */
     background-color: rgba(179, 179, 179, 0.7);
     border: none;
     color: white;
@@ -471,7 +534,7 @@ body {
 
 /* === Test Button Styles === */
 
-#test-expiry-btn {
+/* #test-expiry-btn {
     position: absolute;
     bottom: 20px;
     right: 80px;
@@ -498,7 +561,7 @@ body {
 #test-expiry-btn i {
     font-size: 20px;
     color: #000;
-}
+} */
 
 /* === Responsive Design === */
 

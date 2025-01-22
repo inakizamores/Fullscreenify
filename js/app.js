@@ -493,6 +493,16 @@ document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
+// --- Hide UI Toggle Functionality ---
+const hideUiBtn = document.getElementById('hide-ui-btn');
+const uiButtonsContainer = document.getElementById('ui-buttons-container');
+
+hideUiBtn.addEventListener('click', () => {
+    // Toggle the 'hidden' class on the button group container
+    uiButtonsContainer.classList.toggle('hidden');
+});
+// --- End of Hide UI Toggle Functionality ---
+
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
