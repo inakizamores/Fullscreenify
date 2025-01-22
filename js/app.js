@@ -47,6 +47,40 @@ function removeCursorActivityListeners() {
 
 // --- End of Cursor Hiding Functionality ---
 
+// --- CD Animation Code ---
+let rotationAngle = 0;
+const cdImage = document.getElementById('cd-image');
+let lastTimestamp = 0;
+let animationId;
+
+function animateCD(timestamp) {
+    const deltaTime = timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+
+    const rotationPeriod = 10000; // 10 seconds
+    const rotationSpeed = 360 / rotationPeriod;
+
+    rotationAngle += rotationSpeed * deltaTime;
+    rotationAngle %= 360;
+
+    cdImage.style.transform = `rotate(${rotationAngle}deg)`;
+
+    animationId = requestAnimationFrame(animateCD);
+}
+
+function startCDAnimation() {
+    lastTimestamp = performance.now();
+    if (!animationId) {
+        animationId = requestAnimationFrame(animateCD);
+    }
+}
+
+function stopCDAnimation() {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+}
+// --- End of CD Animation Code ---
+
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
   return new Promise((resolve) => {
@@ -116,14 +150,16 @@ function updateUI(data) {
         playPauseBtn.title = "Pause";
         playPauseBtn.classList.remove("play-icon");
         if (isCdView) {
-          cdImage.style.animationPlayState = "running";
+          //cdImage.style.animationPlayState = "running";
+          startCDAnimation()
         }
       } else {
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         playPauseBtn.title = "Play";
         playPauseBtn.classList.add("play-icon");
         if (isCdView) {
-          cdImage.style.animationPlayState = "paused";
+          //cdImage.style.animationPlayState = "paused";
+          stopCDAnimation();
         }
       }
     }
@@ -275,9 +311,11 @@ async function toggleCdView() {
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
                     await updateImage(cdImage, imageUrl);
                     if (data.is_playing) {
-                        cdImage.style.animationPlayState = "running";
+                        //cdImage.style.animationPlayState = "running";
+                        startCDAnimation();
                     } else {
-                        cdImage.style.animationPlayState = "paused";
+                        //cdImage.style.animationPlayState = "paused";
+                        stopCDAnimation();
                     }
                 } else {
                     handleApiError(response);
