@@ -187,12 +187,13 @@ body {
 #ui-buttons-container {
     position: absolute;
     bottom: 20px;
-    left: 5%; /* Use a percentage-based value */
-    width: 90%; /* Adjust width to span most of the container */
+    left: 20px; /* Adjust left position */
+    width: auto; /* Use auto width */
     display: flex;
-    justify-content: space-between;
-    align-items: center; /* Align items vertically */
+    justify-content: flex-start; /* Align to the start */
+    align-items: center;
     z-index: 10;
+    gap: 20px; /* Adjust the space between buttons */
 }
 
 /* Individual button styles within the container */
@@ -223,8 +224,7 @@ body {
 
 /* Specific adjustments for the Test Expiry Button */
 #test-expiry-btn {
-    margin-left: auto;
-    margin-right: auto;
+    /* Remove margin styles */
 }
 
 /* Style the "Hide UI Toggle" button container */
