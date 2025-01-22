@@ -8,6 +8,7 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
+let isUiHidden = false; // Flag to track if UI is hidden
 
 // Wake Lock Variables
 let wakeLock = null;
@@ -488,10 +489,43 @@ async function handleVisibilityChange() {
     }
 }
 
+// Function to toggle UI visibility
+function toggleUI() {
+    const controls = document.querySelector(".controls");
+    const cdToggleButton = document.getElementById("cd-toggle-btn");
+    const logoutButton = document.getElementById("logout-btn");
+    const testExpiryButton = document.getElementById("test-expiry-btn");
+    const toggleButtonIcon = document.getElementById("toggle-ui-btn").querySelector("i");
+
+    if (isUiHidden) {
+        // Show UI
+        controls.style.opacity = 1;
+        cdToggleButton.style.opacity = isCdView? 1 : 0;
+        logoutButton.style.opacity = 1;
+        testExpiryButton.style.opacity = 1;
+        toggleButtonIcon.classList.remove("fa-eye");
+        toggleButtonIcon.classList.add("fa-eye-slash");
+        document.getElementById("toggle-ui-btn").title = "Hide UI";
+        isUiHidden = false;
+    } else {
+        // Hide UI
+        controls.style.opacity = 0;
+        cdToggleButton.style.opacity = 0;
+        logoutButton.style.opacity = 0;
+        testExpiryButton.style.opacity = 0;
+        toggleButtonIcon.classList.remove("fa-eye-slash");
+        toggleButtonIcon.classList.add("fa-eye");
+        document.getElementById("toggle-ui-btn").title = "Show UI";
+        isUiHidden = true;
+    }
+}
+
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+// Event listener for the toggle UI button
+document.getElementById('toggle-ui-btn').addEventListener('click', toggleUI);
 
 async function initializeApp() {
     if (window.location.hash) {
