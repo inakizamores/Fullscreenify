@@ -494,6 +494,7 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
+// Add an event listener to the "Hide UI Toggle" button
 const hideUiBtn = document.getElementById('hide-ui-btn');
 const uiButtonsContainer = document.getElementById('ui-buttons-container');
 

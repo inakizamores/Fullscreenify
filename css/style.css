@@ -187,11 +187,44 @@ body {
 #ui-buttons-container {
     position: absolute;
     bottom: 20px;
-    left: 20px;
-    width: calc(100% - 40px); /* Adjust width to span from left to right edge */
+    left: 5%; /* Use a percentage-based value */
+    width: 90%; /* Adjust width to span most of the container */
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Align items vertically */
     z-index: 10;
+}
+
+/* Individual button styles within the container */
+#ui-buttons-container button {
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
+}
+
+#ui-buttons-container button:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+#ui-buttons-container button i {
+    font-size: 20px;
+    color: #000;
+}
+
+/* Specific adjustments for the Test Expiry Button */
+#test-expiry-btn {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Style the "Hide UI Toggle" button container */
@@ -242,29 +275,29 @@ body {
 }
 
 /* Style for the hidden state of the button group */
-.hidden {
+/* .hidden {
     display: none;
+} */
+
+#ui-buttons-container.hidden {
+    visibility: hidden; /* Use visibility instead of display: none */
 }
 
 /* === Bottom UI Buttons Styles === */
 
 .bottom-left-btn {
-    position: absolute;
-    /* bottom: 20px;
-    left: 20px; */
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
+    position: relative; /* Changed to relative */
+    /* Other styles remain the same */
+}
+
+.bottom-center-btn {
+    position: relative; /* Changed to relative */
+    /* Other styles remain the same */
+}
+
+.bottom-right-btn {
+    position: relative; /* Changed to relative */
+    /* Other styles remain the same */
 }
 
 .bottom-left-btn:hover {
@@ -285,25 +318,6 @@ body {
 .bottom-left-btn i {
     font-size: 20px;
     color: #000;
-}
-
-.bottom-right-btn {
-    position: absolute;
-    /* bottom: 20px;
-    right: 20px; */
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-right-btn:hover {
