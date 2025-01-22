@@ -185,10 +185,10 @@ body {
 
 /* === Bottom UI Buttons Styles === */
 
-/* Common styles for bottom buttons */
-.bottom-left-btn, .bottom-center-btn, .bottom-right-btn {
+.bottom-left-btn {
     position: absolute;
     bottom: 20px;
+    left: 20px;
     background-color: rgba(179, 179, 179, 0.7);
     border: none;
     color: white;
@@ -201,28 +201,7 @@ body {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    opacity: 0; /* Initially hidden */
-}
-
-.image-container:hover .bottom-left-btn,
-.image-container:hover .bottom-center-btn,
-.image-container:hover .bottom-right-btn,
-.image-container:hover #test-expiry-btn {
-    opacity: 1;
-}
-
-.bottom-left-btn {
-    left: 20px;
-}
-
-.bottom-center-btn {
-    left: 50%;
-    transform: translateX(-50%); /* Center the button */
-}
-
-.bottom-right-btn {
-    right: 20px;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
 }
 
 .bottom-left-btn:hover {
@@ -245,23 +224,31 @@ body {
     color: #000;
 }
 
+.bottom-right-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
+}
+
 .bottom-right-btn:hover {
     background-color: rgba(179, 179, 179, 1);
     transform: scale(1.1);
 }
 
 .bottom-right-btn i {
-    font-size: 20px;
-    color: #000;
-}
-
-/* Hide/Show UI Button */
-#toggle-ui-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: translateX(-50%) scale(1.1); /* Maintain centering on hover and scale */
-}
-
-#toggle-ui-btn i {
     font-size: 20px;
     color: #000;
 }
@@ -501,7 +488,6 @@ body {
     cursor: pointer;
     z-index: 10;
     transition: background-color: 0.3s ease, transform: 0.3s ease;
-    opacity: 0;
 }
 
 #test-expiry-btn:hover {
