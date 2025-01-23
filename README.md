@@ -24,6 +24,9 @@ Immerse yourself in your music with Fullscreenify, a web application that displa
   <dt><b><span style="font-size: 1.2em;">💿</span> CD Display Mode:</b></dt>
   <dd>Allows users to toggle between the album art and a spinning CD display.</dd>
 
+  <dt><b><span style="font-size: 1.2em;">🔄</span> CD Rotation Synced with Refresh Rate:</b></dt>
+  <dd>The CD rotation animation is now synchronized with the user's screen refresh rate, providing a smoother visual experience that is consistent across different devices.</dd>
+
   <dt><b><span style="font-size: 1.2em;">🌫️</span> Blurred Background:</b></dt>
   <dd>Applies a blurred background effect based on the album art, creating a visually appealing backdrop.</dd>
 
@@ -38,6 +41,15 @@ Immerse yourself in your music with Fullscreenify, a web application that displa
 
   <dt><b><span style="font-size: 1.2em;">✨</span> Hover Effects:</b></dt>
   <dd>Control buttons, album art, and CD image have hover effects for visual feedback.</dd>
+
+  <dt><b><span style="font-size: 1.2em;">🙈</span> Hide UI Toggle:</b></dt>
+  <dd>A dedicated "Hide UI" button allows users to hide the following UI elements for a more immersive, distraction-free experience:</dd>
+    <ul>
+        <li>CD Toggle button</li>
+        <li>Test Expiry button</li>
+        <li>Logout button</li>
+    </ul>
+  <dd>The playback controls (previous, play/pause, next) remain visible and functional. The "Hide UI" button itself is only visible when the user hovers near the bottom-center area of the screen.</dd>
 
   <dt><b><span style="font-size: 1.2em;">🔐</span> Automatic Login Persistence:</b></dt>
   <dd>Stores the Spotify access token in local storage to automatically log the user in on subsequent visits.</dd>
@@ -107,8 +119,10 @@ The application consists of the following core components:
     -   Implements intelligent polling to update the UI at different intervals depending on whether music is playing or paused.
     -   Handles the display and behavior of the session expiration modal.
     -   Provides a toggle to switch between album art and CD display.
+    -   **CD Rotation Synchronization:** The CD rotation animation in `app.js` now uses `requestAnimationFrame` to synchronize the rotation with the screen's refresh rate. This ensures smooth animation regardless of the user's display settings.
     -   Displays placeholder content when no music is playing.
     -   Schedules the token refresh mechanism.
+    -   **Hide UI Toggle:** Implements the "Hide UI Toggle" functionality in `app.js`, which adds an event listener to the "Hide UI" button. When clicked, it toggles the `hidden` class on the container with the other UI buttons, effectively hiding or showing them.
     -   **Wake Lock API:**
         -   When a song starts playing, it attempts to acquire a screen wake lock using `navigator.wakeLock.request('screen')`.
         -   If successful, this prevents the screen from turning off or the device from sleeping.
@@ -136,6 +150,7 @@ The application consists of the following core components:
         -   A very subtle, animated background gradient.
     -   Styles the session expiration modal.
     -   Ensures responsiveness across different screen sizes.
+    -   **Hide UI Toggle Button:** `style.css` defines the styles for the "Hide UI Toggle" button, including its container for the hover effect, its appearance, and the `hidden` class used to control visibility.
 
 </details>
 
@@ -162,9 +177,9 @@ The application consists of the following core components:
 ## Setup
 
 1. **Spotify Developer Dashboard:**
-    -   Create a new application.
-    -   Get your Client ID.
-    -   Add `https://fullscreenify.netlify.app/` as a Redirect URI.
+    *   Create a new application.
+    *   Get your Client ID.
+    *   Add `https://fullscreenify.netlify.app/` as a Redirect URI.
 2. **Clone the Repository:**
 
     ```bash
@@ -172,13 +187,13 @@ The application consists of the following core components:
     cd Fullscreenify
     ```
 3. **Update `auth.js`:**
-    -   Replace `YOUR_SPOTIFY_CLIENT_ID` with your actual Client ID.
-    -   Replace the placeholder `redirectUri` with `https://fullscreenify.netlify.app/`.
+    *   Replace `YOUR_SPOTIFY_CLIENT_ID` with your actual Client ID.
+    *   Replace the placeholder `redirectUri` with `https://fullscreenify.netlify.app/`.
 4. **Deployment (Netlify):**
-    -   Push your code to your GitHub repository.
-    -   Create a new site on Netlify and connect it to your GitHub repository.
-    -   In your Netlify site settings:
-        -   Set the production branch (usually `main` or `master`).
+    *   Push your code to your GitHub repository.
+    *   Create a new site on Netlify and connect it to your GitHub repository.
+    *   In your Netlify site settings:
+        *   Set the production branch (usually `main` or `master`).
 
 ---
 
