@@ -311,10 +311,8 @@ async function toggleCdView() {
                     const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
                     await updateImage(cdImage, imageUrl);
                     if (data.is_playing) {
-                        //cdImage.style.animationPlayState = "running";
                         startCDAnimation();
                     } else {
-                        //cdImage.style.animationPlayState = "paused";
                         stopCDAnimation();
                     }
                 } else {
@@ -378,6 +376,8 @@ async function toggleCdView() {
             wrapper.parentNode.insertBefore(cdImage, wrapper);
             wrapper.parentNode.removeChild(wrapper);
         }
+
+        stopCDAnimation(); // Stop the CD animation when switching to album view
     }
 
     // Re-enable toggle button after 1 second
