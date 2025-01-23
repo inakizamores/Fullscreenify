@@ -201,19 +201,19 @@ function displayPlaceholder() {
          const albumCover = document.getElementById('album-cover');
          updateImage(albumCover, placeholderImageUrl);
          albumCover.style.display = 'block';
-         document.getElementById('cd-container').style.display = 'none';
+         document.getElementById("cd-container").style.display = "none";
     } else {
         // CD view
-        const cdImage = document.getElementById('cd-image');
+        const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = 'block';
-        document.getElementById('album-cover').style.display = 'none';
-        document.getElementById('cd-container').style.display = 'flex';
+        cdImage.style.display = "block";
+        document.getElementById("album-cover").style.display = "none";
+        document.getElementById("cd-container").style.display = "flex";
     }
     document.body.style.backgroundColor = '#222';
     document.body.style.backgroundImage = 'none';
     currentBackgroundImage = null;
-    imageContainer.classList.add('placeholder-active');
+    imageContainer.classList.add("placeholder-active");
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
@@ -503,6 +503,22 @@ hideUiBtn.addEventListener('click', () => {
     uiButtonsContainer.classList.toggle('hidden');
 });
 // --- End of Hide UI Toggle Functionality ---
+
+// --- Keyboard Controls ---
+function handleKeyPress(event) {
+    // Check if the pressed key is 'M' (case-insensitive)
+    if (event.key.toLowerCase() === 'm') {
+        // Check if the toggle is currently disabled
+        if (!isToggleDisabled) {
+            toggleCdView(); // Call the existing toggle function
+        }
+    }
+}
+
+// Add a keypress event listener to the window
+window.addEventListener('keypress', handleKeyPress);
+
+// --- End of Keyboard Controls ---
 
 async function initializeApp() {
     if (window.location.hash) {
