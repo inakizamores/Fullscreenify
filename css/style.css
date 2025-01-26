@@ -662,8 +662,8 @@ body::after {
     pointer-events: none;
     z-index: 2;
     background: radial-gradient(
-        ellipse 80% 50% at center,
-        rgba(0, 0, 0, 0) 30%,
-        rgba(0, 0, 0, 0.8) 100%
+        ellipse 80% 50% at center, /* Adjust shape and position */
+        rgba(0, 0, 0, 0) 30%,    /* Adjust transparent area */
+        rgba(0, 0, 0, 0.5) 100%   /* Adjust darkness */
     );
 }
