@@ -663,9 +663,10 @@ body::after {
     pointer-events: none;
     z-index: 2;
     background: radial-gradient(
-        ellipse 80% 45% at center, /* Slightly narrower ellipse */
-        rgba(0, 0, 0, 0) 50%,    /* Larger transparent center */
-        rgba(0, 0, 0, 0.2) 75%,  /* Lighter intermediate color stop */
-        rgba(0, 0, 0, 0.5) 100%   /* Lighter edges */
+        circle at center,       /* Use a circle instead of an ellipse */
+        rgba(0, 0, 0, 0) 0%,    /* Start with a fully transparent center */
+        rgba(0, 0, 0, 0) 60%,   /* Extend the transparent center */
+        rgba(0, 0, 0, 0.1) 70%, /* Very subtle transition */
+        rgba(0, 0, 0, 0.4) 100%  /* Soft outer edge */
     );
 }
