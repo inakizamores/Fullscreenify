@@ -650,3 +650,22 @@ body {
 #next-btn i {
   margin-left: 3px; /* Move slightly to the right */
 }
+
+/* Vignette Effect (Left and Right Sides Only) */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevents interaction with the vignette */
+    z-index: -1; /* Ensure it's behind the main content */
+}
+
+body::after {
+    background: radial-gradient(closest-side at 50% 50%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.5) 100%);
+    background-repeat: repeat-x; /* Repeat horizontally to create left/right vignette */
+    background-size: 20% 100%; /* Adjust size for desired smoothness and width */
+    background-position: left center, right center; /* Position on both left and right */
+}
