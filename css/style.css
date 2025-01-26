@@ -29,8 +29,6 @@ body::before {
     z-index: -1;
     transform: scale(1.1);
     transition: background-image 0.5s ease;
-    mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.5));
-    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.5));
 }
 
 body {
@@ -43,10 +41,6 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    -webkit-font-smoothing: antialiased; /* Improve font rendering */
-    backface-visibility: hidden; /* Potentially improve performance and smoothness */
-    perspective: 1000px;       /* Needed for backface-visibility */
-    will-change: transform; /* Optimize for animation if the background changes frequently */
 }
 
 .fullscreenify-container {
