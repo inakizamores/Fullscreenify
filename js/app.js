@@ -2,11 +2,11 @@
 import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong } from './api.js';
 import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, accessToken, isLoggedIn } from './auth.js';
 
-const ACTIVE_UPDATE_INTERVAL = 250;
-const INACTIVE_UPDATE_INTERVAL = 2000;
+export const ACTIVE_UPDATE_INTERVAL = 250;
+export const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
-let currentSongId = null;
-let currentIsPlaying = null;
+export let currentSongId = null;
+export let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
@@ -109,7 +109,7 @@ function logImageWrapperSize() {
 }
 
 // Updated UI
-function updateUI(data) {
+export function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
@@ -189,7 +189,7 @@ function preloadBackgroundImage(imageUrl, callback) {
     }
 }
 
-function displayPlaceholder() {
+export function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
@@ -250,7 +250,7 @@ document.getElementById('test-expiry-btn').addEventListener('click', () => {
     simulateTokenExpiration();
 });
 
-function startUpdatingSongInfo(interval) {
+export function startUpdatingSongInfo(interval) {
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
     }
@@ -637,4 +637,3 @@ async function initializeApp() {
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
-//initializeApp();
