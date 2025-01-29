@@ -1,6 +1,6 @@
 // app.js
 import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong } from './api.js';
-import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, accessToken, isLoggedIn } from './auth.js';
+import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, isLoggedIn } from './auth.js';
 
 const ACTIVE_UPDATE_INTERVAL = 250;
 const INACTIVE_UPDATE_INTERVAL = 2000;
