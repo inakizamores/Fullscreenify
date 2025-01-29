@@ -1,11 +1,8 @@
 // api.js
 import { accessToken } from './auth.js';
-
-const ACTIVE_UPDATE_INTERVAL = 250;
-const INACTIVE_UPDATE_INTERVAL = 2000;
+import { displayPlaceholder, startUpdatingSongInfo, INACTIVE_UPDATE_INTERVAL, updateUI, currentSongId, currentIsPlaying } from './app.js';
 
 export async function getCurrentlyPlaying() {
-    //console.log("trying to get currently playing song")
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
