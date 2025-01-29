@@ -1,3 +1,5 @@
+// app.js
+
 const ACTIVE_UPDATE_INTERVAL = 250;
 const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
@@ -513,10 +515,31 @@ function handleKeyPress(event) {
             toggleCdView(); // Call the existing toggle function
         }
     }
+
+    // Check for other keys
+    switch (event.key.toLowerCase()) {
+        case ' ': // Spacebar
+            event.preventDefault(); // Prevent default spacebar behavior (scrolling)
+            togglePlayPause();
+            break;
+        case 'arrowleft': // Left Arrow
+            prevSong();
+            break;
+        case 'arrowright': // Right Arrow
+            nextSong();
+            break;
+        case 'f': // F key
+            toggleFullscreen();
+            break;
+        case 'h': // H key
+            // Toggle the 'hidden' class on the button group container
+            uiButtonsContainer.classList.toggle('hidden');
+            break;
+    }
 }
 
 // Add a keypress event listener to the window
-window.addEventListener('keypress', handleKeyPress);
+window.addEventListener('keydown', handleKeyPress); // Use keydown instead of keypress
 
 // --- End of Keyboard Controls ---
 
