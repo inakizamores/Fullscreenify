@@ -568,23 +568,24 @@ fullscreenBtn.addEventListener('click', toggleFullscreen);
 
 // Function to update the fullscreen button icon based on the fullscreen state
 function updateFullscreenButtonIcon() {
-    // Use a slight delay to ensure the browser has updated its state
-    setTimeout(() => {
-        if (isFullscreen()) {
-            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-            fullscreenBtn.title = 'Exit Fullscreen';
-        } else {
-            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-            fullscreenBtn.title = 'Toggle Fullscreen';
-        }
-    }, 10); // 10 milliseconds delay (adjust if needed)
+    if (isFullscreen()) {
+        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        fullscreenBtn.title = 'Exit Fullscreen';
+    } else {
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        fullscreenBtn.title = 'Toggle Fullscreen';
+    }
 }
 
-// Attach event listeners for fullscreen change events
-document.addEventListener('fullscreenchange', updateFullscreenButtonIcon);
-document.addEventListener('webkitfullscreenchange', updateFullscreenButtonIcon);
-document.addEventListener('mozfullscreenchange', updateFullscreenButtonIcon);
-document.addEventListener('MSFullscreenChange', updateFullscreenButtonIcon);
+// Attach a single event listener for all fullscreen change events
+function handleFullscreenChange() {
+  updateFullscreenButtonIcon();
+}
+
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 // Call updateFullscreenButtonIcon initially to set the correct state
 updateFullscreenButtonIcon();
