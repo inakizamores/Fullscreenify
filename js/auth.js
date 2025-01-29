@@ -1,5 +1,9 @@
-const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923';
-const redirectUri = 'https://fullscreenify.netlify.app/';
+// auth.js
+
+import { getCurrentlyPlaying } from './api.js';
+
+const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Replace with your actual Client ID
+const redirectUri = 'https://fullscreenify.netlify.app/'; // Replace with your actual Redirect URI
 const scopes = [
     'user-read-currently-playing',
     'user-modify-playback-state',
@@ -64,7 +68,7 @@ function checkAuthentication() {
 }
 
 // Function to handle logout
-function handleLogout() {
+export function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
     localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
@@ -80,7 +84,7 @@ function handleLogout() {
 }
 
 // Function to refresh the access token
-function refreshToken() {
+export function refreshToken() {
     console.log('Refreshing access token...');
 
     // Create a hidden iframe
@@ -165,3 +169,5 @@ function clearHashFromUrl() {
 
 // Call initializeAuthentication() only once on page load
 initializeAuthentication();
+
+export {isLoggedIn, handleRedirect, checkAuthentication, scheduleTokenRefresh}
