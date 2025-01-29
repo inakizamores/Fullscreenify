@@ -1,4 +1,8 @@
-async function getCurrentlyPlaying() {
+// api.js
+const ACTIVE_UPDATE_INTERVAL = 250;
+const INACTIVE_UPDATE_INTERVAL = 2000;
+
+export async function getCurrentlyPlaying() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
@@ -57,7 +61,7 @@ function handleApiError(response) {
     }
 }
 
-async function playSong() {
+export async function playSong() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/play', {
             method: 'PUT',
@@ -74,7 +78,7 @@ async function playSong() {
     }
 }
 
-async function pauseSong() {
+export async function pauseSong() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/pause', {
             method: 'PUT',
@@ -91,7 +95,7 @@ async function pauseSong() {
     }
 }
 
-async function nextSong() {
+export async function nextSong() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/next', {
             method: 'POST',
@@ -114,92 +118,7 @@ async function nextSong() {
     }
 }
 
-async function prevSong() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (!response.ok) {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error moving to previous song:', error);
-    }
-}
-function handleApiError(response) {
-    if (response.status === 401) {
-        // Unauthorized - token expired or invalid.
-        console.error('API Error 401: Unauthorized. Access token expired.');
-        showSessionExpiredModal(); // Show the session expired modal
-    } else {
-        console.error('API Error:', response.status, response.statusText);
-    }
-}
-
-// ... (Existing code for playSong, pauseSong, nextSong, prevSong) ...
-
-async function playSong() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/play', {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (!response.ok) {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error playing song:', error);
-    }
-}
-
-async function pauseSong() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/pause', {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (!response.ok) {
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Error pausing song:', error);
-    }
-}
-
-async function nextSong() {
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/next', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.status === 204) {
-            console.log('Skipped to next song successfully.');
-            // Fetch the currently playing song to update the UI
-            await getCurrentlyPlaying();
-        } else {
-            const errorData = await response.json();
-            console.error('Error skipping to next song:', errorData);
-            handleApiError(response);
-        }
-    } catch (error) {
-        console.error('Network error while skipping to next song:', error);
-    }
-}
-
-async function prevSong() {
+export async function prevSong() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
             method: 'POST',

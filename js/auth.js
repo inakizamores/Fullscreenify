@@ -1,3 +1,6 @@
+// auth.js
+import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong } from './api.js';
+
 const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923';
 const redirectUri = 'https://fullscreenify.netlify.app/';
 const scopes = [
@@ -6,11 +9,11 @@ const scopes = [
     'user-read-playback-state'
 ];
 
-let accessToken = localStorage.getItem('fullscreenify_access_token');
-let isLoggedIn = !!accessToken;
+export let accessToken = localStorage.getItem('fullscreenify_access_token');
+export let isLoggedIn = !!accessToken;
 
 // Function to initiate the Spotify authentication process
-function handleLogin() {
+export function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
     const params = {
         client_id: clientId,
@@ -26,7 +29,7 @@ function handleLogin() {
 }
 
 // Function to handle the redirect from Spotify after authentication
-function handleRedirect() {
+export function handleRedirect() {
     const hashParams = new URLSearchParams(window.location.hash.substr(1));
     accessToken = hashParams.get('access_token');
     const expiresIn = hashParams.get('expires_in');
@@ -52,7 +55,7 @@ function handleRedirect() {
 }
 
 // Function to check the user's authentication status
-function checkAuthentication() {
+export function checkAuthentication() {
     if (!isLoggedIn) {
         // Show the login screen if not authenticated
         document.getElementById('login-screen').style.display = 'flex';
@@ -64,7 +67,7 @@ function checkAuthentication() {
 }
 
 // Function to handle logout
-function handleLogout() {
+export function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
     localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
@@ -80,7 +83,7 @@ function handleLogout() {
 }
 
 // Function to refresh the access token
-function refreshToken() {
+export function refreshToken() {
     console.log('Refreshing access token...');
 
     // Create a hidden iframe

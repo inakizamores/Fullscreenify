@@ -1,4 +1,6 @@
 // app.js
+import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong } from './api.js';
+import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, accessToken, isLoggedIn } from './auth.js';
 
 const ACTIVE_UPDATE_INTERVAL = 250;
 const INACTIVE_UPDATE_INTERVAL = 2000;
@@ -248,15 +250,6 @@ document.getElementById('test-expiry-btn').addEventListener('click', () => {
     simulateTokenExpiration();
 });
 
-function handleApiError(response) {
-    if (response.status === 401) {
-        console.error('API Error 401: Unauthorized. Access token expired.');
-        showSessionExpiredModal();
-    } else {
-        console.error('API Error:', response.status, response.statusText);
-    }
-}
-
 function startUpdatingSongInfo(interval) {
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
@@ -496,7 +489,7 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
-// Add an event listener to the "Hide UI Toggle" button
+// Add an event listener to the "Hide UI Toggle"
 const hideUiBtn = document.getElementById('hide-ui-btn');
 const uiButtonsContainer = document.getElementById('ui-buttons-container');
 
