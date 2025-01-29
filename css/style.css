@@ -625,7 +625,7 @@ body {
 /* Container for hover effect */
 #fullscreen-container {
     position: absolute;
-    top: 14px;
+    top: 13px;
     right: 15px;
     width: 160px; /* Adjust for hover area */
     height: 160px; /* Adjust for hover area */
