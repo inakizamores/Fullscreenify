@@ -15,7 +15,7 @@ let accessToken = localStorage.getItem('fullscreenify_access_token');
 let isLoggedIn = !!accessToken;
 
 // Function to initiate the Spotify authentication process
-function handleLogin() {
+export function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
     const params = {
         client_id: clientId,
@@ -186,4 +186,4 @@ function clearHashFromUrl() {
 // Call initializeAuthentication() only once on page load
 initializeAuthentication();
 
-export {isLoggedIn, handleRedirect, checkAuthentication };
+export {isLoggedIn, handleRedirect, checkAuthentication, scheduleTokenRefresh };

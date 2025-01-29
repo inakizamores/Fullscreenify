@@ -1,6 +1,5 @@
 // api.js
-
-import { showSessionExpiredModal, startUpdatingSongInfo, INACTIVE_UPDATE_INTERVAL, ACTIVE_UPDATE_INTERVAL, currentSongId, currentIsPlaying, updateUI } from './ui.js';
+import { showSessionExpiredModal, startUpdatingSongInfo, INACTIVE_UPDATE_INTERVAL, ACTIVE_UPDATE_INTERVAL, currentSongId, currentIsPlaying, updateUI, displayPlaceholder, hideSessionExpiredModal } from './ui.js';
 
 let accessToken = localStorage.getItem('fullscreenify_access_token');
 
@@ -58,6 +57,8 @@ export function handleApiError(response) {
         // Unauthorized - token expired or invalid.
         console.error('API Error 401: Unauthorized. Access token expired.');
         showSessionExpiredModal(); // Show the session expired modal
+        // (Optional) Stop further API calls until re-authentication
+        stopUpdatingSongInfo();
     } else {
         console.error('API Error:', response.status, response.statusText);
     }

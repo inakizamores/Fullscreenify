@@ -1,9 +1,10 @@
 // main.js
 
 import { getCurrentlyPlaying, simulateTokenExpiration, handleApiError } from './api.js';
-import {  displayPlaceholder, showSessionExpiredModal, hideSessionExpiredModal, startUpdatingSongInfo, toggleCdView, isToggleDisabled, currentSongId, initialLoadComplete } from './ui.js';
+import {  displayPlaceholder, showSessionExpiredModal, hideSessionExpiredModal, startUpdatingSongInfo, toggleCdView, isToggleDisabled, currentSongId, initialLoadComplete, togglePlayPause } from './ui.js';
 import { requestWakeLock, releaseWakeLock } from './wakeLock.js';
-import { handleLogin, scheduleTokenRefresh, checkAuthentication, handleRedirect, isLoggedIn} from './auth.js';
+import { handleLogout, scheduleTokenRefresh, checkAuthentication, handleRedirect, isLoggedIn} from './auth.js';
+import { attachCursorActivityListeners, resetCursorIdleTimer } from './cursor.js';
 
 // --- Hide UI Toggle Functionality ---
 // Add an event listener to the "Hide UI Toggle" button
@@ -157,24 +158,6 @@ async function initializeApp() {
 
     initialLoadComplete = true;
     scheduleTokenRefresh();
-}
-
-// Release the wake lock when the user logs out
-export function handleLogout() {
-    // Remove the access token from local storage
-    localStorage.removeItem('fullscreenify_access_token');
-    localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
-    isLoggedIn = false;
-
-    // Force a page refresh to clear the URL and state
-    window.location.href = window.location.origin + window.location.pathname;
-
-    // Update the UI (hide main content, show login screen)
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
-    document.querySelector('.fullscreenify-container').style.display = 'none';
-
-    releaseWakeLock();
 }
 
 initializeApp();
