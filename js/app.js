@@ -637,3 +637,5 @@ async function initializeApp() {
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
+
+//initializeApp();
