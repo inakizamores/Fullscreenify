@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fullscreenify</title>
-    <meta name="mobile-web-app-capable" content="yes"> 
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
     <link rel="shortcut icon" href="/favicon/favicon.ico" />
@@ -23,7 +25,8 @@
             <div class="login-content">
                 <img src="favicon/favicon.svg" alt="Fullscreenify Logo" class="logo">
                 <h1>FULLSCREENIFY</h1>
-                <p>Immerse yourself in your music with full-screen album art and a captivating CD display for your currently playing Spotify track.</p>
+                <p>Immerse yourself in your music with full-screen album art and a captivating CD display for your
+                    currently playing Spotify track.</p>
                 <button id="login-btn">
                     <i class="fab fa-spotify"></i>
                     Login with Spotify
@@ -48,7 +51,7 @@
         <div class="image-wrapper">
             <div class="image-container">
                 <img id="album-cover" src="" alt="Album Cover">
-    
+
                 <div id="cd-container">
                     <img id="cd-image" src="" alt="CD Image">
                 </div>
@@ -76,7 +79,7 @@
             </button>
 
             <!-- Test Expiry Button -->
-            <button id="test-expiry-btn" class = "bottom-center-btn" title="Test Session Expiry">
+            <button id="test-expiry-btn" class="bottom-center-btn" title="Test Session Expiry">
                 <i class="fas fa-exclamation-triangle"></i>
             </button>
 
@@ -96,17 +99,16 @@
         <!-- Fullscreen Toggle Button -->
         <div id="fullscreen-container">
             <button id="fullscreen-btn" title="Toggle Fullscreen">
-                <i class="fas fa-expand"></i> 
+                <i class="fas fa-expand"></i>
             </button>
         </div>
     </div>
-
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/api.js"></script>
     <script type="module" src="js/ui.js"></script>
     <script type="module" src="js/cursor.js"></script>
     <script type="module" src="js/cdAnimation.js"></script>
     <script type="module" src="js/wakeLock.js"></script>
     <script type="module" src="js/main.js"></script>
-    </body>
+</body>
 </html>
