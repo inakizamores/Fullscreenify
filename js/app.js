@@ -1,6 +1,6 @@
 // app.js
 import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong } from './api.js';
-import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, isLoggedIn } from './auth.js';
+import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, accessToken, isLoggedIn } from './auth.js';
 
 const ACTIVE_UPDATE_INTERVAL = 250;
 const INACTIVE_UPDATE_INTERVAL = 2000;
@@ -637,22 +637,4 @@ async function initializeApp() {
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
-
-// Release the wake lock when the user logs out
-function handleLogout() {
-    // Remove the access token from local storage
-    localStorage.removeItem('fullscreenify_access_token');
-    localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
-    isLoggedIn = false;
-
-    // Force a page refresh to clear the URL and state
-    window.location.href = window.location.origin + window.location.pathname;
-
-    // Update the UI (hide main content, show login screen)
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
-    document.querySelector('.fullscreenify-container').style.display = 'none';
-
-    releaseWakeLock();
-}
-initializeApp();
+//initializeApp();
