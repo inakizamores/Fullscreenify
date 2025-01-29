@@ -1,6 +1,7 @@
 // auth.js
 
 import { getCurrentlyPlaying } from './api.js';
+import { showSessionExpiredModal } from './ui.js';
 
 const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Replace with your actual Client ID
 const redirectUri = 'https://fullscreenify.netlify.app/'; // Replace with your actual Redirect URI
@@ -141,6 +142,21 @@ export function refreshToken() {
     }
 }
 
+// Function to schedule token refresh
+export function scheduleTokenRefresh() {
+    const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
+    if (expirationTime) {
+        const timeUntilExpiration = expirationTime - Date.now();
+        const refreshTimeout = Math.max(0, timeUntilExpiration - 60000);
+
+        console.log(`Scheduling token refresh in ${refreshTimeout / 1000} seconds.`);
+
+        setTimeout(() => {
+            refreshToken();
+        }, refreshTimeout);
+    }
+}
+
 // Event listener for the login button
 document.getElementById('login-btn').addEventListener('click', handleLogin);
 
@@ -170,4 +186,4 @@ function clearHashFromUrl() {
 // Call initializeAuthentication() only once on page load
 initializeAuthentication();
 
-export {isLoggedIn, handleRedirect, checkAuthentication, scheduleTokenRefresh}
+export {isLoggedIn, handleRedirect, checkAuthentication };
