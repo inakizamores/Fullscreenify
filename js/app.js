@@ -566,6 +566,18 @@ function updateFullscreenButtonIcon() {
         fullscreenBtn.title = 'Toggle Fullscreen';
     }
 }
+
+// Function to handle all fullscreen change events
+function handleFullscreenChange() {
+    updateFullscreenButtonIcon(); // Update the button's icon
+}
+
+// Attach the unified event listener to all relevant events
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
 // --- End of Fullscreen Toggle Functionality ---
 
 async function initializeApp() {
