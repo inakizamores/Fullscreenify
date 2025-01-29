@@ -1,4 +1,4 @@
-import { getCurrentlyPlaying, simulateTokenExpiration, handleApiError } from './api.js';
+import { getCurrentlyPlaying, handleApiError } from './api.js';
 import {  displayPlaceholder, showSessionExpiredModal, hideSessionExpiredModal, startUpdatingSongInfo, toggleCdView, isToggleDisabled, currentSongId, initialLoadComplete, togglePlayPause, stopUpdatingSongInfo } from './ui.js';
 import { requestWakeLock, releaseWakeLock } from './wakeLock.js';
 import { handleLogout, scheduleTokenRefresh, checkAuthentication, handleRedirect, isLoggedIn, handleLogin} from './auth.js';
@@ -123,10 +123,6 @@ document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 updateFullscreenButtonIcon();
 
 // --- End of Fullscreen Toggle Functionality ---
-
-document.getElementById('test-expiry-btn').addEventListener('click', () => {
-    simulateTokenExpiration();
-});
 
 async function initializeApp() {
     if (window.location.hash) {

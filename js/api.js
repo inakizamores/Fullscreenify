@@ -4,7 +4,7 @@ let accessToken = localStorage.getItem('fullscreenify_access_token');
 
 export async function getCurrentlyPlaying() {
     try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+        let response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }

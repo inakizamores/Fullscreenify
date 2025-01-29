@@ -155,6 +155,12 @@ function scheduleTokenRefresh() {
     }
 }
 
+// Event listener for the login button
+document.getElementById('login-btn').addEventListener('click', handleLogin);
+
+// Event listener for the logout button
+document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
 // Check for redirect and existing authentication on page load (only once)
 function initializeAuthentication() {
     if (window.location.hash) {
