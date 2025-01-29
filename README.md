@@ -51,6 +51,17 @@ Immerse yourself in your music with Fullscreenify, a web application that displa
     </ul>
   <dd>The playback controls (previous, play/pause, next) remain visible and functional. The "Hide UI" button itself is only visible when the user hovers near the bottom-center area of the screen.</dd>
 
+  <dt><b><span style="font-size: 1.2em;">⌨️</span> Keyboard Shortcuts:</b></dt>
+  <dd>Provides keyboard shortcuts for quick control:</dd>
+    <ul>
+        <li><b>Spacebar:</b> Play/Pause</li>
+        <li><b>Left Arrow:</b> Previous Song</li>
+        <li><b>Right Arrow:</b> Next Song</li>
+        <li><b>F:</b> Toggle Fullscreen</li>
+        <li><b>H:</b> Toggle Hide UI</li>
+        <li><b>M:</b> Toggle CD View</li>
+    </ul>
+
   <dt><b><span style="font-size: 1.2em;">🔐</span> Automatic Login Persistence:</b></dt>
   <dd>Stores the Spotify access token in local storage to automatically log the user in on subsequent visits.</dd>
 
@@ -123,6 +134,7 @@ The application consists of the following core components:
     -   Displays placeholder content when no music is playing.
     -   Schedules the token refresh mechanism.
     -   **Hide UI Toggle:** Implements the "Hide UI Toggle" functionality in `app.js`, which adds an event listener to the "Hide UI" button. When clicked, it toggles the `hidden` class on the container with the other UI buttons, effectively hiding or showing them.
+    -   **Keyboard Shortcuts:** Implements keyboard shortcuts for various actions: Spacebar (Play/Pause), Left Arrow (Previous Song), Right Arrow (Next Song), F (Toggle Fullscreen), H (Toggle Hide UI), and M (Toggle CD View).
     -   **Wake Lock API:**
         -   When a song starts playing, it attempts to acquire a screen wake lock using `navigator.wakeLock.request('screen')`.
         -   If successful, this prevents the screen from turning off or the device from sleeping.
