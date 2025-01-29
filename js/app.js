@@ -1,3 +1,5 @@
+import FastAverageColor from 'fast-average-color';
+
 const ACTIVE_UPDATE_INTERVAL = 250;
 const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
@@ -81,6 +83,10 @@ function stopCDAnimation() {
 }
 // --- End of CD Animation Code ---
 
+// --- Color Extraction and Progress Bar Logic ---
+const fac = new FastAverageColor();
+let currentDominantColor = null; // Variable to store the current dominant color
+
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
   return new Promise((resolve) => {
@@ -104,8 +110,22 @@ function logImageWrapperSize() {
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
-// Updated UI
-function updateUI(data) {
+// Function to extract and log dominant color from image URL
+function extractDominantColor(imageUrl) {
+    fac.getColorAsync(imageUrl)
+        .then(color => {
+            currentDominantColor = color.hex;
+            console.log('Dominant color:', currentDominantColor);
+            // Apply the color to the progress bar or any other element
+            document.getElementById('progress-bar').style.backgroundColor = currentDominantColor;
+        })
+        .catch(e => {
+            console.error('Error getting dominant color:', e);
+        });
+}
+
+// Updated UI function
+async function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
@@ -119,6 +139,8 @@ function updateUI(data) {
 
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
+        // Extract and log dominant color when a new song starts
+        extractDominantColor(imageUrl);
       preloadBackgroundImage(imageUrl, () => {
         // Once the new image is loaded, update the background if it's still the correct image
         if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
@@ -252,6 +274,66 @@ function handleApiError(response) {
         showSessionExpiredModal();
     } else {
         console.error('API Error:', response.status, response.statusText);
+    }
+}
+
+// Function to update the progress bar
+function updateProgressBar(progress, duration) {
+    const progressBar = document.getElementById('progress-bar');
+    const percentage = (progress / duration) * 100;
+    progressBar.style.width = `${percentage}%`;
+}
+
+// Modify your getCurrentlyPlaying function to also update the progress bar
+async function getCurrentlyPlaying() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No content - nothing is playing
+            displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+        } else if (response.ok) {
+            const data = await response.json();
+
+            // Check if the currently playing item is a track
+            if (data.currently_playing_type === 'track') {
+                // Update UI if the song or playback state has changed
+                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                    updateUI(data);
+                    currentSongId = data.item.id;
+                    currentIsPlaying = data.is_playing;
+
+                    // Update the progress bar
+                    updateProgressBar(data.progress_ms, data.item.duration_ms);
+                }
+
+                // Adjust update interval based on playing state
+                if (data.is_playing) {
+                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+                } else {
+                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                }
+                document.getElementById('login-screen').style.display = 'none';
+                document.querySelector('.fullscreenify-container').style.display = 'flex';
+                hideSessionExpiredModal();
+            } else {
+                // If it's not a track (e.g., podcast, ad), display placeholder
+                displayPlaceholder();
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            }
+
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error fetching currently playing song:', error);
     }
 }
 
@@ -494,15 +576,24 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
-// Add an event listener to the "Hide UI Toggle" button
-const hideUiBtn = document.getElementById('hide-ui-btn');
-const uiButtonsContainer = document.getElementById('ui-buttons-container');
-
+let isProgressBarVisible = true; // Default to visible
+const progressBarContainer = document.getElementById('progress-bar-container');
+const progressBarToggleBtn = document.getElementById('progress-bar-toggle-btn');
+// ... your existing code ...
 hideUiBtn.addEventListener('click', () => {
-    // Toggle the 'hidden' class on the button group container
     uiButtonsContainer.classList.toggle('hidden');
+    if (!progressBarToggleBtn.classList.contains('hidden')) {
+        progressBarContainer.classList.add('hidden'); // Hide progress bar with other UI
+    } else {
+        progressBarContainer.classList.remove('hidden');
+    }
 });
-// --- End of Hide UI Toggle Functionality ---
+progressBarToggleBtn.addEventListener('click', () => {
+    isProgressBarVisible = !isProgressBarVisible;
+    progressBarContainer.style.display = isProgressBarVisible ? 'block' : 'none';
+    progressBarToggleBtn.classList.toggle('hidden');
+});
+// ... your existing code ...
 
 // --- Keyboard Controls ---
 function handleKeyPress(event) {
@@ -548,6 +639,20 @@ async function initializeApp() {
 
     initialLoadComplete = true;
     scheduleTokenRefresh();
+
+    // Create and append the new button to the ui-buttons-container
+    const uiButtonsContainer = document.getElementById('ui-buttons-container');
+
+    const progressBarToggleBtn = document.createElement('button');
+    progressBarToggleBtn.id = 'progress-bar-toggle-btn';
+    progressBarToggleBtn.title = 'Toggle Progress Bar';
+    progressBarToggleBtn.innerHTML = '<i class="fas fa-bars-progress"></i>';
+    uiButtonsContainer.appendChild(progressBarToggleBtn);
+
+    progressBarToggleBtn.addEventListener('click', () => {
+        isProgressBarVisible = !isProgressBarVisible;
+        progressBarContainer.style.display = isProgressBarVisible ? 'block' : 'none';
+    });
 }
 
 // Release the wake lock when the user logs out
