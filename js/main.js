@@ -1,9 +1,7 @@
-// main.js
-
 import { getCurrentlyPlaying, simulateTokenExpiration, handleApiError } from './api.js';
-import {  displayPlaceholder, showSessionExpiredModal, hideSessionExpiredModal, startUpdatingSongInfo, toggleCdView, isToggleDisabled, currentSongId, initialLoadComplete, togglePlayPause } from './ui.js';
+import {  displayPlaceholder, showSessionExpiredModal, hideSessionExpiredModal, startUpdatingSongInfo, toggleCdView, isToggleDisabled, currentSongId, initialLoadComplete, togglePlayPause, stopUpdatingSongInfo } from './ui.js';
 import { requestWakeLock, releaseWakeLock } from './wakeLock.js';
-import { handleLogout, scheduleTokenRefresh, checkAuthentication, handleRedirect, isLoggedIn} from './auth.js';
+import { handleLogout, scheduleTokenRefresh, checkAuthentication, handleRedirect, isLoggedIn, handleLogin} from './auth.js';
 import { attachCursorActivityListeners, resetCursorIdleTimer } from './cursor.js';
 
 // --- Hide UI Toggle Functionality ---

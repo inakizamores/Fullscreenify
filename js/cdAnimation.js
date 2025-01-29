@@ -1,5 +1,3 @@
-// cdAnimation.js
-
 export let rotationAngle = 0;
 export const cdImage = document.getElementById('cd-image');
 export let lastTimestamp = 0;

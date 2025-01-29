@@ -1,5 +1,3 @@
-// cursor.js
-
 let cursorIdleTimer;
 const cursorIdleDelay = 5000; // 5 seconds (adjust as needed)
 

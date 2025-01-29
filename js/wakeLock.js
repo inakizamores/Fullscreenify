@@ -1,5 +1,3 @@
-// wakeLock.js
-
 import { resetCursorIdleTimer, attachCursorActivityListeners, removeCursorActivityListeners } from './cursor.js';
 
 let wakeLock = null;

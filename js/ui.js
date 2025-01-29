@@ -1,7 +1,6 @@
-// ui.js
-
 import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong, handleApiError } from './api.js';
 import { animateCD, startCDAnimation, stopCDAnimation } from './cdAnimation.js';
+import { handleLogin } from './auth.js';
 
 export const ACTIVE_UPDATE_INTERVAL = 250;
 export const INACTIVE_UPDATE_INTERVAL = 2000;

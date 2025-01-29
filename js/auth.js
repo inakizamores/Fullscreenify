@@ -1,5 +1,3 @@
-// auth.js
-
 import { getCurrentlyPlaying } from './api.js';
 import { showSessionExpiredModal } from './ui.js';
 
@@ -143,7 +141,7 @@ export function refreshToken() {
 }
 
 // Function to schedule token refresh
-export function scheduleTokenRefresh() {
+function scheduleTokenRefresh() {
     const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
     if (expirationTime) {
         const timeUntilExpiration = expirationTime - Date.now();
@@ -156,12 +154,6 @@ export function scheduleTokenRefresh() {
         }, refreshTimeout);
     }
 }
-
-// Event listener for the login button
-document.getElementById('login-btn').addEventListener('click', handleLogin);
-
-// Event listener for the logout button
-document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
 // Check for redirect and existing authentication on page load (only once)
 function initializeAuthentication() {
