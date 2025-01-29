@@ -546,37 +546,6 @@ body {
     box-shadow: 0 0 15px #1DB954;
 }
 
-/* === Test Button Styles === */
-
-/* #test-expiry-btn {
-    position: absolute;
-    bottom: 20px;
-    right: 80px;
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
-}
-
-#test-expiry-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-#test-expiry-btn i {
-    font-size: 20px;
-    color: #000;
-} */
-
 /* === Responsive Design === */
 
 @media (max-width: 768px) {
@@ -649,4 +618,52 @@ body {
 
 #next-btn i {
   margin-left: 3px; /* Move slightly to the right */
+}
+
+/* === Fullscreen Button Styles === */
+
+/* Container for hover effect */
+#fullscreen-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 160px; /* Adjust for hover area */
+    height: 160px; /* Adjust for hover area */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+    z-index: 10; /* Ensure it's on top */
+}
+
+/* Make button visible on hover */
+#fullscreen-container:hover {
+    opacity: 1;
+}
+
+/* Style the button */
+#fullscreen-btn {
+    background-color: rgba(179, 179, 179, 0.7);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color: 0.3s ease, transform: 0.3s ease;
+}
+
+#fullscreen-btn:hover {
+    background-color: rgba(179, 179, 179, 1);
+    transform: scale(1.1);
+}
+
+#fullscreen-btn i {
+    font-size: 20px;
+    color: #000;
 }

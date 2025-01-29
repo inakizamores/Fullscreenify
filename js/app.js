@@ -520,6 +520,54 @@ window.addEventListener('keypress', handleKeyPress);
 
 // --- End of Keyboard Controls ---
 
+// --- Fullscreen Toggle Functionality ---
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+function isFullscreen() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+}
+
+function toggleFullscreen() {
+    if (!isFullscreen()) {
+        // Enter fullscreen
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+            document.documentElement.msRequestFullscreen();
+        }
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
+    }
+}
+
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+// Update the fullscreen button's icon on fullscreen change
+document.addEventListener('fullscreenchange', updateFullscreenButtonIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenButtonIcon); // Safari
+document.addEventListener('mozfullscreenchange', updateFullscreenButtonIcon); // Firefox
+document.addEventListener('MSFullscreenChange', updateFullscreenButtonIcon); // IE11
+
+function updateFullscreenButtonIcon() {
+    if (isFullscreen()) {
+        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        fullscreenBtn.title = 'Exit Fullscreen';
+    } else {
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        fullscreenBtn.title = 'Toggle Fullscreen';
+    }
+}
+// --- End of Fullscreen Toggle Functionality ---
+
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
