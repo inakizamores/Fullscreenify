@@ -1,8 +1,5 @@
-import { getCurrentlyPlaying } from './api.js';
-import { showSessionExpiredModal } from './ui.js';
-
-const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923'; // Replace with your actual Client ID
-const redirectUri = 'https://fullscreenify.netlify.app/'; // Replace with your actual Redirect URI
+const clientId = 'c9aaff6bc4d0497eb4d2c2cad732a923';
+const redirectUri = 'https://fullscreenify.netlify.app/';
 const scopes = [
     'user-read-currently-playing',
     'user-modify-playback-state',
@@ -13,7 +10,7 @@ let accessToken = localStorage.getItem('fullscreenify_access_token');
 let isLoggedIn = !!accessToken;
 
 // Function to initiate the Spotify authentication process
-export function handleLogin() {
+function handleLogin() {
     const authUrl = new URL('https://accounts.spotify.com/authorize');
     const params = {
         client_id: clientId,
@@ -67,7 +64,7 @@ function checkAuthentication() {
 }
 
 // Function to handle logout
-export function handleLogout() {
+function handleLogout() {
     // Remove the access token from local storage
     localStorage.removeItem('fullscreenify_access_token');
     localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
@@ -83,7 +80,7 @@ export function handleLogout() {
 }
 
 // Function to refresh the access token
-export function refreshToken() {
+function refreshToken() {
     console.log('Refreshing access token...');
 
     // Create a hidden iframe
@@ -140,21 +137,6 @@ export function refreshToken() {
     }
 }
 
-// Function to schedule token refresh
-function scheduleTokenRefresh() {
-    const expirationTime = localStorage.getItem('fullscreenify_token_expiration');
-    if (expirationTime) {
-        const timeUntilExpiration = expirationTime - Date.now();
-        const refreshTimeout = Math.max(0, timeUntilExpiration - 60000);
-
-        console.log(`Scheduling token refresh in ${refreshTimeout / 1000} seconds.`);
-
-        setTimeout(() => {
-            refreshToken();
-        }, refreshTimeout);
-    }
-}
-
 // Event listener for the login button
 document.getElementById('login-btn').addEventListener('click', handleLogin);
 
@@ -183,5 +165,3 @@ function clearHashFromUrl() {
 
 // Call initializeAuthentication() only once on page load
 initializeAuthentication();
-
-export {isLoggedIn, handleRedirect, checkAuthentication, scheduleTokenRefresh };
