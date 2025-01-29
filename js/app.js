@@ -586,6 +586,9 @@ document.addEventListener('webkitfullscreenchange', updateFullscreenButtonIcon);
 document.addEventListener('mozfullscreenchange', updateFullscreenButtonIcon);
 document.addEventListener('MSFullscreenChange', updateFullscreenButtonIcon);
 
+// Call updateFullscreenButtonIcon initially to set the correct state
+updateFullscreenButtonIcon();
+
 // --- End of Fullscreen Toggle Functionality ---
 
 async function initializeApp() {
