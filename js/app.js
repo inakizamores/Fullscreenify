@@ -1,12 +1,10 @@
 // app.js
-import { getCurrentlyPlaying, playSong, pauseSong, nextSong, prevSong } from './api.js';
-import { handleLogin, handleRedirect, checkAuthentication, handleLogout, refreshToken, accessToken, isLoggedIn } from './auth.js';
 
-export const ACTIVE_UPDATE_INTERVAL = 250;
-export const INACTIVE_UPDATE_INTERVAL = 2000;
+const ACTIVE_UPDATE_INTERVAL = 250;
+const INACTIVE_UPDATE_INTERVAL = 2000;
 let updateIntervalId = null;
-export let currentSongId = null;
-export let currentIsPlaying = null;
+let currentSongId = null;
+let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
 const imageCache = new Set();
@@ -109,7 +107,7 @@ function logImageWrapperSize() {
 }
 
 // Updated UI
-export function updateUI(data) {
+function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
@@ -189,7 +187,7 @@ function preloadBackgroundImage(imageUrl, callback) {
     }
 }
 
-export function displayPlaceholder() {
+function displayPlaceholder() {
     const placeholderText = document.getElementById('placeholder-text');
     placeholderText.textContent = 'START STREAMING TO SEE YOUR CURRENTLY PLAYING ALBUM COVER HERE.';
     placeholderText.style.display = 'block';
@@ -250,7 +248,16 @@ document.getElementById('test-expiry-btn').addEventListener('click', () => {
     simulateTokenExpiration();
 });
 
-export function startUpdatingSongInfo(interval) {
+function handleApiError(response) {
+    if (response.status === 401) {
+        console.error('API Error 401: Unauthorized. Access token expired.');
+        showSessionExpiredModal();
+    } else {
+        console.error('API Error:', response.status, response.statusText);
+    }
+}
+
+function startUpdatingSongInfo(interval) {
     if (updateIntervalId) {
         clearInterval(updateIntervalId);
     }
@@ -489,7 +496,7 @@ document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
-// Add an event listener to the "Hide UI Toggle"
+// Add an event listener to the "Hide UI Toggle" button
 const hideUiBtn = document.getElementById('hide-ui-btn');
 const uiButtonsContainer = document.getElementById('ui-buttons-container');
 
@@ -638,4 +645,21 @@ async function initializeApp() {
     scheduleTokenRefresh();
 }
 
-//initializeApp();
+// Release the wake lock when the user logs out
+function handleLogout() {
+    // Remove the access token from local storage
+    localStorage.removeItem('fullscreenify_access_token');
+    localStorage.removeItem('fullscreenify_token_expiration'); // Also remove expiration time
+    isLoggedIn = false;
+
+    // Force a page refresh to clear the URL and state
+    window.location.href = window.location.origin + window.location.pathname;
+
+    // Update the UI (hide main content, show login screen)
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
+    document.querySelector('.fullscreenify-container').style.display = 'none';
+
+    releaseWakeLock();
+}
+initializeApp();
