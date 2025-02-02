@@ -128,14 +128,19 @@ async function prevSong() {
             }
         });
 
-        if (!response.ok) {
+        if (response.status === 204) {
+            // Successfully skipped (or attempted to skip)
+            console.log('Attempted to skip to previous song.');
+            await getCurrentlyPlaying(); // Update UI immediately
+
+            // We'll handle the button visibility in updateUI() after the data is fetched
+        } else {
             // Only handle errors if not 403
             if (response.status !== 403) {
-                handleApiError(response);
+                // handleApiError(response); // Removed error handling here
             }
         }
     } catch (error) {
-        // Suppress network error logging
-        // console.error('Error moving to previous song:', error);
+        // Suppress network error logging (as before)
     }
 }

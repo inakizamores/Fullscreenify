@@ -106,6 +106,9 @@ function logImageWrapperSize() {
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
+// Global variable to track if it's the first song
+let isFirstSong = false; 
+
 // Updated UI
 function updateUI(data) {
     const timestamp = new Date().getTime();
@@ -167,6 +170,17 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
+    // Check if it's the first song based on track position and duration
+    isFirstSong = data.progress_ms === 0 && data.item.track_number === 1;
+
+    // Update the visibility of the previous button
+    const prevBtn = document.getElementById("prev-btn");
+    if (isFirstSong) {
+        prevBtn.style.visibility = "hidden";
+    } else {
+        prevBtn.style.visibility = "visible";
+    }
+
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
   }
@@ -208,7 +222,7 @@ function displayPlaceholder() {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = "block";
+        cdImage.style.display = 'block';
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
