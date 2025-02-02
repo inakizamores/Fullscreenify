@@ -107,8 +107,8 @@ async function nextSong() {
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
         } else {
-            // Handle error responses without trying to parse JSON
-            const errorText = await response.text(); // Get error as text
+            // Get error as text (line number 112-114)
+            const errorText = await response.text();
             console.error('Error skipping to next song:', errorText);
             handleApiError(response);
         }
