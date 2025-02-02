@@ -1,5 +1,3 @@
-// api.js
-
 async function getCurrentlyPlaying() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -107,7 +105,7 @@ async function nextSong() {
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
         } else {
-            // Get error as text (line number 112-114)
+            // Handle errors
             const errorText = await response.text();
             console.error('Error skipping to next song:', errorText);
             handleApiError(response);
