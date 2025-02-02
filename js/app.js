@@ -208,7 +208,7 @@ function displayPlaceholder() {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = 'block';
+        cdImage.style.display = "block";
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
@@ -492,32 +492,7 @@ async function handleVisibilityChange() {
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
-document.getElementById('prev-btn').addEventListener('click', async () => {
-    await prevSong(); // Call the API function
-
-    // After the API call, check the current playback state to determine if the button should be disabled
-    const response = await fetch('https://api.spotify.com/v1/me/player', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
-
-    if (response.ok) {
-        const data = await response.json();
-        // Check if there is a previous track
-        if (!data.item || !data.item.id) {
-            // If there is no previous track, disable the button
-            disablePreviousButton();
-        } else {
-            // If there is a previous track, ensure the button is enabled
-            enablePreviousButton();
-        }
-    } else {
-        console.error('Error fetching playback state:', response.status, response.statusText);
-        // If there is an error, ensure the button is enabled (to avoid getting stuck in disabled state)
-        enablePreviousButton();
-    }
-});
+document.getElementById('prev-btn').addEventListener('click', prevSong);
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---

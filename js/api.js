@@ -1,5 +1,3 @@
-// api.js
-
 async function getCurrentlyPlaying() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -14,8 +12,6 @@ async function getCurrentlyPlaying() {
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
-            // Re-enable the previous button if it was disabled
-            enablePreviousButton();
         } else if (response.ok) {
             const data = await response.json();
 
@@ -37,14 +33,10 @@ async function getCurrentlyPlaying() {
                 document.getElementById('login-screen').style.display = 'none';
                 document.querySelector('.fullscreenify-container').style.display = 'flex';
                 hideSessionExpiredModal();
-                // Re-enable the previous button if it was disabled
-                enablePreviousButton();
             } else {
                 // If it's not a track (e.g., podcast, ad), display placeholder
                 displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
-                // Re-enable the previous button if it was disabled
-                enablePreviousButton();
             }
 
         } else {
@@ -113,12 +105,17 @@ async function nextSong() {
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
         } else {
-            // Instead of trying to parse JSON, check status and handle accordingly
-            console.error('Error skipping to next song:', response.status, response.statusText);
-            handleApiError(response);
+            // Only handle errors if not 403
+            if (response.status !== 403) {
+                const errorData = await response.json();
+                // Suppress error logging
+                // console.error('Error skipping to next song:', errorData);
+                handleApiError(response);
+            }
         }
     } catch (error) {
-        console.error('Network error while skipping to next song:', error);
+        // Suppress network error logging
+        // console.error('Network error while skipping to next song:', error);
     }
 }
 
@@ -131,33 +128,14 @@ async function prevSong() {
             }
         });
 
-        if (response.status === 204) {
-            console.log('Moved to previous song successfully.');
-            // Fetch the currently playing song to update the UI
-            await getCurrentlyPlaying();
-        } else if (response.status === 403) {
-            console.log('Cannot go to previous song: You are already at the beginning of the playlist/queue.');
-            // Disable the previous button when 403 is received
-            disablePreviousButton();
-            // Fetch the currently playing song to update the UI
-            await getCurrentlyPlaying();
-        } else {
-            handleApiError(response);
+        if (!response.ok) {
+            // Only handle errors if not 403
+            if (response.status !== 403) {
+                handleApiError(response);
+            }
         }
     } catch (error) {
-        console.error('Network error while moving to previous song:', error);
+        // Suppress network error logging
+        // console.error('Error moving to previous song:', error);
     }
-}
-
-// Helper functions to enable/disable the previous button
-function disablePreviousButton() {
-    const prevBtn = document.getElementById('prev-btn');
-    prevBtn.disabled = true;
-    prevBtn.classList.add('disabled');
-}
-
-function enablePreviousButton() {
-    const prevBtn = document.getElementById('prev-btn');
-    prevBtn.disabled = false;
-    prevBtn.classList.remove('disabled');
 }
