@@ -208,7 +208,7 @@ function displayPlaceholder() {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = "block";
+        cdImage.style.display = 'block';
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
