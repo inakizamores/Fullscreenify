@@ -109,7 +109,7 @@ function logImageWrapperSize() {
 // Global variable to track if it's the first song
 let isFirstSong = false; 
 
-// Updated UI
+// Updated UI function
 function updateUI(data) {
     const timestamp = new Date().getTime();
     const albumCover = document.getElementById("album-cover");
@@ -117,9 +117,7 @@ function updateUI(data) {
     const playPauseBtn = document.getElementById("play-pause-btn");
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
-
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
-
     manageImageCache(imageUrl);
 
     // Preload the new background image only if it's different from the current one
@@ -170,8 +168,8 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
-     // Check if it's the first song based on track position and duration
-    isFirstSong = data.progress_ms === 0 && data.item.track_number === 1;
+    // Check if it's the first song in the PLAY QUEUE
+    isFirstSong = data.item.track_number === 1 && data.context === null;
 
     // Update the visibility of the previous button using CSS
     const prevBtn = document.getElementById("prev-btn");
