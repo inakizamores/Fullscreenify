@@ -213,14 +213,13 @@ function displayPlaceholder() {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = "block";
+        cdImage.style.display = 'block';
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
 
-    // Set the background to black in placeholder mode
-    document.body.style.backgroundImage = 'none';
-    document.body.style.backgroundColor = '#222'; // Or your preferred dark color
+    // Remove the background image variable forcing the default background
+    document.body.style.removeProperty('--background-image');
 
     // Update currentBackgroundImage to force re-application of background
     currentBackgroundImage = null; 
