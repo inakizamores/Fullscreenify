@@ -106,20 +106,10 @@ async function nextSong() {
             console.log('Skipped to next song successfully.');
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
-        } else if (response.ok) {
-            // Only try to parse JSON if the response is OK but not 204 No Content.
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const errorData = await response.json();
-                console.error('Error skipping to next song:', errorData);
-                handleApiError(response);
-            } else {
-                // Handle non-JSON response (e.g., an error message as plain text).
-                const errorText = await response.text();
-                console.error('Error skipping to next song:', errorText);
-                handleApiError(response);
-            }
         } else {
+            // Handle error responses without trying to parse JSON
+            const errorText = await response.text(); // Get error as text
+            console.error('Error skipping to next song:', errorText);
             handleApiError(response);
         }
     } catch (error) {
