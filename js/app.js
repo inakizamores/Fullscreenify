@@ -172,9 +172,6 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
-    // Remove the placeholder-mode class when a song is playing
-    document.body.classList.remove('placeholder-mode');
-
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
   }
@@ -207,16 +204,16 @@ function displayPlaceholder() {
     currentIsPlaying = null;
 
     if (!isCdView) {
-         // Album cover view
-         const albumCover = document.getElementById('album-cover');
-         updateImage(albumCover, placeholderImageUrl);
-         albumCover.style.display = 'block';
-         document.getElementById("cd-container").style.display = "none";
+        // Album cover view
+        const albumCover = document.getElementById('album-cover');
+        updateImage(albumCover, placeholderImageUrl);
+        albumCover.style.display = 'block';
+        document.getElementById("cd-container").style.display = "none";
     } else {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = "block";
+        cdImage.style.display = 'block';
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
@@ -226,9 +223,6 @@ function displayPlaceholder() {
 
     // Update currentBackgroundImage to force re-application of background
     currentBackgroundImage = null; 
-
-    // Remove body::before in placeholder mode
-    document.body.classList.add('placeholder-mode');
 
     imageContainer.classList.add("placeholder-active");
 
