@@ -204,11 +204,11 @@ function displayPlaceholder() {
     currentIsPlaying = null;
 
     if (!isCdView) {
-         // Album cover view
-         const albumCover = document.getElementById('album-cover');
-         updateImage(albumCover, placeholderImageUrl);
-         albumCover.style.display = 'block';
-         document.getElementById("cd-container").style.display = "none";
+        // Album cover view
+        const albumCover = document.getElementById('album-cover');
+        updateImage(albumCover, placeholderImageUrl);
+        albumCover.style.display = 'block';
+        document.getElementById("cd-container").style.display = "none";
     } else {
         // CD view
         const cdImage = document.getElementById("cd-image");
@@ -217,9 +217,14 @@ function displayPlaceholder() {
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
-    document.body.style.backgroundColor = '#222';
+
+    // Set the background to black in placeholder mode
     document.body.style.backgroundImage = 'none';
-    currentBackgroundImage = null;
+    document.body.style.backgroundColor = '#222'; // Or your preferred dark color
+
+    // Update currentBackgroundImage to force re-application of background
+    currentBackgroundImage = null; 
+
     imageContainer.classList.add("placeholder-active");
 
     // Log the size of the image wrapper after updating the UI
