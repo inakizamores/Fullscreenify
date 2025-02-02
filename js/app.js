@@ -491,26 +491,6 @@ async function handleVisibilityChange() {
     }
 }
 
-document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
-document.getElementById('next-btn').addEventListener('click', nextSong);
-document.getElementById('prev-btn').addEventListener('click', () => {
-    if (!isFirstSong) {
-        prevSong();
-    }
-});
-document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
-
-// --- Hide UI Toggle Functionality ---
-// Add an event listener to the "Hide UI Toggle" button
-const hideUiBtn = document.getElementById('hide-ui-btn');
-const uiButtonsContainer = document.getElementById('ui-buttons-container');
-
-hideUiBtn.addEventListener('click', () => {
-    // Toggle the 'hidden' class on the button group container
-    uiButtonsContainer.classList.toggle('hidden');
-});
-// --- End of Hide UI Toggle Functionality ---
-
 // --- Keyboard Controls ---
 function handleKeyPress(event) {
     // Check if the pressed key is 'M' (case-insensitive)
@@ -528,7 +508,9 @@ function handleKeyPress(event) {
             togglePlayPause();
             break;
         case 'arrowleft': // Left Arrow
-            prevSong();
+            if (!isFirstSong) {
+                prevSong();
+            }
             break;
         case 'arrowright': // Right Arrow
             nextSong();
@@ -617,6 +599,7 @@ document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 // Call updateFullscreenButtonIcon initially to set the correct state
 updateFullscreenButtonIcon();
+
 async function getCurrentlyPlaying() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -689,6 +672,7 @@ function updatePrevButtonState() {
         prevBtn.classList.remove('disabled'); // Remove the CSS class (optional)
     }
 }
+
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
@@ -737,3 +721,24 @@ function handleLogout() {
     releaseWakeLock();
 }
 initializeApp();
+
+// --- Event Listeners ---
+document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
+document.getElementById('next-btn').addEventListener('click', nextSong);
+document.getElementById('prev-btn').addEventListener('click', () => {
+    if (!isFirstSong) {
+        prevSong();
+    }
+});
+document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+
+// --- Hide UI Toggle Functionality ---
+// Add an event listener to the "Hide UI Toggle" button
+const hideUiBtn = document.getElementById('hide-ui-btn');
+const uiButtonsContainer = document.getElementById('ui-buttons-container');
+
+hideUiBtn.addEventListener('click', () => {
+    // Toggle the 'hidden' class on the button group container
+    uiButtonsContainer.classList.toggle('hidden');
+});
+// --- End of Hide UI Toggle Functionality ---
