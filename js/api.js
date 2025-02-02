@@ -103,13 +103,19 @@ async function nextSong() {
         });
 
         if (response.status === 204) {
-            console.log('Skipped to next song successfully.');
+            console.log('Skipped to next song successfully. Waiting for API to update...');
+            // Wait for a short time for the API to update
+            await new Promise(resolve => setTimeout(resolve, 500)); // Adjust delay as needed
             // Fetch the currently playing song to update the UI
             const data = await getCurrentlyPlaying();
+            // Update UI only if data is not null
             if (data) {
                 updateUI(data);
+            } else {
+                console.log("API did not update in time or no song is playing.");
             }
         } else {
+            // Handle errors other than 204
             const errorData = await response.json();
             console.error('Error skipping to next song:', errorData);
             handleApiError(response);
