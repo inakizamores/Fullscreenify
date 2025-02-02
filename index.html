@@ -19,87 +19,88 @@
     <link rel="manifest" href="/favicon/site.webmanifest" />
 </head>
 <body>
-    <header>
-        <div id="login-screen" style="display: none;">
-            <div class="login-container">
-                <div class="login-content">
-                    <img src="favicon/favicon.svg" alt="Fullscreenify Logo" class="logo">
-                    <h1>FULLSCREENIFY</h1>
-                    <p>Immerse yourself in your music with full-screen album art and a captivating CD display for your currently playing Spotify track.</p>
-                    <button id="login-btn">
-                        <i class="fab fa-spotify"></i>
-                        Login with Spotify
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <!-- Session Expired Modal -->
-        <div id="session-expired-modal">
-            <div class="modal-content">
-                <h2>Session Expired</h2>
-                <p>Your session has expired. Please log in again to continue.</p>
-                <button id="re-authenticate-btn" class="login-btn">
+    <div id="login-screen" style="display: none;">
+        <div class="login-container">
+            <div class="login-content">
+                <img src="favicon/favicon.svg" alt="Fullscreenify Logo" class="logo">
+                <h1>FULLSCREENIFY</h1>
+                <p>Immerse yourself in your music with full-screen album art and a captivating CD display for your currently playing Spotify track.</p>
+                <button id="login-btn">
                     <i class="fab fa-spotify"></i>
                     Login with Spotify
                 </button>
             </div>
         </div>
+    </div>
 
-        <div class="fullscreenify-container" style="display: none;">
-            <section class="image-wrapper">
-                <div class="image-container">
-                    <img id="album-cover" src="" alt="Album Cover">
+    <!-- Session Expired Modal -->
+    <div id="session-expired-modal">
+        <div class="modal-content">
+            <h2>Session Expired</h2>
+            <p>Your session has expired. Please log in again to continue.</p>
+            <button id="re-authenticate-btn" class="login-btn">
+                <i class="fab fa-spotify"></i>
+                Login with Spotify
+            </button>
+        </div>
+    </div>
 
-                    <div id="cd-container">
-                        <img id="cd-image" src="" alt="CD Image">
-                    </div>
-                    <div class="controls">
-                        <button id="prev-btn" class="control-btn" title="Previous">
-                            <i class="fas fa-backward"></i>
-                        </button>
-                        <button id="play-pause-btn" class="control-btn" title="Play/Pause">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <button id="next-btn" class="control-btn" title="Next">
-                            <i class="fas fa-forward"></i>
-                        </button>
-                    </div>
+    <div class="fullscreenify-container" style="display: none;">
+        <div class="image-wrapper">
+            <div class="image-container">
+                <img id="album-cover" src="" alt="Album Cover">
+    
+                <div id="cd-container">
+                    <img id="cd-image" src="" alt="CD Image">
                 </div>
-            </section>
-
-            <aside id="placeholder-text">
-                <h2>Start Streaming</h2>
-                <p>Start streaming on Spotify to see your currently playing album cover here.</p>
-            </aside>
-
-            <nav id="ui-buttons-container">
-                <button id="cd-toggle-btn" class="bottom-left-btn" title="Toggle CD View">
-                    <i class="fas fa-compact-disc"></i>
-                </button>
-                <button id="test-expiry-btn" class="bottom-center-btn" title="Test Session Expiry">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </button>
-                <button id="logout-btn" class="bottom-right-btn" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </nav>
-
-            <div id="hide-ui-container">
-                <button id="hide-ui-btn" title="Hide UI">
-                    <i class="fas fa-eye-slash"></i>
-                </button>
-            </div>
-
-            <div id="fullscreen-container">
-                <button id="fullscreen-btn" title="Toggle Fullscreen">
-                    <i class="fas fa-expand"></i>
-                </button>
+                <div class="controls">
+                    <button id="prev-btn" class="control-btn" title="Previous">
+                        <i class="fas fa-backward"></i>
+                    </button>
+                    <button id="play-pause-btn" class="control-btn" title="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="next-btn" class="control-btn" title="Next">
+                        <i class="fas fa-forward"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    </main>
+
+        <div id="placeholder-text"></div>
+
+        <!-- UI Buttons Container (for grouping) -->
+        <div id="ui-buttons-container">
+            <!-- CD Toggle Button -->
+            <button id="cd-toggle-btn" class="bottom-left-btn" title="Toggle CD View">
+                <i class="fas fa-compact-disc"></i>
+            </button>
+
+            <!-- Test Expiry Button -->
+            <button id="test-expiry-btn" class = "bottom-center-btn" title="Test Session Expiry">
+                <i class="fas fa-exclamation-triangle"></i>
+            </button>
+
+            <!-- Logout Button -->
+            <button id="logout-btn" class="bottom-right-btn" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+
+        <!-- Hide UI Toggle Button -->
+        <div id="hide-ui-container">
+            <button id="hide-ui-btn" title="Hide UI">
+                <i class="fas fa-eye-slash"></i>
+            </button>
+        </div>
+
+        <!-- Fullscreen Toggle Button -->
+        <div id="fullscreen-container">
+            <button id="fullscreen-btn" title="Toggle Fullscreen">
+                <i class="fas fa-expand"></i> 
+            </button>
+        </div>
+    </div>
 
     <footer>
         <p>Created by <a href="https://inakizamores.com" target="_blank" rel="noopener noreferrer">Iñaki Zamores</a></p>
@@ -108,5 +109,5 @@
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
-</body>
+    </body>
 </html>
