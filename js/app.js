@@ -112,24 +112,12 @@ function updateUI(data) {
     const albumCover = document.getElementById("album-cover");
     const cdImage = document.getElementById("cd-image");
     const playPauseBtn = document.getElementById("play-pause-btn");
-    const prevBtn = document.getElementById("prev-btn"); // Get the previous button
     const isPlaying = data.is_playing;
     const imageContainer = document.querySelector(".image-container");
 
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
-
-    // Disable the previous button if skipping_prev is disallowed
-    if (data.actions && data.actions.disallows.skipping_prev) {
-        prevBtn.disabled = true;
-        prevBtn.classList.add("disabled");
-        prevBtn.title = "No previous track";
-    } else {
-        prevBtn.disabled = false;
-        prevBtn.classList.remove("disabled");
-        prevBtn.title = "Previous";
-    }
 
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {

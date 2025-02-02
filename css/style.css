@@ -667,9 +667,3 @@ body {
     font-size: 20px;
     color: #000;
 }
-
-.control-btn.disabled {
-    opacity: 0.5; /* Make it semi-transparent */
-    cursor: not-allowed; /* Change the cursor */
-    pointer-events: none; /* Prevent clicks */
-}
