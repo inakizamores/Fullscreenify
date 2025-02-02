@@ -617,7 +617,6 @@ document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 // Call updateFullscreenButtonIcon initially to set the correct state
 updateFullscreenButtonIcon();
-
 async function getCurrentlyPlaying() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -632,6 +631,11 @@ async function getCurrentlyPlaying() {
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
+
+            // Assume it's not the first song when nothing is playing
+            isFirstSong = false;
+            updatePrevButtonState();
+
         } else if (response.ok) {
             const data = await response.json();
 
@@ -653,7 +657,7 @@ async function getCurrentlyPlaying() {
 
                 // --- First Song Logic ---
                 // Check if it's the first song in the queue (no previous track)
-                isFirstSong = !data.item.previous_track; // Check if previous_track exists
+                isFirstSong = data.item.linked_from_uri == null;
 
                 // Update the state of the previous button
                 updatePrevButtonState();
@@ -685,7 +689,6 @@ function updatePrevButtonState() {
         prevBtn.classList.remove('disabled'); // Remove the CSS class (optional)
     }
 }
-
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
