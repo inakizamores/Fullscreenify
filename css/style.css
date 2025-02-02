@@ -672,3 +672,9 @@ body {
     visibility: hidden; /* Use visibility for a smoother effect */
     pointer-events: none; /* Prevent clicks when hidden */
 }
+
+.control-btn.disabled {
+    opacity: 0.5; /* Example: Make it semi-transparent */
+    cursor: default; /* Change the cursor */
+    pointer-events: none; /* Prevent clicks on the disabled button */
+}

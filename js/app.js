@@ -10,6 +10,7 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
+let isFirstSong = false; // Flag to track if it's the first song
 
 // Wake Lock Variables
 let wakeLock = null;
@@ -208,7 +209,7 @@ function displayPlaceholder() {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = "block";
+        cdImage.style.display = 'block';
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
@@ -492,7 +493,11 @@ async function handleVisibilityChange() {
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
-document.getElementById('prev-btn').addEventListener('click', prevSong);
+document.getElementById('prev-btn').addEventListener('click', () => {
+    if (!isFirstSong) {
+        prevSong();
+    }
+});
 document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
@@ -613,7 +618,73 @@ document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 // Call updateFullscreenButtonIcon initially to set the correct state
 updateFullscreenButtonIcon();
 
-// --- End of Fullscreen Toggle Functionality ---
+async function getCurrentlyPlaying() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No content - nothing is playing
+            displayPlaceholder();
+            startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            document.getElementById('login-screen').style.display = 'none';
+            document.querySelector('.fullscreenify-container').style.display = 'flex';
+        } else if (response.ok) {
+            const data = await response.json();
+
+            // Check if the currently playing item is a track
+            if (data.currently_playing_type === 'track') {
+                // Update UI if the song or playback state has changed
+                if (data.item.id !== currentSongId || data.is_playing !== currentIsPlaying) {
+                    updateUI(data);
+                    currentSongId = data.item.id;
+                    currentIsPlaying = data.is_playing;
+                }
+
+                // Adjust update interval based on playing state
+                if (data.is_playing) {
+                    startUpdatingSongInfo(ACTIVE_UPDATE_INTERVAL);
+                } else {
+                    startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                }
+
+                // --- First Song Logic ---
+                // Check if it's the first song in the queue (no previous track)
+                isFirstSong = !data.item.previous_track; // Check if previous_track exists
+
+                // Update the state of the previous button
+                updatePrevButtonState();
+
+                document.getElementById('login-screen').style.display = 'none';
+                document.querySelector('.fullscreenify-container').style.display = 'flex';
+                hideSessionExpiredModal();
+            } else {
+                // If it's not a track (e.g., podcast, ad), display placeholder
+                displayPlaceholder();
+                startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+            }
+
+        } else {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error fetching currently playing song:', error);
+    }
+}
+
+function updatePrevButtonState() {
+    const prevBtn = document.getElementById('prev-btn');
+    if (isFirstSong) {
+        prevBtn.disabled = true; // Disable the button
+        prevBtn.classList.add('disabled'); // Add a CSS class for styling (optional)
+    } else {
+        prevBtn.disabled = false; // Enable the button
+        prevBtn.classList.remove('disabled'); // Remove the CSS class (optional)
+    }
+}
 
 async function initializeApp() {
     if (window.location.hash) {
