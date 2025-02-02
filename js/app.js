@@ -10,7 +10,6 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
-let isFirstInQueue = false; // Global variable to track first in queue
 
 // Wake Lock Variables
 let wakeLock = null;
@@ -107,79 +106,66 @@ function logImageWrapperSize() {
     console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
-// Global variable to track if it's the first song
-let isFirstSong = false; 
-
-// Updated UI function
+// Updated UI
 function updateUI(data) {
-    // ... (other UI update logic)
+    const timestamp = new Date().getTime();
+    const albumCover = document.getElementById("album-cover");
+    const cdImage = document.getElementById("cd-image");
+    const playPauseBtn = document.getElementById("play-pause-btn");
+    const isPlaying = data.is_playing;
+    const imageContainer = document.querySelector(".image-container");
 
-    // Assume not first in queue until determined otherwise
-    isFirstInQueue = false; 
+    const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
-    // Get the previous button element
-    const prevBtn = document.getElementById("prev-btn");
+    manageImageCache(imageUrl);
 
-    // Check if there is a context (playlist, album, etc.)
-    if (data.context) {
-        // If there's a context, use a different API endpoint to check for previous track
-        checkPreviousTrackInContext(data.context.uri).then(hasPrevious => {
-            isFirstInQueue = !hasPrevious;
-            updatePreviousButtonVisibility(isFirstInQueue);
-        });
-    } else {
-        // If no context, assume it's the first in the queue (no previous track possible)
-        isFirstInQueue = true;
-        updatePreviousButtonVisibility(isFirstInQueue);
-    }
-}
-
-async function checkPreviousTrackInContext(contextUri) {
-    try {
-        // Extract context type and ID from the URI
-        const contextParts = contextUri.split(':');
-        const contextType = contextParts[1]; // "album" or "playlist"
-        const contextId = contextParts[2];
-
-        // Use the correct endpoint based on context type
-        let endpoint;
-        if (contextType === 'album') {
-            endpoint = `https://api.spotify.com/v1/albums/${contextId}/tracks?limit=1&offset=0`;
-        } else if (contextType === 'playlist') {
-            endpoint = `https://api.spotify.com/v1/playlists/${contextId}/tracks?limit=1&offset=0`;
-        } else {
-            // Not a supported context type
-            return false;
+    // Preload the new background image only if it's different from the current one
+    if (imageUrl !== currentBackgroundImage) {
+      preloadBackgroundImage(imageUrl, () => {
+        // Once the new image is loaded, update the background if it's still the correct image
+        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
+          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          currentBackgroundImage = imageUrl;
         }
-
-        const response = await fetch(endpoint, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            // If there are items, there might be a previous track
-            return data.items.length > 0;
-        } else {
-            console.error('Error checking for previous track in context:', response.status, response.statusText);
-            return false;
-        }
-    } catch (error) {
-        console.error('Network error while checking for previous track:', error);
-        return false;
+      });
     }
-}
 
-function updatePreviousButtonVisibility(isFirstInQueue) {
-    const prevBtn = document.getElementById("prev-btn");
-    if (isFirstInQueue) {
-        prevBtn.classList.add("hidden"); // Add a CSS class to hide
+    if (!isCdView) {
+      // Album cover view
+      updateImage(albumCover, imageUrl);
+      albumCover.style.display = "block";
+      document.getElementById("cd-container").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
     } else {
-        prevBtn.classList.remove("hidden"); // Remove the class to show
+      // CD view
+      updateImage(cdImage, imageUrl);
+      cdImage.style.display = "block";
+      document.getElementById("album-cover").style.display = "none";
+      document.getElementById("placeholder-text").style.display = "none";
+      document.getElementById("cd-container").style.display = "flex";
     }
-}
+
+    // Update play/pause button icon based on the current state
+    if (isPlaying !== currentIsPlaying) {
+      if (isPlaying) {
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        playPauseBtn.title = "Pause";
+        playPauseBtn.classList.remove("play-icon");
+        if (isCdView) {
+          //cdImage.style.animationPlayState = "running";
+          startCDAnimation()
+        }
+      } else {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.title = "Play";
+        playPauseBtn.classList.add("play-icon");
+        if (isCdView) {
+          //cdImage.style.animationPlayState = "paused";
+          stopCDAnimation();
+        }
+      }
+    }
+    imageContainer.classList.remove("placeholder-active");
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
@@ -222,7 +208,7 @@ function displayPlaceholder() {
         // CD view
         const cdImage = document.getElementById("cd-image");
         updateImage(cdImage, placeholderImageUrl);
-        cdImage.style.display = 'block';
+        cdImage.style.display = "block";
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }

@@ -105,27 +105,16 @@ async function nextSong() {
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
         } else {
-            // Only handle errors if not 403
-            if (response.status !== 403) {
-                const errorData = await response.json();
-                // Suppress error logging
-                // console.error('Error skipping to next song:', errorData);
-                handleApiError(response);
-            }
+            const errorData = await response.json();
+            console.error('Error skipping to next song:', errorData);
+            handleApiError(response);
         }
     } catch (error) {
-        // Suppress network error logging
-        // console.error('Network error while skipping to next song:', error);
+        console.error('Network error while skipping to next song:', error);
     }
 }
 
 async function prevSong() {
-    // Check if it's the first song before making the API request
-    if (isFirstSong) {
-        console.log("Attempted to go to previous song, but it's the first song.");
-        return; // Don't do anything if it's the first song
-    }
-
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
             method: 'POST',
@@ -134,17 +123,95 @@ async function prevSong() {
             }
         });
 
-        if (response.status === 204) {
-            // Successfully skipped (or attempted to skip)
-            console.log('Attempted to skip to previous song.');
-            await getCurrentlyPlaying(); // Update UI immediately
-        } else {
-            // Only handle errors if not 403 (as before)
-            if (response.status !== 403) {
-                // handleApiError(response); // Error handling removed
-            }
+        if (!response.ok) {
+            handleApiError(response);
         }
     } catch (error) {
-        // Suppress network error logging (as before)
+        console.error('Error moving to previous song:', error);
+    }
+}
+function handleApiError(response) {
+    if (response.status === 401) {
+        // Unauthorized - token expired or invalid.
+        console.error('API Error 401: Unauthorized. Access token expired.');
+        showSessionExpiredModal(); // Show the session expired modal
+    } else {
+        console.error('API Error:', response.status, response.statusText);
+    }
+}
+
+// ... (Existing code for playSong, pauseSong, nextSong, prevSong) ...
+
+async function playSong() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/play', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error playing song:', error);
+    }
+}
+
+async function pauseSong() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/pause', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error pausing song:', error);
+    }
+}
+
+async function nextSong() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/next', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            console.log('Skipped to next song successfully.');
+            // Fetch the currently playing song to update the UI
+            await getCurrentlyPlaying();
+        } else {
+            const errorData = await response.json();
+            console.error('Error skipping to next song:', errorData);
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Network error while skipping to next song:', error);
+    }
+}
+
+async function prevSong() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            handleApiError(response);
+        }
+    } catch (error) {
+        console.error('Error moving to previous song:', error);
     }
 }
