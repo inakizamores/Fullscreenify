@@ -170,15 +170,15 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
-    // Check if it's the first song based on track position and duration
+     // Check if it's the first song based on track position and duration
     isFirstSong = data.progress_ms === 0 && data.item.track_number === 1;
 
-    // Update the visibility of the previous button
+    // Update the visibility of the previous button using CSS
     const prevBtn = document.getElementById("prev-btn");
     if (isFirstSong) {
-        prevBtn.style.visibility = "hidden";
+        prevBtn.classList.add("hidden"); // Add a CSS class to hide
     } else {
-        prevBtn.style.visibility = "visible";
+        prevBtn.classList.remove("hidden"); // Remove the class to show
     }
 
     // Log the size of the image wrapper after updating the UI

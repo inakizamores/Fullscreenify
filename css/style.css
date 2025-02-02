@@ -667,3 +667,8 @@ body {
     font-size: 20px;
     color: #000;
 }
+
+#prev-btn.hidden {
+    visibility: hidden; /* Use visibility for a smoother effect */
+    pointer-events: none; /* Prevent clicks when hidden */
+}

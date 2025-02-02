@@ -120,6 +120,12 @@ async function nextSong() {
 }
 
 async function prevSong() {
+    // Check if it's the first song before making the API request
+    if (isFirstSong) {
+        console.log("Attempted to go to previous song, but it's the first song.");
+        return; // Don't do anything if it's the first song
+    }
+
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
             method: 'POST',
@@ -132,12 +138,10 @@ async function prevSong() {
             // Successfully skipped (or attempted to skip)
             console.log('Attempted to skip to previous song.');
             await getCurrentlyPlaying(); // Update UI immediately
-
-            // We'll handle the button visibility in updateUI() after the data is fetched
         } else {
-            // Only handle errors if not 403
+            // Only handle errors if not 403 (as before)
             if (response.status !== 403) {
-                // handleApiError(response); // Removed error handling here
+                // handleApiError(response); // Error handling removed
             }
         }
     } catch (error) {
