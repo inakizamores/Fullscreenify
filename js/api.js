@@ -14,6 +14,8 @@ async function getCurrentlyPlaying() {
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
+            // Re-enable the previous button if it was disabled
+            enablePreviousButton();
         } else if (response.ok) {
             const data = await response.json();
 
@@ -35,10 +37,14 @@ async function getCurrentlyPlaying() {
                 document.getElementById('login-screen').style.display = 'none';
                 document.querySelector('.fullscreenify-container').style.display = 'flex';
                 hideSessionExpiredModal();
+                // Re-enable the previous button if it was disabled
+                enablePreviousButton();
             } else {
                 // If it's not a track (e.g., podcast, ad), display placeholder
                 displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
+                // Re-enable the previous button if it was disabled
+                enablePreviousButton();
             }
 
         } else {
@@ -106,18 +112,8 @@ async function nextSong() {
             console.log('Skipped to next song successfully.');
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
-        } else if (response.ok) {
-            // Check if the response is a valid JSON before parsing it
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const errorData = await response.json();
-                console.error('Error skipping to next song:', errorData);
-            } else {
-                console.error('Error skipping to next song. Non-JSON response received.');
-            }
-            handleApiError(response);
         } else {
-            // Non-ok status codes (like 403, 404, etc.)
+            // Instead of trying to parse JSON, check status and handle accordingly
             console.error('Error skipping to next song:', response.status, response.statusText);
             handleApiError(response);
         }
@@ -135,30 +131,33 @@ async function prevSong() {
             }
         });
 
-        const prevBtn = document.getElementById('prev-btn');
-
         if (response.status === 204) {
             console.log('Moved to previous song successfully.');
-            // Re-enable the button if it was previously disabled
-            prevBtn.disabled = false;
-            prevBtn.classList.remove('disabled');
             // Fetch the currently playing song to update the UI
             await getCurrentlyPlaying();
         } else if (response.status === 403) {
             console.log('Cannot go to previous song: You are already at the beginning of the playlist/queue.');
-            // Disable the button
-            prevBtn.disabled = true;
-            prevBtn.classList.add('disabled');
+            // Disable the previous button when 403 is received
+            disablePreviousButton();
+            // Fetch the currently playing song to update the UI
+            await getCurrentlyPlaying();
         } else {
             handleApiError(response);
-            // Re-enable the button in case of other errors (to avoid getting stuck in disabled state)
-            prevBtn.disabled = false;
-            prevBtn.classList.remove('disabled');
         }
     } catch (error) {
         console.error('Network error while moving to previous song:', error);
-        // Re-enable the button in case of network errors
-        document.getElementById('prev-btn').disabled = false;
-        prevBtn.classList.remove('disabled');
     }
+}
+
+// Helper functions to enable/disable the previous button
+function disablePreviousButton() {
+    const prevBtn = document.getElementById('prev-btn');
+    prevBtn.disabled = true;
+    prevBtn.classList.add('disabled');
+}
+
+function enablePreviousButton() {
+    const prevBtn = document.getElementById('prev-btn');
+    prevBtn.disabled = false;
+    prevBtn.classList.remove('disabled');
 }
