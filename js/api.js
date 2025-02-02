@@ -1,5 +1,3 @@
-// api.js
-
 async function getCurrentlyPlaying() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -10,12 +8,12 @@ async function getCurrentlyPlaying() {
 
         if (response.status === 204) {
             // No content - nothing is playing or the track has changed
-            console.log("No content returned (204). Handling appropriately.");
+            console.log("No content returned (204). Song change detected, updating UI.");
             displayPlaceholder();
             startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             document.getElementById('login-screen').style.display = 'none';
             document.querySelector('.fullscreenify-container').style.display = 'flex';
-        
+            return null; // Return null to indicate no data was received
         } else if (response.ok) {
             const data = await response.json();
 
@@ -42,7 +40,7 @@ async function getCurrentlyPlaying() {
                 displayPlaceholder();
                 startUpdatingSongInfo(INACTIVE_UPDATE_INTERVAL);
             }
-
+            return data; // Return the data
         } else {
             handleApiError(response);
         }
@@ -107,7 +105,10 @@ async function nextSong() {
         if (response.status === 204) {
             console.log('Skipped to next song successfully.');
             // Fetch the currently playing song to update the UI
-            await getCurrentlyPlaying();
+            const data = await getCurrentlyPlaying();
+            if (data) {
+                updateUI(data);
+            }
         } else {
             const errorData = await response.json();
             console.error('Error skipping to next song:', errorData);
@@ -127,7 +128,18 @@ async function prevSong() {
             }
         });
 
-        if (!response.ok) {
+        if (response.status === 403) {
+            // Check if the error is due to no previous track
+            const errorData = await response.json();
+            if (errorData.error.message.includes("No previous track")) {
+                console.log('No previous track available.'); // Optional: Log a message without throwing an error
+                return; // Do nothing and exit the function
+            } else {
+                // Handle other 403 errors as before
+                console.error('API Error 403:', errorData.error.message);
+                handleApiError(response);
+            }
+        } else if (!response.ok) {
             handleApiError(response);
         }
     } catch (error) {
