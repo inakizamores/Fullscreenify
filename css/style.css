@@ -29,12 +29,13 @@ body::before {
     z-index: -1;
     transform: scale(1.1);
     transition: background-image 0.5s ease;
+    background-image: var(--background-image);
 }
 
 body {
     margin: 0;
     font-family: 'Helvetica Neue Medium', sans-serif; /* Apply Helvetica Neue Medium to body */
-    background-color: #222;
+    background-color: #222; /* Initial background color */
     color: #fff;
     overflow: hidden;
     display: flex;
@@ -666,4 +667,36 @@ body {
 #fullscreen-btn i {
     font-size: 20px;
     color: #000;
+}
+
+/* Preloader Styles */
+#preloader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100; /* Ensure it's on top */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #fff;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

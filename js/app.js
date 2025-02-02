@@ -124,7 +124,12 @@ function updateUI(data) {
       preloadBackgroundImage(imageUrl, () => {
         // Once the new image is loaded, update the background if it's still the correct image
         if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-          document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${imageUrl})`;
+          // Remove background from body
+          document.body.style.backgroundImage = 'none';
+          document.body.style.backgroundColor = 'transparent';
+
+          // Set background on body::before
+          document.body.style.setProperty('--background-image', `url(${imageUrl})`);
           currentBackgroundImage = imageUrl;
         }
       });
@@ -626,23 +631,38 @@ async function initializeApp() {
         return; // Don't proceed if not logged in
     }
 
-    document.getElementById('login-screen').style.display = 'none';
-    document.querySelector('.fullscreenify-container').style.display = 'flex';
-
     await getCurrentlyPlaying();
 
+    // Add the following to show content after image loads or activate placeholder:
     if (currentSongId) {
-        // Request wake lock only if a song is playing
-        await requestWakeLock();
+        // Wait for the album image to load
+        const albumCover = document.getElementById("album-cover");
+        if (albumCover.complete) {
+            // Image already loaded, show content
+            showContent();
+        } else {
+            albumCover.onload = () => {
+                // Image loaded, show content
+                showContent();
+            };
+        }
     } else {
-        displayPlaceholder();
-        // Attach cursor activity listeners if no song is playing
-        attachCursorActivityListeners();
-        resetCursorIdleTimer();
+        // Nothing is playing, activate placeholder mode and show content
+        await displayPlaceholder();
+        showContent(); // Show content immediately in placeholder mode
     }
 
     initialLoadComplete = true;
     scheduleTokenRefresh();
+}
+
+function showContent() {
+    // Hide the preloader
+    document.getElementById('preloader').style.display = 'none';
+    // Show the main content
+    document.querySelector('.fullscreenify-container').style.visibility = 'visible';
+    // Show the image wrapper
+    document.querySelector('.image-wrapper').style.visibility = 'visible';
 }
 
 // Release the wake lock when the user logs out
