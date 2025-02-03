@@ -62,28 +62,18 @@ body {
     height: 640px; /* Explicit height */
     max-width: 90%; /* Responsive max-width */
     max-height: 90vw; /* Responsive max-height based on viewport width to maintain aspect ratio */
+    transition: transform 0.5s ease, opacity 0.5s ease; /* Add transitions for animation */
+    opacity: 1; /* Initially visible */
 }
 
-.image-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+/* Add transitions for floating and scaling */
 #album-cover {
     position: relative;
     width: 100%; /* Occupy the container */
     height: 100%;
     object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, top 0.5s ease;
     display: block;
 }
 
@@ -342,6 +332,8 @@ body {
     justify-content: center;
     align-items: center;
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: transform 0.5s ease;
+    transform: scale(1); /* Initial scale */
 }
 
 /* Styles for CD image wrapper */
@@ -350,13 +342,13 @@ body {
     height: 100%;
     border-radius: 50%; /* Make the wrapper circular */
     overflow: hidden;    /* Hide anything outside the circle */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition back here */
+    transition: transform 0.5s ease, box-shadow 0.3s ease, top 0.5s ease; /* Added transition back here */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Initial box shadow */
     pointer-events: none; /* Disable pointer events on the wrapper initially */
 }
 
 /* Hover effect for zoom */
-.image-container:hover #cd-container .cd-image-wrapper{
+.image-container:hover #cd-container .cd-image-wrapper:not(.disable-hover){ /* Add a new class to disable hover on click */
     transform: scale(1.05);
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
     pointer-events: auto; /* Enable pointer events on hover */
@@ -700,4 +692,24 @@ body {
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* === Animation Styles === */
+
+.image-wrapper.floating {
+    transform: translateY(-100vh); /* Move off-screen upwards */
+    opacity: 0;
+}
+
+.image-wrapper.floating.cd-mode {
+    transform: translateY(0); /* Override upward float for CD mode */
+    opacity: 1;
+}
+
+.cd-growing {
+    transform: scale(0.95); /* Initial smaller size for CD */
+}
+
+.cd-mode #cd-container {
+    transform: scale(1); /* Regular size in CD mode */
 }

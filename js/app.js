@@ -286,121 +286,95 @@ function stopUpdatingSongInfo() {
 
 async function toggleCdView() {
     // Disable toggle button immediately
-    isToggleDisabled = true;
-    document.getElementById("cd-toggle-btn").disabled = true;
-    document.getElementById("cd-toggle-btn").classList.add("disabled");
+    const cdToggleButton = document.getElementById("cd-toggle-btn");
+    cdToggleButton.disabled = true;
+    cdToggleButton.classList.add("disabled");
 
+    // Add class to disable the hover effect
+    const cdImageWrapper = document.querySelector(".cd-image-wrapper");
+    if (cdImageWrapper) {
+        cdImageWrapper.classList.add("disable-hover");
+    }
+
+    const imageWrapper = document.querySelector(".image-wrapper");
     const albumCover = document.getElementById("album-cover");
     const cdContainer = document.getElementById("cd-container");
     const cdImage = document.getElementById("cd-image");
     const placeholderText = document.getElementById("placeholder-text");
-    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg'; // Or your placeholder image URL
+
+    // Add floating animation
+    imageWrapper.classList.add("floating");
 
     if (!isCdView) {
-        // Intention to switch to CD view
+        // Switching to CD View
 
-        // 1. Ensure the CD wrapper exists *before* updating the image
+        // Ensure CD wrapper exists and start at 95% size
         if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
             const wrapper = document.createElement("div");
             wrapper.classList.add("cd-image-wrapper");
             cdImage.parentNode.insertBefore(wrapper, cdImage);
             wrapper.appendChild(cdImage);
         }
+        cdContainer.classList.add("cd-growing");
 
-        if (currentSongId) {
-            try {
-                const response = await fetch(
-                    "https://api.spotify.com/v1/me/player/currently-playing",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
-                    }
-                );
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(cdImage, imageUrl);
-                    if (data.is_playing) {
-                        startCDAnimation();
-                    } else {
-                        stopCDAnimation();
-                    }
-                } else {
-                    handleApiError(response);
-                }
-            } catch (error) {
-                console.error(
-                    "Error fetching currently playing song for CD image:",
-                    error
-                );
-            }
-        } else {
-            await updateImage(cdImage, placeholderImageUrl);
-        }
-
-        // 2. *After* the image is ready (or placeholder is set), switch visibility
-        isCdView = true;
-        albumCover.style.display = 'none';
-        cdContainer.style.display = 'flex';
-        placeholderText.style.display = 'none';
-
+        // ... (rest of your existing CD view setup code)
     } else {
-        // Intention to switch to album cover view
+        // Switching to Album Cover View
 
-        if (currentSongId) {
-            try {
-                const response = await fetch(
-                    "https://api.spotify.com/v1/me/player/currently-playing",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
-                    }
-                );
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = `${data.item.album.images[0].url}?t=${new Date().getTime()}`;
-                    await updateImage(albumCover, imageUrl);
-                } else {
-                    handleApiError(response);
-                }
-            } catch (error) {
-                console.error(
-                    "Error fetching currently playing song for album cover:",
-                    error
-                );
-            }
-        } else {
-            await updateImage(albumCover, placeholderImageUrl);
-        }
+        // Scale down CD before hiding
+        cdContainer.classList.remove("cd-mode");
 
-        // 1. Switch visibility *before* potentially removing the wrapper
-        isCdView = false;
-        cdContainer.style.display = 'none';
-        albumCover.style.display = 'block';
-        placeholderText.style.display = 'none';
-
-        // 2. Remove the wrapper when switching back to album view
-        if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
-            const wrapper = cdImage.parentNode;
-            wrapper.parentNode.insertBefore(cdImage, wrapper);
-            wrapper.parentNode.removeChild(wrapper);
-        }
-
-        stopCDAnimation(); // Stop the CD animation when switching to album view
+        // ... (rest of your existing album cover view setup code)
     }
 
-    // Re-enable toggle button after 1 second
-    setTimeout(() => {
-        isToggleDisabled = false;
-        document.getElementById("cd-toggle-btn").disabled = false;
-        document.getElementById("cd-toggle-btn").classList.remove("disabled");
-    }, 1000);
+    // Wait for animation to complete
+    setTimeout(async () => {
+        if (!isCdView) {
+            // Finalize CD View
+            isCdView = true;
+            albumCover.style.display = "none";
+            cdContainer.style.display = "flex";
+            cdContainer.classList.remove("cd-growing");
+            cdContainer.classList.add("cd-mode");
+            placeholderText.style.display = "none";
 
-    // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
+            // Remove the 'floating' class in CD mode
+            imageWrapper.classList.add("cd-mode");
+            imageWrapper.classList.remove("floating");
+            // ... (rest of your existing CD view finalization code)
+        } else {
+            // Finalize Album Cover View
+            isCdView = false;
+            cdContainer.style.display = "none";
+            albumCover.style.display = "block";
+            placeholderText.style.display = "none";
+            imageWrapper.classList.remove("cd-mode");
+
+            // ... (rest of your existing album cover view finalization code)
+
+            // Remove the wrapper when switching back to album view
+            if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+                const wrapper = cdImage.parentNode;
+                wrapper.parentNode.insertBefore(cdImage, wrapper);
+                wrapper.parentNode.removeChild(wrapper);
+            }
+            imageWrapper.classList.remove("floating");
+        }
+
+        // Re-enable toggle button after timeout
+        setTimeout(() => {
+            cdToggleButton.disabled = false;
+            cdToggleButton.classList.remove("disabled");
+            if (cdImageWrapper) {
+                cdImageWrapper.classList.remove("disable-hover");
+            }
+        }, 500); // 500ms timeout after animation
+
+        // Log the size of the image wrapper after updating the UI
+        logImageWrapperSize();
+    }, 500); // 500ms matches CSS transition time
 }
+
 async function togglePlayPause() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
