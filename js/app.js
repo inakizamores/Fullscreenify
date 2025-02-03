@@ -89,6 +89,14 @@ function setPlaceholderBackground() {
     document.body.style.backgroundImage = 'none';
     document.body.style.backgroundColor = '#222'; // Your desired intermediate grey
     document.body.style.removeProperty('--background-image'); // Ensure no variable overrides
+
+    // Add these lines to properly reset body::before styles:
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.filter = 'blur(20px)';
+    document.body.style.transform = 'scale(1.1)';
+    document.body.style.boxShadow = 'inset 0 0 0 2000px rgba(0, 0, 0, 0.7)';
+
     currentBackgroundImage = null;
 }
 
@@ -107,10 +115,17 @@ function setAlbumBackground(imageUrl) {
                 // Set background on body::before
                 document.body.style.setProperty('--background-image', `url(${imageUrl})`);
                 currentBackgroundImage = imageUrl;
+
+                // Add these lines to properly set body::before styles:
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.filter = 'blur(20px)';
+                document.body.style.transform = 'scale(1.1)';
+                document.body.style.boxShadow = 'inset 0 0 0 2000px rgba(0, 0, 0, 0.7)';
             }
         });
     }
-}
+}}
 
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {

@@ -35,21 +35,25 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: inherit;
     background-size: cover;
     background-position: center;
     filter: blur(20px);
     z-index: -1;
     transform: scale(1.1);
     transition: background-image 0.5s ease;
-    background-image: var(--background-image);
     box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.7);
+    background-image: var(--background-image); /* Apply album art when available */
 }
 
+/* Placeholder mode - ensure consistent background */
+body.placeholder-mode {
+    background-color: #222; /* Same as default */
+}
+
+/* Disable background image in placeholder mode */
 body.placeholder-mode::before {
-    background-image: none; /* Or adjust opacity, etc. */
+    background-image: none;
 }
-
 .fullscreenify-container {
     position: relative;
     width: 100%;
