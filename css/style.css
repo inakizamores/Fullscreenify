@@ -62,19 +62,28 @@ body {
     height: 640px; /* Explicit height */
     max-width: 90%; /* Responsive max-width */
     max-height: 90vw; /* Responsive max-height based on viewport width to maintain aspect ratio */
-    overflow: hidden;  /* Ensure CD is clipped by the square */
-    transition: transform 0.5s ease; /* Add transition for floating effect */
 }
 
-/* Add transitions for floating and scaling */
+.image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #album-cover {
-    position: relative; /* Needed for z-index to work */
+    position: relative;
     width: 100%; /* Occupy the container */
     height: 100%;
     object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.5s ease, box-shadow 0.3s ease; 
-    z-index: 2; /* Ensure album cover is above CD container */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
 }
 
@@ -333,9 +342,6 @@ body {
     justify-content: center;
     align-items: center;
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    transition: transform 0.5s ease; 
-    transform: translateY(100%); /* Initially position the CD below the square */
-    z-index: 1; /* Ensure CD container is below album cover */
 }
 
 /* Styles for CD image wrapper */
@@ -344,13 +350,13 @@ body {
     height: 100%;
     border-radius: 50%; /* Make the wrapper circular */
     overflow: hidden;    /* Hide anything outside the circle */
-    transition: transform 0.5s ease, box-shadow 0.3s ease; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition back here */
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8); /* Initial box shadow */
     pointer-events: none; /* Disable pointer events on the wrapper initially */
 }
 
 /* Hover effect for zoom */
-.image-container:hover #cd-container .cd-image-wrapper:not(.disable-hover){ /* Add a new class to disable hover on click */
+.image-container:hover #cd-container .cd-image-wrapper{
     transform: scale(1.05);
     box-shadow: 0px 0px 60px 20px rgba(0, 0, 0, 0.9);
     pointer-events: auto; /* Enable pointer events on hover */
@@ -694,23 +700,4 @@ body {
     100% {
         transform: rotate(360deg);
     }
-}
-
-/* === Animation Styles === */
-
-.image-wrapper.animate-out {
-    transform: translateY(-100%); /* Move square up to reveal CD */
-}
-
-.image-wrapper.animate-in {
-    transform: translateY(0%); /* Move square back down to cover CD */
-}
-
-/* Show the CD container */
-.cd-mode #cd-container {
-    transform: translateY(0); /* Bring CD up into view */
-}
-
-.cd-mode #album-cover {
-    transform: translateY(-100%); /* Move album cover off-screen */
 }

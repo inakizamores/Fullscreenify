@@ -285,23 +285,21 @@ function stopUpdatingSongInfo() {
 }
 
 async function toggleCdView() {
-    const cdToggleButton = document.getElementById("cd-toggle-btn");
-    cdToggleButton.disabled = true;
-    cdToggleButton.classList.add("disabled");
+    // Disable toggle button immediately
+    isToggleDisabled = true;
+    document.getElementById("cd-toggle-btn").disabled = true;
+    document.getElementById("cd-toggle-btn").classList.add("disabled");
 
-    const imageWrapper = document.querySelector(".image-wrapper");
     const albumCover = document.getElementById("album-cover");
     const cdContainer = document.getElementById("cd-container");
     const cdImage = document.getElementById("cd-image");
     const placeholderText = document.getElementById("placeholder-text");
+    const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg'; // Or your placeholder image URL
 
-    // Toggle isCdView to reflect the intended state
-    isCdView = !isCdView;
+    if (!isCdView) {
+        // Intention to switch to CD view
 
-    if (isCdView) {
-        // Switching to CD View
-
-        // Ensure CD wrapper exists
+        // 1. Ensure the CD wrapper exists *before* updating the image
         if (!cdImage.parentNode.classList.contains("cd-image-wrapper")) {
             const wrapper = document.createElement("div");
             wrapper.classList.add("cd-image-wrapper");
@@ -309,7 +307,6 @@ async function toggleCdView() {
             wrapper.appendChild(cdImage);
         }
 
-        // Update CD image source
         if (currentSongId) {
             try {
                 const response = await fetch(
@@ -339,24 +336,18 @@ async function toggleCdView() {
                 );
             }
         } else {
-            const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
             await updateImage(cdImage, placeholderImageUrl);
         }
 
-        // Add class to manage transitions for animating out
-        imageWrapper.classList.add("animate-out");
-
-        // Show CD container after animation starts
-        cdContainer.style.display = "flex";
-        placeholderText.style.display = "none";
+        // 2. *After* the image is ready (or placeholder is set), switch visibility
+        isCdView = true;
+        albumCover.style.display = 'none';
+        cdContainer.style.display = 'flex';
+        placeholderText.style.display = 'none';
 
     } else {
-        // Switching to Album Cover View
+        // Intention to switch to album cover view
 
-        // Add class to manage transitions for animating in
-        imageWrapper.classList.add("animate-in");
-
-        // Update album cover image source
         if (currentSongId) {
             try {
                 const response = await fetch(
@@ -381,45 +372,34 @@ async function toggleCdView() {
                 );
             }
         } else {
-            const placeholderImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/6/60/Kanye_donda.jpg';
             await updateImage(albumCover, placeholderImageUrl);
         }
 
-        // Show album cover
-        albumCover.style.display = "block";
-        placeholderText.style.display = "none";
-    }
+        // 1. Switch visibility *before* potentially removing the wrapper
+        isCdView = false;
+        cdContainer.style.display = 'none';
+        albumCover.style.display = 'block';
+        placeholderText.style.display = 'none';
 
-    // Wait for animation to complete
-    setTimeout(() => {
-        // Finalize view state
-        imageWrapper.classList.toggle("cd-mode", isCdView);
-
-        // Remove the animation classes
-        imageWrapper.classList.remove("animate-out");
-        imageWrapper.classList.remove("animate-in");
-
-        // Hide the element that is not active
-        if (isCdView) {
-            albumCover.style.display = "none";
-        } else {
-            cdContainer.style.display = "none";
-        }
-
-        // Remove the CD wrapper when switching back to album view
-        if (!isCdView && cdImage.parentNode.classList.contains("cd-image-wrapper")) {
+        // 2. Remove the wrapper when switching back to album view
+        if (cdImage.parentNode.classList.contains("cd-image-wrapper")) {
             const wrapper = cdImage.parentNode;
             wrapper.parentNode.insertBefore(cdImage, wrapper);
             wrapper.parentNode.removeChild(wrapper);
         }
 
-        // Re-enable toggle button
-        cdToggleButton.disabled = false;
-        cdToggleButton.classList.remove("disabled");
+        stopCDAnimation(); // Stop the CD animation when switching to album view
+    }
 
-        // Log the size of the image wrapper
-        logImageWrapperSize();
-    }, 500); // 500ms matches CSS transition time
+    // Re-enable toggle button after 1 second
+    setTimeout(() => {
+        isToggleDisabled = false;
+        document.getElementById("cd-toggle-btn").disabled = false;
+        document.getElementById("cd-toggle-btn").classList.remove("disabled");
+    }, 1000);
+
+    // Log the size of the image wrapper after updating the UI
+    logImageWrapperSize();
 }
 async function togglePlayPause() {
     try {
