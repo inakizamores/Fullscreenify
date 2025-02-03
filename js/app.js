@@ -83,6 +83,35 @@ function stopCDAnimation() {
 }
 // --- End of CD Animation Code ---
 
+// Function to set the placeholder background
+function setPlaceholderBackground() {
+    document.body.classList.add('placeholder-mode'); // Add the class for CSS styling
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundColor = '#222'; // Your desired intermediate grey
+    document.body.style.removeProperty('--background-image'); // Ensure no variable overrides
+    currentBackgroundImage = null;
+}
+
+// Function to set the album background
+function setAlbumBackground(imageUrl) {
+    document.body.classList.remove('placeholder-mode'); // Remove the placeholder class
+    // Preload the new background image only if it's different from the current one
+    if (imageUrl !== currentBackgroundImage) {
+        preloadBackgroundImage(imageUrl, () => {
+            // Once the new image is loaded, update the background if it's still the correct image
+            if (imageUrl === `${data.item.album.images[0].url}?t=${new Date().getTime()}`) {
+                // Remove background from body
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = 'transparent';
+
+                // Set background on body::before
+                document.body.style.setProperty('--background-image', `url(${imageUrl})`);
+                currentBackgroundImage = imageUrl;
+            }
+        });
+    }
+}
+
 // Function to update image with debugging
 function updateImage(imgElement, imageUrl) {
   return new Promise((resolve) => {
@@ -119,21 +148,7 @@ function updateUI(data) {
 
     manageImageCache(imageUrl);
 
-    // Preload the new background image only if it's different from the current one
-    if (imageUrl !== currentBackgroundImage) {
-      preloadBackgroundImage(imageUrl, () => {
-        // Once the new image is loaded, update the background if it's still the correct image
-        if (imageUrl === `${data.item.album.images[0].url}?t=${timestamp}`) {
-          // Remove background from body
-          document.body.style.backgroundImage = 'none';
-          document.body.style.backgroundColor = 'transparent';
-
-          // Set background on body::before
-          document.body.style.setProperty('--background-image', `url(${imageUrl})`);
-          currentBackgroundImage = imageUrl;
-        }
-      });
-    }
+    setAlbumBackground(imageUrl);
 
     if (!isCdView) {
       // Album cover view
@@ -203,6 +218,8 @@ function displayPlaceholder() {
     currentSongId = null;
     currentIsPlaying = null;
 
+    setPlaceholderBackground();
+
     if (!isCdView) {
         // Album cover view
         const albumCover = document.getElementById('album-cover');
@@ -217,12 +234,6 @@ function displayPlaceholder() {
         document.getElementById("album-cover").style.display = "none";
         document.getElementById("cd-container").style.display = "flex";
     }
-
-    // Remove the background image variable forcing the default background
-    document.body.style.removeProperty('--background-image');
-
-    // Update currentBackgroundImage to force re-application of background
-    currentBackgroundImage = null; 
 
     imageContainer.classList.add("placeholder-active");
 
