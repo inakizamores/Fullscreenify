@@ -10,8 +10,8 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
-let isSongInfoVisible = false; // new line
-const songInfoContainer = document.getElementById('song-info-container'); // new line
+let isSongInfoVisible = false;
+const songInfoContainer = document.getElementById('song-info-container');
 
 // Wake Lock Variables
 let wakeLock = null;
@@ -159,16 +159,14 @@ function updateUI(data) {
         playPauseBtn.title = "Pause";
         playPauseBtn.classList.remove("play-icon");
         if (isCdView) {
-          //cdImage.style.animationPlayState = "running";
-          startCDAnimation()
+          startCDAnimation(); // Start the animation if in CD view
         }
       } else {
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         playPauseBtn.title = "Play";
         playPauseBtn.classList.add("play-icon");
         if (isCdView) {
-          //cdImage.style.animationPlayState = "paused";
-          stopCDAnimation();
+          stopCDAnimation(); // Stop animation
         }
       }
     }
@@ -231,6 +229,8 @@ function displayPlaceholder() {
     currentBackgroundImage = null;
 
     imageContainer.classList.add("placeholder-active");
+    // Hide artist and song name when placeholder is active
+    songInfoContainer.classList.remove('visible');
 
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
@@ -693,7 +693,6 @@ function handleLogout() {
     releaseWakeLock();
 }
 
-// new lines to add the toggle song button
 const songInfoToggleButton = document.getElementById('song-info-toggle-btn');
 
 songInfoToggleButton.addEventListener('click', () => {
@@ -704,4 +703,5 @@ songInfoToggleButton.addEventListener('click', () => {
         songInfoContainer.classList.remove('visible');
     }
 });
+
 initializeApp();
