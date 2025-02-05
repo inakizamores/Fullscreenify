@@ -10,8 +10,6 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
-let isSongInfoVisible = false;
-const songInfoContainer = document.getElementById('song-info-container');
 
 // Wake Lock Variables
 let wakeLock = null;
@@ -103,12 +101,9 @@ function updateImage(imgElement, imageUrl) {
 }
 
 // Function to check and log the size of the image wrapper
-// Updated function to set the CSS variable
-function setImageWrapperSize() {
+function logImageWrapperSize() {
     const imageWrapper = document.querySelector('.image-wrapper');
-    const width = imageWrapper.offsetWidth;
-    document.documentElement.style.setProperty('--image-wrapper-width', `${width}px`);
-    //console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight }); //for debugging remove if needed
+    console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
 }
 
 // Updated UI
@@ -162,26 +157,23 @@ function updateUI(data) {
         playPauseBtn.title = "Pause";
         playPauseBtn.classList.remove("play-icon");
         if (isCdView) {
-          startCDAnimation(); // Start the animation if in CD view
+          //cdImage.style.animationPlayState = "running";
+          startCDAnimation()
         }
       } else {
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         playPauseBtn.title = "Play";
         playPauseBtn.classList.add("play-icon");
         if (isCdView) {
-          stopCDAnimation(); // Stop animation
+          //cdImage.style.animationPlayState = "paused";
+          stopCDAnimation();
         }
       }
     }
     imageContainer.classList.remove("placeholder-active");
 
-    // new lines to change the text
-    document.getElementById('artist-name').textContent = data.item.artists[0].name;
-    document.getElementById('song-name').textContent = data.item.name;
-
-    setImageWrapperSize(); // IMPORTANT: Update the size here
     // Log the size of the image wrapper after updating the UI
-    //logImageWrapperSize();
+    logImageWrapperSize();
   }
 
 // Function to preload the background image
@@ -230,15 +222,12 @@ function displayPlaceholder() {
     document.body.style.removeProperty('--background-image');
 
     // Update currentBackgroundImage to force re-application of background
-    currentBackgroundImage = null;
+    currentBackgroundImage = null; 
 
     imageContainer.classList.add("placeholder-active");
-    // Hide artist and song name when placeholder is active
-    songInfoContainer.classList.remove('visible');
-    setImageWrapperSize();
 
     // Log the size of the image wrapper after updating the UI
-    //logImageWrapperSize();
+    logImageWrapperSize();
 }
 
 function showSessionExpiredModal() {
@@ -409,9 +398,8 @@ async function toggleCdView() {
         document.getElementById("cd-toggle-btn").classList.remove("disabled");
     }, 1000);
 
-    setImageWrapperSize(); //Update size
     // Log the size of the image wrapper after updating the UI
-    //logImageWrapperSize();
+    logImageWrapperSize();
 }
 async function togglePlayPause() {
     try {
@@ -495,7 +483,7 @@ function releaseWakeLock() {
             console.log('Wake Lock released!');
 
             // Make sure cursor is visible when wake lock is released
-            document.body.style.cursor = 'default';
+            document.body.style.cursor = 'default'; 
             // Remove listeners when the Wake Lock is released
             removeCursorActivityListeners();
         });
@@ -667,7 +655,7 @@ async function initializeApp() {
         await displayPlaceholder();
         showContent(); // Show content immediately in placeholder mode
     }
-    setImageWrapperSize();  // VERY IMPORTANT: Set the initial size
+
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
@@ -698,19 +686,4 @@ function handleLogout() {
 
     releaseWakeLock();
 }
-
-const songInfoToggleButton = document.getElementById('song-info-toggle-btn');
-
-songInfoToggleButton.addEventListener('click', () => {
-    isSongInfoVisible = !isSongInfoVisible;
-    if (isSongInfoVisible) {
-        songInfoContainer.classList.add('visible');
-    } else {
-        songInfoContainer.classList.remove('visible');
-    }
-});
-
-// Call on resize to adjust positioning
-window.addEventListener('resize', setImageWrapperSize);
-
 initializeApp();
