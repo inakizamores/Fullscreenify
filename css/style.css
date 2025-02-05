@@ -3,14 +3,14 @@
 /* Import Helvetica Neue Medium and Helvetica Neue Heavy fonts */
 @font-face {
     font-family: 'Helvetica Neue Medium';
-    src: url('../fonts/HelveticaNeueMedium.otf') format('opentype'); /* Path relative to CSS file */
+    src: url('../fonts/HelveticaNeueMedium.otf') format('opentype');
     font-weight: normal; /* Or 500 if that's the intended weight for Medium */
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Helvetica Neue Heavy';
-    src: url('../fonts/HelveticaNeueHeavy.otf') format('opentype'); /* Path relative to CSS file */
+    src: url('../fonts/HelveticaNeueHeavy.otf') format('opentype');
     font-weight: 900; /* Heavy is typically 900 */
     font-style: normal;
 }
@@ -703,51 +703,61 @@ body {
 }
 
 /* === Overlay Text Styles === */
+
 #song-info-container {
     position: absolute;
-    top: 20px; /* Adjust vertical position as needed */
+    top: 0;  /* Adjusted to top: 0 */
     left: 0;
     width: 100%;
+    height: 100%; /* Full height of the container */
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0 20px; /* Adjust padding as needed */
-    z-index: 10;
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.3s ease;
+    align-items: center; /* Vertically center the items */
+    z-index: 9;  /* Lower z-index than controls */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none; /* Prevent text from blocking clicks */
 }
 
 #song-info-container.visible {
     opacity: 1;
+    pointer-events: auto; /* Allow interaction when visible */
 }
 
 #artist-name,
 #song-name {
-    font-size: 20px; /* Adjust font size as needed */
-    font-weight: bold;
+    font-family: 'Helvetica Neue Heavy', sans-serif; /* Use Helvetica Neue Heavy */
+    font-size: 48px; /* Much larger font size */
+    font-weight: 900;  /* Make sure it's Heavy weight */
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add a text shadow for readability */
-    white-space: nowrap; /* Prevent text from wrapping */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Add ellipsis if the text overflows */
-    max-width: 45%; /* Adjust max-width as needed */
-    position: relative;
-    transition: transform 0.5s ease; /* Slide animation */
+    text-overflow: ellipsis;
+    max-width: 30%; /* Limit width to prevent overlap */
+    position: absolute; /* Absolute positioning */
+    top: 50%;       /* Center vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    transition: left 0.5s ease, right 0.5s ease; /* Animate left/right properties */
+    padding: 20px;
 }
 
 #artist-name {
-    transform: translateX(-120%); /* Initially hidden off-screen to the left */
+    left: -33%;     /* Start off-screen to the left */
 }
 
 #song-name {
-    text-align: right;
-    transform: translateX(120%); /* Initially hidden off-screen to the right */
+    right: -33%;    /* Start off-screen to the right */
 }
 
 #song-info-container.visible #artist-name {
-    transform: translateX(0); /* Slide in from the left */
+    left: calc(50% + 55px); /* Position to the left of the image */
 }
 
 #song-info-container.visible #song-name {
-    transform: translateX(0); /* Slide in from the right */
+    right: calc(50% + 55px); /* Position to the right of the image */
+}
+/* New rule to ensure text is above background */
+body::before {
+  z-index: -2; /* Lower than #song-info-container */
 }
