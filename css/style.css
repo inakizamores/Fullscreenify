@@ -232,7 +232,7 @@ body {
 /* Style the "Hide UI Toggle" button container */
 #hide-ui-container {
     position: absolute;
-    bottom: 0px; 
+    bottom: 0px;
     left: 50%;
     transform: translateX(-50%);
     width: 160px; /* Adjust for hover area (3x button width) */
@@ -369,7 +369,7 @@ body {
     border-radius: 50%;
     position: relative;
     /* Removed animation properties */
-    /* animation: rotateCD 10s linear infinite; 
+    /* animation: rotateCD 10s linear infinite;
     animation-play-state: paused; */
     cursor: pointer;
     display: block;
@@ -440,8 +440,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 70%; 
-    max-width: 500px; 
+    width: 70%;
+    max-width: 500px;
     margin: auto;
     padding: 0 20px;
 }
@@ -462,17 +462,17 @@ body {
 }
 
 .login-content h1 {
-    font-size: 3em; 
+    font-size: 3em;
     font-weight: bold;
-    margin-bottom: 0.3em; 
+    margin-bottom: 0.3em;
     font-family: 'Helvetica Neue Heavy', sans-serif;
     text-transform: uppercase;
 }
 
 .login-content p {
-    font-size: 1.2em; 
+    font-size: 1.2em;
     margin-top: 0em;
-    margin-bottom: 2.5em; 
+    margin-bottom: 2.5em;
     font-family: 'Helvetica Neue Medium', sans-serif;
     line-height: 1.4;
 }
@@ -552,7 +552,7 @@ body {
 
 @media (max-width: 768px) {
     .login-content h1 {
-        font-size: 2.5em; 
+        font-size: 2.5em;
         margin-bottom: 0.4em;
     }
 
@@ -562,16 +562,16 @@ body {
     }
 
     #login-btn {
-        font-size: 18px; 
+        font-size: 18px;
         padding: 12px 25px;
     }
 
     .login-container {
-        width: 80%; 
+        width: 80%;
     }
 
     .logo {
-        max-width: 80px; 
+        max-width: 80px;
         margin-bottom: 0.8em;
     }
 }
