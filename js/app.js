@@ -103,9 +103,12 @@ function updateImage(imgElement, imageUrl) {
 }
 
 // Function to check and log the size of the image wrapper
-function logImageWrapperSize() {
+// Updated function to set the CSS variable
+function setImageWrapperSize() {
     const imageWrapper = document.querySelector('.image-wrapper');
-    console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight });
+    const width = imageWrapper.offsetWidth;
+    document.documentElement.style.setProperty('--image-wrapper-width', `${width}px`);
+    //console.log("Image Wrapper Size:", { width: imageWrapper.offsetWidth, height: imageWrapper.offsetHeight }); //for debugging remove if needed
 }
 
 // Updated UI
@@ -176,8 +179,9 @@ function updateUI(data) {
     document.getElementById('artist-name').textContent = data.item.artists[0].name;
     document.getElementById('song-name').textContent = data.item.name;
 
+    setImageWrapperSize(); // IMPORTANT: Update the size here
     // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
+    //logImageWrapperSize();
   }
 
 // Function to preload the background image
@@ -231,9 +235,10 @@ function displayPlaceholder() {
     imageContainer.classList.add("placeholder-active");
     // Hide artist and song name when placeholder is active
     songInfoContainer.classList.remove('visible');
+    setImageWrapperSize();
 
     // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
+    //logImageWrapperSize();
 }
 
 function showSessionExpiredModal() {
@@ -404,8 +409,9 @@ async function toggleCdView() {
         document.getElementById("cd-toggle-btn").classList.remove("disabled");
     }, 1000);
 
+    setImageWrapperSize(); //Update size
     // Log the size of the image wrapper after updating the UI
-    logImageWrapperSize();
+    //logImageWrapperSize();
 }
 async function togglePlayPause() {
     try {
@@ -661,7 +667,7 @@ async function initializeApp() {
         await displayPlaceholder();
         showContent(); // Show content immediately in placeholder mode
     }
-
+    setImageWrapperSize();  // VERY IMPORTANT: Set the initial size
     initialLoadComplete = true;
     scheduleTokenRefresh();
 }
@@ -703,5 +709,8 @@ songInfoToggleButton.addEventListener('click', () => {
         songInfoContainer.classList.remove('visible');
     }
 });
+
+// Call on resize to adjust positioning
+window.addEventListener('resize', setImageWrapperSize);
 
 initializeApp();

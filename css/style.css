@@ -26,7 +26,7 @@ body::before {
     background-size: cover;
     background-position: center;
     filter: blur(20px);
-    z-index: -1;
+    z-index: -2;
     transform: scale(1.1);
     transition: background-image 0.5s ease;
     background-image: var(--background-image);
@@ -706,58 +706,65 @@ body {
 
 #song-info-container {
     position: absolute;
-    top: 0;  /* Adjusted to top: 0 */
+    top: 0;
     left: 0;
     width: 100%;
-    height: 100%; /* Full height of the container */
+    height: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Vertically center the items */
-    z-index: 9;  /* Lower z-index than controls */
+    align-items: center;
+    z-index: 9;
     opacity: 0;
     transition: opacity 0.5s ease;
-    pointer-events: none; /* Prevent text from blocking clicks */
+    pointer-events: none; /* Very important! */
 }
 
 #song-info-container.visible {
     opacity: 1;
-    pointer-events: auto; /* Allow interaction when visible */
+    pointer-events: auto;
 }
 
 #artist-name,
 #song-name {
-    font-family: 'Helvetica Neue Heavy', sans-serif; /* Use Helvetica Neue Heavy */
-    font-size: 48px; /* Much larger font size */
-    font-weight: 900;  /* Make sure it's Heavy weight */
+    font-family: 'Helvetica Neue Heavy', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 30%; /* Limit width to prevent overlap */
-    position: absolute; /* Absolute positioning */
-    top: 50%;       /* Center vertically */
-    transform: translateY(-50%); /* Adjust for vertical centering */
-    transition: left 0.5s ease, right 0.5s ease; /* Animate left/right properties */
+    max-width: 30%; /*  control overlap */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     padding: 20px;
+     /* Use calc() with the image-wrapper width */
+    transition: left 0.5s ease, right 0.5s ease;
+
 }
 
 #artist-name {
-    left: -33%;     /* Start off-screen to the left */
+    left: calc(-1 * (50% + (0.9 * 0.5 * var(--image-wrapper-width)) + 20px)); /* Corrected calculation */
+    text-align: right; /* Align text to the right */
+
 }
 
 #song-name {
-    right: -33%;    /* Start off-screen to the right */
+    right: calc(-1 * (50% + (0.9 * 0.5 * var(--image-wrapper-width)) + 20px)); /* Corrected calculation */
+     text-align: left;
 }
 
+
 #song-info-container.visible #artist-name {
-    left: calc(50% + 55px); /* Position to the left of the image */
+    left: calc(50% - (0.9 * 0.5 * var(--image-wrapper-width)) - 20px); /* Slide in */
+
 }
 
 #song-info-container.visible #song-name {
-    right: calc(50% + 55px); /* Position to the right of the image */
+    right: calc(50% - (0.9 * 0.5 * var(--image-wrapper-width)) - 20px); /* Slide in */
 }
-/* New rule to ensure text is above background */
+/* Ensure text is above background */
 body::before {
   z-index: -2; /* Lower than #song-info-container */
 }
