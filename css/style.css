@@ -701,3 +701,53 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* === Overlay Text Styles === */
+#song-info-container {
+    position: absolute;
+    top: 20px; /* Adjust vertical position as needed */
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px; /* Adjust padding as needed */
+    z-index: 10;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+}
+
+#song-info-container.visible {
+    opacity: 1;
+}
+
+#artist-name,
+#song-name {
+    font-size: 20px; /* Adjust font size as needed */
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add a text shadow for readability */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis if the text overflows */
+    max-width: 45%; /* Adjust max-width as needed */
+    position: relative;
+    transition: transform 0.5s ease; /* Slide animation */
+}
+
+#artist-name {
+    transform: translateX(-120%); /* Initially hidden off-screen to the left */
+}
+
+#song-name {
+    text-align: right;
+    transform: translateX(120%); /* Initially hidden off-screen to the right */
+}
+
+#song-info-container.visible #artist-name {
+    transform: translateX(0); /* Slide in from the left */
+}
+
+#song-info-container.visible #song-name {
+    transform: translateX(0); /* Slide in from the right */
+}

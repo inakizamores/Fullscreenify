@@ -10,6 +10,8 @@ let isCdView = false;
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
+let isSongInfoVisible = false; // new line
+const songInfoContainer = document.getElementById('song-info-container'); // new line
 
 // Wake Lock Variables
 let wakeLock = null;
@@ -172,6 +174,10 @@ function updateUI(data) {
     }
     imageContainer.classList.remove("placeholder-active");
 
+    // new lines to change the text
+    document.getElementById('artist-name').textContent = data.item.artists[0].name;
+    document.getElementById('song-name').textContent = data.item.name;
+
     // Log the size of the image wrapper after updating the UI
     logImageWrapperSize();
   }
@@ -222,7 +228,7 @@ function displayPlaceholder() {
     document.body.style.removeProperty('--background-image');
 
     // Update currentBackgroundImage to force re-application of background
-    currentBackgroundImage = null; 
+    currentBackgroundImage = null;
 
     imageContainer.classList.add("placeholder-active");
 
@@ -483,7 +489,7 @@ function releaseWakeLock() {
             console.log('Wake Lock released!');
 
             // Make sure cursor is visible when wake lock is released
-            document.body.style.cursor = 'default'; 
+            document.body.style.cursor = 'default';
             // Remove listeners when the Wake Lock is released
             removeCursorActivityListeners();
         });
@@ -686,4 +692,16 @@ function handleLogout() {
 
     releaseWakeLock();
 }
+
+// new lines to add the toggle song button
+const songInfoToggleButton = document.getElementById('song-info-toggle-btn');
+
+songInfoToggleButton.addEventListener('click', () => {
+    isSongInfoVisible = !isSongInfoVisible;
+    if (isSongInfoVisible) {
+        songInfoContainer.classList.add('visible');
+    } else {
+        songInfoContainer.classList.remove('visible');
+    }
+});
 initializeApp();
