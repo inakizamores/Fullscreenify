@@ -141,6 +141,7 @@ function updateUI(data) {
       albumCover.style.display = "block";
       document.getElementById("cd-container").style.display = "none";
       document.getElementById("placeholder-text").style.display = "none";
+        albumCover.style.borderRadius = "0"; // Square
     } else {
       // CD view
       updateImage(cdImage, imageUrl);
@@ -209,6 +210,7 @@ function displayPlaceholder() {
         updateImage(albumCover, placeholderImageUrl);
         albumCover.style.display = 'block';
         document.getElementById("cd-container").style.display = "none";
+        albumCover.style.borderRadius = "0"; // Square
     } else {
         // CD view
         const cdImage = document.getElementById("cd-image");
@@ -344,6 +346,7 @@ async function toggleCdView() {
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
         placeholderText.style.display = 'none';
+        removeMouseMoveListeners(); // Remove mousemove listeners when switching to CD view
 
     } else {
         // Intention to switch to album cover view
@@ -389,6 +392,8 @@ async function toggleCdView() {
         }
 
         stopCDAnimation(); // Stop the CD animation when switching to album view
+        attachMouseMoveListeners(); // Attach mousemove listeners when switching to album view
+
     }
 
     // Re-enable toggle button after 1 second
@@ -529,9 +534,9 @@ function updateReflectionPosition(event) {
 
     // Apply the transform to the reflection
     //const translateDistance = normalizedDistance * 20; // Adjust for intensity
-    const translateAngle = angle * (180 / Math.PI);
-    const translatePercentage =  normalizedDistance * 20; // Adjust for intensity
-    const shimmerPosition = `${translatePercentage}%`; // Shimmer moves with the mouse
+    //const translateAngle = angle * (180 / Math.PI);
+    const translatePercentage =  (offsetX / (containerWidth/2)) * 50; // Adjust for intensity. Mouse Position in relation to the image
+    const shimmerPosition = `${50 + translatePercentage}%`; // Shimmer moves with the mouse
     container.style.setProperty('--shimmer-position', shimmerPosition)
 }
 
@@ -573,23 +578,12 @@ function displayPlaceholder() {
     removeMouseMoveListeners(); // Remove listeners on placeholder
 
 }
-
-// Add a new listener to the CD toggle button
-document.getElementById('cd-toggle-btn').addEventListener('click', () => {
-    toggleCdView();
-    if(isCdView){
-        removeMouseMoveListeners();
-    }
-    else {
-        attachMouseMoveListeners();
-    }
-});
 // --- End Shimmer Reflection ---
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
-//document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
 // Add an event listener to the "Hide UI Toggle" button

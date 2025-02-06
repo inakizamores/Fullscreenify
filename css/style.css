@@ -85,6 +85,7 @@ body {
     box-shadow: 0px 0px 50px 10px rgba(0, 0, 0, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: block;
+    border-radius: 0; /* Default: Square */
 }
 
 .image-container:hover #album-cover{
@@ -102,254 +103,25 @@ body {
 
 /* === Shimmer Reflection Styles (for both Album Cover and CD) === */
 
-.image-container::after { /* Use ::after for the reflection */
+.image-container::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%); /* Increased brightness */
     opacity: 0;
     transition: opacity 0.2s ease; /* Fade-in on hover */
     pointer-events: none; /* Crucial:  Allows hover on the image itself */
     z-index: 1; /* Ensure it's above the image, but below controls */
+    /* --shimmer-position: 50%; // Default position (center) - this is set via javascript */
+    background-size: 200% 100%; /* Wider shimmer */
+    background-position: var(--shimmer-position, 50%) 0;  /* Use the custom property and default*/
 }
 
 .image-container:hover::after {
     opacity: 1; /* Make reflection visible on hover */
-}
-
-/* === Control Buttons Styles === */
-
-.controls {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 400px;
-    display: flex;
-    justify-content: space-around;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1;
-}
-
-.control-btn {
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 15px;
-    margin: 0 10px;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
-}
-
-.control-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-.control-btn i {
-    margin: 0;
-    font-size: 24px;
-    color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-
-/* === Login Button Styles === */
-
-#login-btn {
-    background-color: #1DB954;
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    animation: pulsate 2s infinite;
-}
-
-#login-btn i {
-    margin-right: 10px;
-    font-size: 24px;
-}
-
-#login-btn:hover {
-    box-shadow: 0 0 15px #1DB954;
-}
-
-@keyframes pulsate {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* === UI Buttons Container Styles === */
-#ui-buttons-container {
-    position: absolute;
-    bottom: 20px;
-    left: 20px; /* Adjust left position */
-    width: auto; /* Use auto width */
-    display: flex;
-    justify-content: flex-start; /* Align to the start */
-    align-items: center;
-    z-index: 10;
-    gap: 20px; /* Adjust the space between buttons */
-}
-
-/* Individual button styles within the container */
-#ui-buttons-container button {
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
-}
-
-#ui-buttons-container button:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-#ui-buttons-container button i {
-    font-size: 20px;
-    color: #000;
-}
-
-/* Specific adjustments for the Test Expiry Button */
-#test-expiry-btn {
-    /* Remove margin styles */
-}
-
-/* Style the "Hide UI Toggle" button container */
-#hide-ui-container {
-    position: absolute;
-    bottom: 0px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160px; /* Adjust for hover area (3x button width) */
-    height: 160px; /* Adjust for hover area (3x button height) */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.3s ease;
-    z-index: 10; /* Ensure it's above other elements */
-}
-
-/* Style for making the button visible on hover */
-#hide-ui-container:hover {
-    opacity: 1;
-}
-
-/* Style the "Hide UI Toggle" button */
-#hide-ui-btn {
-    background-color: rgba(179, 179, 179, 0.7);
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color: 0.3s ease, transform: 0.3s ease;
-}
-
-#hide-ui-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-#hide-ui-btn i {
-    font-size: 20px;
-    color: #000;
-}
-
-/* Style for the hidden state of the button group */
-/* .hidden {
-    display: none;
-} */
-
-#ui-buttons-container.hidden {
-    visibility: hidden; /* Use visibility instead of display: none */
-}
-
-/* === Bottom UI Buttons Styles === */
-
-.bottom-left-btn {
-    position: relative; /* Changed to relative */
-    /* Other styles remain the same */
-}
-
-.bottom-center-btn {
-    position: relative; /* Changed to relative */
-    /* Other styles remain the same */
-}
-
-.bottom-right-btn {
-    position: relative; /* Changed to relative */
-    /* Other styles remain the same */
-}
-
-.bottom-left-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-.bottom-left-btn.disabled {
-    background-color: rgba(80, 80, 80, 0.7); /* Dimmed color */
-    cursor: default; /* Indicate non-interactable */
-    pointer-events: none; /* Disable click events */
-}
-
-.bottom-left-btn.disabled:hover {
-    transform: scale(1); /* Remove scaling on hover */
-}
-
-.bottom-left-btn i {
-    font-size: 20px;
-    color: #000;
-}
-
-.bottom-right-btn:hover {
-    background-color: rgba(179, 179, 179, 1);
-    transform: scale(1.1);
-}
-
-.bottom-right-btn i {
-    font-size: 20px;
-    color: #000;
 }
 
 /* === CD Display Styles === */
