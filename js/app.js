@@ -38,6 +38,7 @@ function attachCursorActivityListeners() {
     document.addEventListener('mousemove', handleUserActivity);
     document.addEventListener('keypress', handleUserActivity);
     document.addEventListener('touchstart', handleUserActivity); // For touch devices
+    attachReflectionListeners(); // *** ADD THIS - attach reflection listeners ***
 }
 
 // Remove event listeners
@@ -45,6 +46,7 @@ function removeCursorActivityListeners() {
     document.removeEventListener('mousemove', handleUserActivity);
     document.removeEventListener('keypress', handleUserActivity);
     document.removeEventListener('touchstart', handleUserActivity);
+    removeReflectionListeners(); // *** ADD THIS - remove reflection listeners ***
 }
 
 // --- End of Cursor Hiding Functionality ---
@@ -586,8 +588,8 @@ async function toggleFullscreen() {
                 await document.webkitExitFullscreen();
             } else if (document.mozCancelFullScreen) {
                 await document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                await document.msExitFullscreen();
+            } else if (document.documentElement.msExitFullscreen) {
+                await document.documentElement.msExitFullscreen();
             }
         } catch (error) {
             console.error('Error exiting fullscreen:', error);
@@ -687,6 +689,8 @@ function handleLogout() {
     releaseWakeLock();
 }
 
+// --- Reflection Code ---
+
 function updateReflectionPosition(event) {
   const container = document.querySelector('.image-container');
   if (!container) return;
@@ -733,27 +737,6 @@ function removeReflectionListeners() {
     }
 }
 
-// Call attachReflectionListeners when the app initializes, and potentially
-// when switching between CD and album view.  We can integrate this into the
-// existing event listener management.
-document.addEventListener('DOMContentLoaded', () => {
-    //... other initialization code ...
-    attachReflectionListeners(); // Call this when the image container becomes available
-    //...
-});
+// --- End Reflection Code ---
 
-// Update existing event listener handling to include the reflection listener:
-function attachCursorActivityListeners() {
-    document.addEventListener('mousemove', handleUserActivity);
-    document.addEventListener('keypress', handleUserActivity);
-    document.addEventListener('touchstart', handleUserActivity); // For touch devices
-    attachReflectionListeners(); // *** ADD THIS ***
-}
-
-function removeCursorActivityListeners() {
-    document.removeEventListener('mousemove', handleUserActivity);
-    document.removeEventListener('keypress', handleUserActivity);
-    document.removeEventListener('touchstart', handleUserActivity);
-    removeReflectionListeners(); // *** ADD THIS ***
-}
 initializeApp();
