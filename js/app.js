@@ -686,4 +686,74 @@ function handleLogout() {
 
     releaseWakeLock();
 }
+
+function updateReflectionPosition(event) {
+  const container = document.querySelector('.image-container');
+  if (!container) return;
+
+  const rect = container.getBoundingClientRect();
+  const x = event.clientX - rect.left; // X position relative to the container
+  const y = event.clientY - rect.top;  // Y position relative to the container
+
+  const containerWidth = rect.width;
+  const containerHeight = rect.height;
+
+    // Calculate percentage position within the container
+  const xPercent = (x / containerWidth) * 100;
+  const yPercent = (y / containerHeight) * 100;
+
+
+  // --- Album Cover ---
+  const albumCoverReflection = document.querySelector('#album-cover::before');
+  if (albumCoverReflection) {
+    albumCoverReflection.style.maskPosition = `${xPercent}% ${yPercent}%`;
+    albumCoverReflection.style.webkitMaskPosition = `${xPercent}% ${yPercent}%`; // For Safari
+  }
+
+  // --- CD Wrapper ---
+  const cdReflection = document.querySelector('#cd-container .cd-image-wrapper::before');
+  if (cdReflection) {
+     cdReflection.style.maskPosition = `${xPercent}% ${yPercent}%`;
+     cdReflection.style.webkitMaskPosition = `${xPercent}% ${yPercent}%`;
+  }
+}
+
+// Add the event listener to the image container
+function attachReflectionListeners() {
+    const imageContainer = document.querySelector('.image-container');
+    if (imageContainer) {
+        imageContainer.addEventListener('mousemove', updateReflectionPosition);
+    }
+}
+
+function removeReflectionListeners() {
+    const imageContainer = document.querySelector('.image-container');
+    if (imageContainer) {
+        imageContainer.removeEventListener('mousemove', updateReflectionPosition);
+    }
+}
+
+// Call attachReflectionListeners when the app initializes, and potentially
+// when switching between CD and album view.  We can integrate this into the
+// existing event listener management.
+document.addEventListener('DOMContentLoaded', () => {
+    //... other initialization code ...
+    attachReflectionListeners(); // Call this when the image container becomes available
+    //...
+});
+
+// Update existing event listener handling to include the reflection listener:
+function attachCursorActivityListeners() {
+    document.addEventListener('mousemove', handleUserActivity);
+    document.addEventListener('keypress', handleUserActivity);
+    document.addEventListener('touchstart', handleUserActivity); // For touch devices
+    attachReflectionListeners(); // *** ADD THIS ***
+}
+
+function removeCursorActivityListeners() {
+    document.removeEventListener('mousemove', handleUserActivity);
+    document.removeEventListener('keypress', handleUserActivity);
+    document.removeEventListener('touchstart', handleUserActivity);
+    removeReflectionListeners(); // *** ADD THIS ***
+}
 initializeApp();

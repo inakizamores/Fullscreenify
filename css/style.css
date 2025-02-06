@@ -701,3 +701,56 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* --- Album Cover Reflection --- */
+#album-cover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Important:  Make the reflection non-interactive */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+    background-image: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 40%, /* Brightest point of the shimmer */
+        rgba(255, 255, 255, 0) 60%
+    );
+    mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 60%); /* Shape the reflection */
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 60%); /* For Safari */
+    z-index: 2; /* Place above the album cover but potentially below controls */
+}
+
+.image-container:hover #album-cover::before {
+    opacity: 1; /* Show on hover */
+}
+
+/* --- CD Reflection --- */
+#cd-container .cd-image-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* Crucial for the CD shape */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background-image: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 40%,
+        rgba(255, 255, 255, 0) 60%
+    );
+    mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 60%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 60%);
+    z-index: 3; /* Place reflection on top */
+}
+
+.image-container:hover #cd-container .cd-image-wrapper::before {
+    opacity: 1;
+}
