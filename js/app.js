@@ -141,7 +141,6 @@ function updateUI(data) {
       albumCover.style.display = "block";
       document.getElementById("cd-container").style.display = "none";
       document.getElementById("placeholder-text").style.display = "none";
-        albumCover.style.borderRadius = "0"; // Square
     } else {
       // CD view
       updateImage(cdImage, imageUrl);
@@ -210,7 +209,6 @@ function displayPlaceholder() {
         updateImage(albumCover, placeholderImageUrl);
         albumCover.style.display = 'block';
         document.getElementById("cd-container").style.display = "none";
-        albumCover.style.borderRadius = "0"; // Square
     } else {
         // CD view
         const cdImage = document.getElementById("cd-image");
@@ -224,7 +222,7 @@ function displayPlaceholder() {
     document.body.style.removeProperty('--background-image');
 
     // Update currentBackgroundImage to force re-application of background
-    currentBackgroundImage = null;
+    currentBackgroundImage = null; 
 
     imageContainer.classList.add("placeholder-active");
 
@@ -346,7 +344,6 @@ async function toggleCdView() {
         albumCover.style.display = 'none';
         cdContainer.style.display = 'flex';
         placeholderText.style.display = 'none';
-        removeMouseMoveListeners(); // Remove mousemove listeners when switching to CD view
 
     } else {
         // Intention to switch to album cover view
@@ -392,8 +389,6 @@ async function toggleCdView() {
         }
 
         stopCDAnimation(); // Stop the CD animation when switching to album view
-        attachMouseMoveListeners(); // Attach mousemove listeners when switching to album view
-
     }
 
     // Re-enable toggle button after 1 second
@@ -488,7 +483,7 @@ function releaseWakeLock() {
             console.log('Wake Lock released!');
 
             // Make sure cursor is visible when wake lock is released
-            document.body.style.cursor = 'default';
+            document.body.style.cursor = 'default'; 
             // Remove listeners when the Wake Lock is released
             removeCursorActivityListeners();
         });
@@ -503,82 +498,6 @@ async function handleVisibilityChange() {
         await requestWakeLock();
     }
 }
-
-// --- Shimmer Reflection ---
-// Function to update the reflection position based on mouse movement
-function updateReflectionPosition(event) {
-    const container = event.currentTarget;  // The .image-container
-    const rect = container.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-
-    // Calculate the center of the container
-    const containerWidth = rect.width;
-    const containerHeight = rect.height;
-    const centerX = containerWidth / 2;
-    const centerY = containerHeight / 2;
-
-    // Calculate the offset from the center
-    const offsetX = mouseX - centerX;
-    const offsetY = mouseY - centerY;
-
-    // Calculate the distance from the center
-    const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-    const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY); // Distance from center to corner
-
-    // Normalize the distance to get a value between 0 and 1
-    const normalizedDistance = distance / maxDistance;
-
-    // Calculate the angle
-    const angle = Math.atan2(offsetY, offsetX);
-
-    // Apply the transform to the reflection
-    //const translateDistance = normalizedDistance * 20; // Adjust for intensity
-    //const translateAngle = angle * (180 / Math.PI);
-    const translatePercentage =  (offsetX / (containerWidth/2)) * 50; // Adjust for intensity. Mouse Position in relation to the image
-    const shimmerPosition = `${50 + translatePercentage}%`; // Shimmer moves with the mouse
-    container.style.setProperty('--shimmer-position', shimmerPosition)
-}
-
-// Attach event listeners for mousemove (inside a function to be called later)
-function attachMouseMoveListeners() {
-    const imageContainers = document.querySelectorAll('.image-container');
-    imageContainers.forEach(container => {
-        container.addEventListener('mousemove', updateReflectionPosition);
-    });
-}
-
-function removeMouseMoveListeners() {
-    const imageContainers = document.querySelectorAll('.image-container');
-    imageContainers.forEach(container => {
-        container.removeEventListener('mousemove', updateReflectionPosition);
-    });
-}
-
-// Modify the existing functions to call attach and remove
-
-function showContent() {
-    // Hide the preloader
-    document.getElementById('preloader').style.display = 'none';
-    // Show the main content
-    document.querySelector('.fullscreenify-container').style.visibility = 'visible';
-    // Show the image wrapper
-    document.querySelector('.image-wrapper').style.visibility = 'visible';
-
-    attachMouseMoveListeners(); // Attach listeners when content is shown
-}
-
-function handleLogout() {
-    // ... existing logout functionality
-    removeMouseMoveListeners(); // Remove listeners on logout
-    releaseWakeLock();
-}
-function displayPlaceholder() {
-    // ...existing code
-    removeMouseMoveListeners(); // Remove listeners on placeholder
-
-}
-// --- End Shimmer Reflection ---
 
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
@@ -748,8 +667,6 @@ function showContent() {
     document.querySelector('.fullscreenify-container').style.visibility = 'visible';
     // Show the image wrapper
     document.querySelector('.image-wrapper').style.visibility = 'visible';
-
-    attachMouseMoveListeners(); // Attach listeners when content is shown
 }
 
 // Release the wake lock when the user logs out
@@ -767,7 +684,6 @@ function handleLogout() {
     document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
     document.querySelector('.fullscreenify-container').style.display = 'none';
 
-    removeMouseMoveListeners(); // Remove listeners on logout
     releaseWakeLock();
 }
 initializeApp();
