@@ -100,6 +100,26 @@ body {
     opacity: 0;
 }
 
+/* === Shimmer Reflection Styles (for both Album Cover and CD) === */
+
+.image-container::after { /* Use ::after for the reflection */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.2s ease; /* Fade-in on hover */
+    pointer-events: none; /* Crucial:  Allows hover on the image itself */
+    z-index: 1; /* Ensure it's above the image, but below controls */
+}
+
+.image-container:hover::after {
+    opacity: 1; /* Make reflection visible on hover */
+}
+
 /* === Control Buttons Styles === */
 
 .controls {
@@ -700,57 +720,4 @@ body {
     100% {
         transform: rotate(360deg);
     }
-}
-
-/* --- Album Cover Reflection --- */
-#album-cover::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    background-image: linear-gradient(
-      90deg, /* Horizontal gradient for square */
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    background-size: 200% 100%; /* Make the gradient wider */
-    background-position: 0 0; /* Initial position */
-    z-index: 2;
-}
-
-.image-container:hover #album-cover::before {
-    opacity: 1;
-}
-
-/* --- CD Reflection --- */
-#cd-container .cd-image-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%; /* CD shape */
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    background-image: linear-gradient(
-      135deg, /* Diagonal gradient for circle */
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    background-size: 200% 200%; /* Make the gradient wider */
-    background-position: 0 0; /* Initial position */
-    z-index: 3;
-}
-
-.image-container:hover #cd-container .cd-image-wrapper::before {
-    opacity: 1;
 }

@@ -38,7 +38,6 @@ function attachCursorActivityListeners() {
     document.addEventListener('mousemove', handleUserActivity);
     document.addEventListener('keypress', handleUserActivity);
     document.addEventListener('touchstart', handleUserActivity); // For touch devices
-    attachReflectionListeners(); // *** ADD THIS - attach reflection listeners ***
 }
 
 // Remove event listeners
@@ -46,7 +45,6 @@ function removeCursorActivityListeners() {
     document.removeEventListener('mousemove', handleUserActivity);
     document.removeEventListener('keypress', handleUserActivity);
     document.removeEventListener('touchstart', handleUserActivity);
-    removeReflectionListeners(); // *** ADD THIS - remove reflection listeners ***
 }
 
 // --- End of Cursor Hiding Functionality ---
@@ -501,10 +499,97 @@ async function handleVisibilityChange() {
     }
 }
 
+// --- Shimmer Reflection ---
+// Function to update the reflection position based on mouse movement
+function updateReflectionPosition(event) {
+    const container = event.currentTarget;  // The .image-container
+    const rect = container.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Calculate the center of the container
+    const containerWidth = rect.width;
+    const containerHeight = rect.height;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
+
+    // Calculate the offset from the center
+    const offsetX = mouseX - centerX;
+    const offsetY = mouseY - centerY;
+
+    // Calculate the distance from the center
+    const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+    const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY); // Distance from center to corner
+
+    // Normalize the distance to get a value between 0 and 1
+    const normalizedDistance = distance / maxDistance;
+
+    // Calculate the angle
+    const angle = Math.atan2(offsetY, offsetX);
+
+    // Apply the transform to the reflection
+    //const translateDistance = normalizedDistance * 20; // Adjust for intensity
+    const translateAngle = angle * (180 / Math.PI);
+    const translatePercentage =  normalizedDistance * 20; // Adjust for intensity
+    const shimmerPosition = `${translatePercentage}%`; // Shimmer moves with the mouse
+    container.style.setProperty('--shimmer-position', shimmerPosition)
+}
+
+// Attach event listeners for mousemove (inside a function to be called later)
+function attachMouseMoveListeners() {
+    const imageContainers = document.querySelectorAll('.image-container');
+    imageContainers.forEach(container => {
+        container.addEventListener('mousemove', updateReflectionPosition);
+    });
+}
+
+function removeMouseMoveListeners() {
+    const imageContainers = document.querySelectorAll('.image-container');
+    imageContainers.forEach(container => {
+        container.removeEventListener('mousemove', updateReflectionPosition);
+    });
+}
+
+// Modify the existing functions to call attach and remove
+
+function showContent() {
+    // Hide the preloader
+    document.getElementById('preloader').style.display = 'none';
+    // Show the main content
+    document.querySelector('.fullscreenify-container').style.visibility = 'visible';
+    // Show the image wrapper
+    document.querySelector('.image-wrapper').style.visibility = 'visible';
+
+    attachMouseMoveListeners(); // Attach listeners when content is shown
+}
+
+function handleLogout() {
+    // ... existing logout functionality
+    removeMouseMoveListeners(); // Remove listeners on logout
+    releaseWakeLock();
+}
+function displayPlaceholder() {
+    // ...existing code
+    removeMouseMoveListeners(); // Remove listeners on placeholder
+
+}
+
+// Add a new listener to the CD toggle button
+document.getElementById('cd-toggle-btn').addEventListener('click', () => {
+    toggleCdView();
+    if(isCdView){
+        removeMouseMoveListeners();
+    }
+    else {
+        attachMouseMoveListeners();
+    }
+});
+// --- End Shimmer Reflection ---
+
 document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
 document.getElementById('next-btn').addEventListener('click', nextSong);
 document.getElementById('prev-btn').addEventListener('click', prevSong);
-document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
+//document.getElementById('cd-toggle-btn').addEventListener('click', toggleCdView);
 
 // --- Hide UI Toggle Functionality ---
 // Add an event listener to the "Hide UI Toggle" button
@@ -588,8 +673,8 @@ async function toggleFullscreen() {
                 await document.webkitExitFullscreen();
             } else if (document.mozCancelFullScreen) {
                 await document.mozCancelFullScreen();
-            } else if (document.documentElement.msExitFullscreen) {
-                await document.documentElement.msExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                await document.msExitFullscreen();
             }
         } catch (error) {
             console.error('Error exiting fullscreen:', error);
@@ -626,55 +711,6 @@ updateFullscreenButtonIcon();
 
 // --- End of Fullscreen Toggle Functionality ---
 
-// --- Reflection Code ---
-
-function updateReflectionPosition(event) {
-  const container = document.querySelector('.image-container');
-  if (!container) return;
-
-  const rect = container.getBoundingClientRect();
-  const x = event.clientX - rect.left; // X position relative to the container
-  const y = event.clientY - rect.top;  // Y position relative to the container
-
-  const containerWidth = rect.width;
-  const containerHeight = rect.height;
-
-  // Calculate percentage position within the container
-  const xPercent = (x / containerWidth) * 100;
-  const yPercent = (y / containerHeight) * 100;
-
-
-  // --- Album Cover ---
-  const albumCoverReflection = document.querySelector('#album-cover::before');
-  if (albumCoverReflection) {
-    albumCoverReflection.style.backgroundPosition = `${xPercent * 2}% 50%`; // Horizontal
-  }
-
-  // --- CD Wrapper ---
-  const cdReflection = document.querySelector('#cd-container .cd-image-wrapper::before');
-  if (cdReflection) {
-    cdReflection.style.backgroundPosition = `${xPercent * 2}% ${yPercent * 2}%`; // Diagonal
-  }
-}
-
-// Add the event listener to the image container
-function attachReflectionListeners() {
-    const imageContainer = document.querySelector('.image-container');
-    if (imageContainer) {
-        imageContainer.addEventListener('mousemove', updateReflectionPosition);
-    }
-}
-
-function removeReflectionListeners() {
-    const imageContainer = document.querySelector('.image-container');
-    if (imageContainer) {
-        imageContainer.removeEventListener('mousemove', updateReflectionPosition);
-    }
-}
-
-// --- End Reflection Code ---
-
-// --- Initialization ---
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
@@ -718,7 +754,8 @@ function showContent() {
     document.querySelector('.fullscreenify-container').style.visibility = 'visible';
     // Show the image wrapper
     document.querySelector('.image-wrapper').style.visibility = 'visible';
-    attachReflectionListeners(); // *** CALL HERE - Attach reflection listeners after content is visible ***
+
+    attachMouseMoveListeners(); // Attach listeners when content is shown
 }
 
 // Release the wake lock when the user logs out
@@ -735,9 +772,8 @@ function handleLogout() {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
     document.querySelector('.fullscreenify-container').style.display = 'none';
-    removeReflectionListeners(); // *** CALL HERE - Remove reflection listeners on logout ***
+
+    removeMouseMoveListeners(); // Remove listeners on logout
     releaseWakeLock();
 }
-
-// --- Initialization ---
 initializeApp();
