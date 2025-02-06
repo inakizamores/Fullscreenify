@@ -588,8 +588,8 @@ async function toggleFullscreen() {
                 await document.webkitExitFullscreen();
             } else if (document.mozCancelFullScreen) {
                 await document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                await document.msExitFullscreen();
+            } else if (document.documentElement.msExitFullscreen) {
+                await document.documentElement.msExitFullscreen();
             }
         } catch (error) {
             console.error('Error exiting fullscreen:', error);
@@ -626,6 +626,55 @@ updateFullscreenButtonIcon();
 
 // --- End of Fullscreen Toggle Functionality ---
 
+// --- Reflection Code ---
+
+function updateReflectionPosition(event) {
+  const container = document.querySelector('.image-container');
+  if (!container) return;
+
+  const rect = container.getBoundingClientRect();
+  const x = event.clientX - rect.left; // X position relative to the container
+  const y = event.clientY - rect.top;  // Y position relative to the container
+
+  const containerWidth = rect.width;
+  const containerHeight = rect.height;
+
+  // Calculate percentage position within the container
+  const xPercent = (x / containerWidth) * 100;
+  const yPercent = (y / containerHeight) * 100;
+
+
+  // --- Album Cover ---
+  const albumCoverReflection = document.querySelector('#album-cover::before');
+  if (albumCoverReflection) {
+    albumCoverReflection.style.backgroundPosition = `${xPercent * 2}% 50%`; // Horizontal
+  }
+
+  // --- CD Wrapper ---
+  const cdReflection = document.querySelector('#cd-container .cd-image-wrapper::before');
+  if (cdReflection) {
+    cdReflection.style.backgroundPosition = `${xPercent * 2}% ${yPercent * 2}%`; // Diagonal
+  }
+}
+
+// Add the event listener to the image container
+function attachReflectionListeners() {
+    const imageContainer = document.querySelector('.image-container');
+    if (imageContainer) {
+        imageContainer.addEventListener('mousemove', updateReflectionPosition);
+    }
+}
+
+function removeReflectionListeners() {
+    const imageContainer = document.querySelector('.image-container');
+    if (imageContainer) {
+        imageContainer.removeEventListener('mousemove', updateReflectionPosition);
+    }
+}
+
+// --- End Reflection Code ---
+
+// --- Initialization ---
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
@@ -669,6 +718,7 @@ function showContent() {
     document.querySelector('.fullscreenify-container').style.visibility = 'visible';
     // Show the image wrapper
     document.querySelector('.image-wrapper').style.visibility = 'visible';
+    attachReflectionListeners(); // *** CALL HERE - Attach reflection listeners after content is visible ***
 }
 
 // Release the wake lock when the user logs out
@@ -685,58 +735,9 @@ function handleLogout() {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('login-screen').classList.add('logout'); // Add logout class for styling
     document.querySelector('.fullscreenify-container').style.display = 'none';
-
+    removeReflectionListeners(); // *** CALL HERE - Remove reflection listeners on logout ***
     releaseWakeLock();
 }
 
-// --- Reflection Code ---
-
-function updateReflectionPosition(event) {
-  const container = document.querySelector('.image-container');
-  if (!container) return;
-
-  const rect = container.getBoundingClientRect();
-  const x = event.clientX - rect.left; // X position relative to the container
-  const y = event.clientY - rect.top;  // Y position relative to the container
-
-  const containerWidth = rect.width;
-  const containerHeight = rect.height;
-
-  // Calculate percentage position within the container
-  const xPercent = (x / containerWidth) * 100;
-  const yPercent = (y / containerHeight) * 100;
-
-
-  // --- Album Cover ---
-  const albumCoverReflection = document.querySelector('#album-cover::before');
-  if (albumCoverReflection) {
-    // Shimmer moves horizontally
-    albumCoverReflection.style.backgroundPosition = `${xPercent * 2}% 50%`; // Adjust multiplier for speed
-  }
-
-  // --- CD Wrapper ---
-  const cdReflection = document.querySelector('#cd-container .cd-image-wrapper::before');
-  if (cdReflection) {
-     // Shimmer moves diagonally
-    cdReflection.style.backgroundPosition = `${xPercent * 2}% ${yPercent * 2}%`; // Adjust multiplier for speed
-  }
-}
-
-// Add the event listener to the image container
-function attachReflectionListeners() {
-    const imageContainer = document.querySelector('.image-container');
-    if (imageContainer) {
-        imageContainer.addEventListener('mousemove', updateReflectionPosition);
-    }
-}
-
-function removeReflectionListeners() {
-    const imageContainer = document.querySelector('.image-container');
-    if (imageContainer) {
-        imageContainer.removeEventListener('mousemove', updateReflectionPosition);
-    }
-}
-
-// --- End Reflection Code ---
-
+// --- Initialization ---
 initializeApp();
