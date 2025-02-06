@@ -224,7 +224,7 @@ function displayPlaceholder() {
     document.body.style.removeProperty('--background-image');
 
     // Update currentBackgroundImage to force re-application of background
-    currentBackgroundImage = null; 
+    currentBackgroundImage = null;
 
     imageContainer.classList.add("placeholder-active");
 
@@ -485,7 +485,7 @@ function releaseWakeLock() {
             console.log('Wake Lock released!');
 
             // Make sure cursor is visible when wake lock is released
-            document.body.style.cursor = 'default'; 
+            document.body.style.cursor = 'default';
             // Remove listeners when the Wake Lock is released
             removeCursorActivityListeners();
         });
@@ -588,8 +588,8 @@ async function toggleFullscreen() {
                 await document.webkitExitFullscreen();
             } else if (document.mozCancelFullScreen) {
                 await document.mozCancelFullScreen();
-            } else if (document.documentElement.msExitFullscreen) {
-                await document.documentElement.msExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                await document.msExitFullscreen();
             }
         } catch (error) {
             console.error('Error exiting fullscreen:', error);
@@ -702,7 +702,7 @@ function updateReflectionPosition(event) {
   const containerWidth = rect.width;
   const containerHeight = rect.height;
 
-    // Calculate percentage position within the container
+  // Calculate percentage position within the container
   const xPercent = (x / containerWidth) * 100;
   const yPercent = (y / containerHeight) * 100;
 
@@ -710,15 +710,15 @@ function updateReflectionPosition(event) {
   // --- Album Cover ---
   const albumCoverReflection = document.querySelector('#album-cover::before');
   if (albumCoverReflection) {
-    albumCoverReflection.style.maskPosition = `${xPercent}% ${yPercent}%`;
-    albumCoverReflection.style.webkitMaskPosition = `${xPercent}% ${yPercent}%`; // For Safari
+    // Shimmer moves horizontally
+    albumCoverReflection.style.backgroundPosition = `${xPercent * 2}% 50%`; // Adjust multiplier for speed
   }
 
   // --- CD Wrapper ---
   const cdReflection = document.querySelector('#cd-container .cd-image-wrapper::before');
   if (cdReflection) {
-     cdReflection.style.maskPosition = `${xPercent}% ${yPercent}%`;
-     cdReflection.style.webkitMaskPosition = `${xPercent}% ${yPercent}%`;
+     // Shimmer moves diagonally
+    cdReflection.style.backgroundPosition = `${xPercent * 2}% ${yPercent * 2}%`; // Adjust multiplier for speed
   }
 }
 
