@@ -7,6 +7,7 @@ let currentSongId = null;
 let currentIsPlaying = null;
 let currentBackgroundImage = null;
 let isCdView = false;
+let isTextOverlayEnabled = false; // Text overlay toggle state
 const imageCache = new Set();
 let isToggleDisabled = false; // Flag to disable toggle during cooldown
 let initialLoadComplete = false; // Flag to track if initial load is done
@@ -118,6 +119,9 @@ function updateUI(data) {
     const imageUrl = `${data.item.album.images[0].url}?t=${timestamp}`;
 
     manageImageCache(imageUrl);
+
+    // Update text overlay with song and artist information
+    updateTextOverlay(data.item.name, data.item.artists[0].name);
 
     // Preload the new background image only if it's different from the current one
     if (imageUrl !== currentBackgroundImage) {
@@ -544,6 +548,10 @@ function handleKeyPress(event) {
             // Toggle the 'hidden' class on the button group container
             uiButtonsContainer.classList.toggle('hidden');
             break;
+        case 'T': // T key
+        case 't': // t key
+            toggleTextOverlay();
+            break;
     }
 }
 
@@ -624,6 +632,84 @@ updateFullscreenButtonIcon();
 
 // --- End of Fullscreen Toggle Functionality ---
 
+// Function to update text overlay with song and artist information
+function updateTextOverlay(songName, artistName) {
+    const songElement = document.getElementById('song-name');
+    const artistElement = document.getElementById('artist-name');
+    
+    // Clear previous content
+    songElement.innerHTML = '';
+    artistElement.innerHTML = '';
+    
+    // Create span elements for animation
+    const songSpan = document.createElement('span');
+    const artistSpan = document.createElement('span');
+    
+    // For continuous scrolling, repeat the text with spacing
+    // Using three repetitions with proper spacing for seamless looping
+    const spacer = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'; // Non-breaking spaces for consistent spacing
+    songSpan.textContent = songName + spacer + songName + spacer + songName;
+    artistSpan.textContent = artistName + spacer + artistName + spacer + artistName;
+    
+    // Append spans to parent elements
+    songElement.appendChild(songSpan);
+    artistElement.appendChild(artistSpan);
+    
+    // Check if text is overflowing and apply scrolling animation
+    checkTextOverflow(songElement, songName);
+    checkTextOverflow(artistElement, artistName);
+}
+
+// Function to check if text is overflowing and apply scrolling animation
+function checkTextOverflow(element, originalText) {
+    // Reset classes first
+    element.classList.remove('scrolling');
+    
+    // Force browser to calculate the rendered width
+    void element.offsetWidth;
+    
+    // Only apply scrolling if the original text would overflow
+    // Add a buffer to prevent unnecessary scrolling for text that's just slightly larger
+    const buffer = 20; // 20px buffer
+    if (getTextWidth(originalText, getComputedStyle(element).font) > (element.offsetWidth - buffer)) {
+        element.classList.add('scrolling');
+    }
+}
+
+// Helper function to calculate text width
+function getTextWidth(text, font) {
+    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
+    const context = canvas.getContext('2d');
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+}
+
+// Function to toggle text overlay visibility
+function toggleTextOverlay() {
+    isTextOverlayEnabled = !isTextOverlayEnabled;
+    const textOverlay = document.getElementById('text-overlay');
+    textOverlay.style.display = isTextOverlayEnabled ? 'flex' : 'none';
+    
+    // If enabled, check for text overflow
+    if (isTextOverlayEnabled) {
+        const songElement = document.getElementById('song-name');
+        const artistElement = document.getElementById('artist-name');
+        
+        // Get the original text (first part before spacers)
+        const songSpan = songElement.querySelector('span');
+        const artistSpan = artistElement.querySelector('span');
+        
+        if (songSpan && artistSpan) {
+            const songText = songSpan.textContent.split(/\u00A0+/)[0]; // Split by non-breaking spaces
+            const artistText = artistSpan.textContent.split(/\u00A0+/)[0];
+            
+            checkTextOverflow(songElement, songText);
+            checkTextOverflow(artistElement, artistText);
+        }
+    }
+}
+
 async function initializeApp() {
     if (window.location.hash) {
         await handleRedirect();
@@ -658,6 +744,9 @@ async function initializeApp() {
 
     initialLoadComplete = true;
     scheduleTokenRefresh();
+
+    // Add event listener for text overlay toggle button
+    document.getElementById('text-overlay-toggle-btn').addEventListener('click', toggleTextOverlay);
 }
 
 function showContent() {

@@ -9,6 +9,7 @@
     <meta name="author" content="Iñaki Zamores">
     <meta name="keywords" content="Spotify, album art, full-screen, music, web application, CD display, Iñaki Zamores, inakizamores">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/overlay.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -82,6 +83,11 @@
                 <i class="fas fa-compact-disc"></i>
             </button>
 
+            <!-- Text Overlay Toggle Button -->
+            <button id="text-overlay-toggle-btn" class="bottom-left-btn" title="Toggle Text Overlay">
+                <i class="fas fa-font"></i>
+            </button>
+
             <!-- Test Expiry Button -->
             <button id="test-expiry-btn" class = "bottom-center-btn" title="Test Session Expiry">
                 <i class="fas fa-exclamation-triangle"></i>
@@ -91,6 +97,12 @@
             <button id="logout-btn" class="bottom-right-btn" title="Logout">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
+        </div>
+
+        <!-- Text Overlay -->
+        <div id="text-overlay" style="display: none;">
+            <div id="artist-name" class="overlay-text left"></div>
+            <div id="song-name" class="overlay-text right"></div>
         </div>
 
         <!-- Hide UI Toggle Button -->

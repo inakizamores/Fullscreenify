@@ -701,3 +701,62 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* === Text Overlay Styles === */
+#text-overlay {
+    position: absolute;
+    width: 100%;
+    bottom: 100px; /* Position above UI buttons */
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    z-index: 5;
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+.overlay-text {
+    font-family: 'Helvetica Neue Heavy', sans-serif;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    font-size: 24px;
+    max-width: 40%; /* Ensure it doesn't overlap center */
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-text.left {
+    text-align: left;
+    margin-right: auto; /* Push to the left */
+}
+
+.overlay-text.right {
+    text-align: right;
+    margin-left: auto; /* Push to the right */
+}
+
+/* Responsive adjustments for text overlay */
+@media (max-width: 768px) {
+    #text-overlay {
+        padding: 0 20px;
+        bottom: 80px;
+    }
+    
+    .overlay-text {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    #text-overlay {
+        padding: 0 10px;
+        bottom: 60px;
+    }
+    
+    .overlay-text {
+        font-size: 14px;
+    }
+}
