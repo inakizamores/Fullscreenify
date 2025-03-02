@@ -645,44 +645,32 @@ function updateTextOverlay(songName, artistName) {
     const songSpan = document.createElement('span');
     const artistSpan = document.createElement('span');
     
-    // For continuous scrolling, repeat the text with spacing
-    // Using three repetitions with proper spacing for seamless looping
-    const spacer = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'; // Non-breaking spaces for consistent spacing
-    songSpan.textContent = songName + spacer + songName + spacer + songName;
-    artistSpan.textContent = artistName + spacer + artistName + spacer + artistName;
+    songSpan.textContent = songName;
+    artistSpan.textContent = artistName;
     
     // Append spans to parent elements
     songElement.appendChild(songSpan);
     artistElement.appendChild(artistSpan);
     
     // Check if text is overflowing and apply scrolling animation
-    checkTextOverflow(songElement, songName);
-    checkTextOverflow(artistElement, artistName);
+    checkTextOverflow(songElement);
+    checkTextOverflow(artistElement);
 }
 
 // Function to check if text is overflowing and apply scrolling animation
-function checkTextOverflow(element, originalText) {
+function checkTextOverflow(element) {
     // Reset classes first
     element.classList.remove('scrolling');
     
     // Force browser to calculate the rendered width
     void element.offsetWidth;
     
-    // Only apply scrolling if the original text would overflow
-    // Add a buffer to prevent unnecessary scrolling for text that's just slightly larger
-    const buffer = 20; // 20px buffer
-    if (getTextWidth(originalText, getComputedStyle(element).font) > (element.offsetWidth - buffer)) {
+    const span = element.querySelector('span');
+    
+    // Check if the content width exceeds the visible width
+    if (span && span.offsetWidth > element.offsetWidth) {
         element.classList.add('scrolling');
     }
-}
-
-// Helper function to calculate text width
-function getTextWidth(text, font) {
-    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
-    const context = canvas.getContext('2d');
-    context.font = font;
-    const metrics = context.measureText(text);
-    return metrics.width;
 }
 
 // Function to toggle text overlay visibility
@@ -696,17 +684,8 @@ function toggleTextOverlay() {
         const songElement = document.getElementById('song-name');
         const artistElement = document.getElementById('artist-name');
         
-        // Get the original text (first part before spacers)
-        const songSpan = songElement.querySelector('span');
-        const artistSpan = artistElement.querySelector('span');
-        
-        if (songSpan && artistSpan) {
-            const songText = songSpan.textContent.split(/\u00A0+/)[0]; // Split by non-breaking spaces
-            const artistText = artistSpan.textContent.split(/\u00A0+/)[0];
-            
-            checkTextOverflow(songElement, songText);
-            checkTextOverflow(artistElement, artistText);
-        }
+        checkTextOverflow(songElement);
+        checkTextOverflow(artistElement);
     }
 }
 

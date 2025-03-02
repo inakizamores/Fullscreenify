@@ -17,7 +17,7 @@
 .overlay-text {
     font-family: 'Helvetica Neue Heavy', sans-serif;
     color: white;
-    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3); /* Even lighter shadow */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Enhanced shadow */
     font-size: 38px; /* Even larger font size */
     max-width: 35%; /* Ensure it doesn't get too close to center */
     opacity: 0.95;
@@ -38,32 +38,46 @@
     margin-left: auto; /* Push to the right */
 }
 
-/* Continuous scrolling animation technique */
+/* AV Receiver style scrolling technique */
 .overlay-text.scrolling {
     text-overflow: clip;
+    position: relative;
+}
+
+/* Animation for left text */
+.overlay-text.left.scrolling {
     overflow: hidden;
 }
 
-/* Animation for left text - continuous scrolling */
 .overlay-text.left.scrolling span {
     display: inline-block;
-    animation: scrollLeftContinuous 30s linear infinite;
+    padding-right: 2em; /* Space after text */
+    animation: marqueeLeft 10s linear infinite;
+    animation-delay: 3s; /* Longer delay before scrolling */
 }
 
-@keyframes scrollLeftContinuous {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-33.33%); } /* Only scroll 1/3 of content for seamless looping */
+@keyframes marqueeLeft {
+    0%, 10% { transform: translate(0, 0); }
+    90%, 100% { transform: translate(-100%, 0); }
 }
 
-/* Animation for right text - continuous scrolling */
+/* Animation for right text */
+.overlay-text.right.scrolling {
+    overflow: hidden;
+    direction: rtl; /* Right to left direction */
+}
+
 .overlay-text.right.scrolling span {
     display: inline-block;
-    animation: scrollRightContinuous 30s linear infinite;
+    padding-left: 2em; /* Space after text */
+    direction: ltr; /* Set the text direction back to left-to-right */
+    animation: marqueeRight 10s linear infinite;
+    animation-delay: 3s; /* Longer delay before scrolling */
 }
 
-@keyframes scrollRightContinuous {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(33.33%); } /* Only scroll 1/3 of content for seamless looping */
+@keyframes marqueeRight {
+    0%, 10% { transform: translate(100%, 0); }
+    90%, 100% { transform: translate(0, 0); }
 }
 
 /* Responsive adjustments for text overlay */
