@@ -1,0 +1,116 @@
+/* === Text Overlay Styles === */
+#text-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Vertically center */
+    z-index: 5;
+    padding: 0 60px; /* Increased padding */
+    box-sizing: border-box;
+    pointer-events: none; /* Allow clicks to pass through */
+}
+
+.overlay-text {
+    font-family: 'Helvetica Neue Heavy', sans-serif;
+    color: white;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Enhanced shadow */
+    font-size: 38px; /* Even larger font size */
+    max-width: 35%; /* Ensure it doesn't get too close to center */
+    opacity: 0.95;
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Show ellipsis for non-animated state */
+    position: relative;
+    letter-spacing: 0.02em; /* Slightly improved readability */
+}
+
+.overlay-text.left {
+    text-align: left;
+    margin-right: auto; /* Push to the left */
+}
+
+.overlay-text.right {
+    text-align: right;
+    margin-left: auto; /* Push to the right */
+}
+
+/* AV Receiver style scrolling technique */
+.overlay-text.scrolling {
+    text-overflow: clip;
+    position: relative;
+}
+
+/* Animation for left text */
+.overlay-text.left.scrolling {
+    overflow: hidden;
+}
+
+.overlay-text.left.scrolling span {
+    display: inline-block;
+    padding-right: 2em; /* Space after text */
+    animation: marqueeLeft 10s linear infinite;
+    animation-delay: 3s; /* Longer delay before scrolling */
+}
+
+@keyframes marqueeLeft {
+    0%, 10% { transform: translate(0, 0); }
+    90%, 100% { transform: translate(-100%, 0); }
+}
+
+/* Animation for right text */
+.overlay-text.right.scrolling {
+    overflow: hidden;
+    direction: rtl; /* Right to left direction */
+}
+
+.overlay-text.right.scrolling span {
+    display: inline-block;
+    padding-left: 2em; /* Space after text */
+    direction: ltr; /* Set the text direction back to left-to-right */
+    animation: marqueeRight 10s linear infinite;
+    animation-delay: 3s; /* Longer delay before scrolling */
+}
+
+@keyframes marqueeRight {
+    0%, 10% { transform: translate(100%, 0); }
+    90%, 100% { transform: translate(0, 0); }
+}
+
+/* Responsive adjustments for text overlay */
+@media (max-width: 1400px) {
+    .overlay-text {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .overlay-text {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    #text-overlay {
+        padding: 0 30px;
+    }
+    
+    .overlay-text {
+        font-size: 26px;
+        max-width: 30%;
+    }
+}
+
+@media (max-width: 480px) {
+    #text-overlay {
+        padding: 0 20px;
+    }
+    
+    .overlay-text {
+        font-size: 22px;
+        max-width: 28%;
+    }
+} 
